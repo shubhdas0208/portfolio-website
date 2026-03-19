@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const NAV_ITEMS = [
   { id: 'hero',       label: 'Intro' },
