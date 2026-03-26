@@ -1,96 +1,249 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import type { CSSProperties, RefObject } from 'react'
+import * as THREE from 'three'
 import { useTheme } from '../lib/ThemeContext'
 
 const WORDS = ['AI-native', 'systems-first', 'evidence-backed', 'outcome-tied']
 
-// ── Dot grid flashlight canvas ────────────────────────────────────────
-function useDotGrid(canvasRef: React.RefObject<HTMLCanvasElement>) {
+function useCursorShader(
+  hostRef: RefObject<HTMLElement>,
+  containerRef: RefObject<HTMLDivElement>
+) {
   const { theme } = useTheme()
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const canvas = canvasRef.current
-    if (!canvas || !canvas.parentElement) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    const host = hostRef.current
+    const container = containerRef.current
 
-    const GAP = 24
-    let W = 0, H = 0
-    let mouseX = -9999, mouseY = -9999
-    let rafId = 0
+    if (!host || !container || reduced) return
 
-    const isDark = theme === 'dark'
-    const dotBase = isDark ? 'rgba(242,239,232,' : 'rgba(17,17,16,'
-    const RADIUS = 150
+    const scene = new THREE.Scene()
+    const camera = new THREE.Camera()
+    camera.position.z = 1
 
-    function resize() {
-      W = canvas!.parentElement!.offsetWidth
-      H = canvas!.parentElement!.offsetHeight
-      canvas!.width = W
-      canvas!.height = H
-    }
-
-    function draw() {
-      ctx!.clearRect(0, 0, W, H)
-      const cols = Math.ceil(W / GAP) + 1
-      const rows = Math.ceil(H / GAP) + 1
-
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const x = c * GAP
-          const y = r * GAP
-          const dx = x - mouseX
-          const dy = y - mouseY
-          const dist = Math.sqrt(dx * dx + dy * dy)
-
-          let alpha = 0.12
-          if (dist < RADIUS) {
-            alpha = 0.12 + (1 - dist / RADIUS) * 0.65
+    const geometry = new THREE.PlaneGeometry(2, 2)
+    const trail = Array.from({ length: 5 }, () => new THREE.Vector2(0.5, 0.5))
+    const target = new THREE.Vector2(0.5, 0.5)
+    // Two persistent shard sources placed in the right-side blank area.
+    const anchors = [new THREE.Vector2(0.76, 0.67), new THREE.Vector2(0.84, 0.33)]
+    const strengths = [1, 0.82, 0.64, 0.46, 0.3]
+    const anchorStrengths = [0.68, 0.0]
+    const palette =
+      theme === 'dark'
+        ? {
+            base: new THREE.Color('#f6f0e7'),
+            accent: new THREE.Color('#ff8a3d'),
+            wash: new THREE.Color('#9fb4c8'),
+          }
+        : {
+            base: new THREE.Color('#221f1b'),
+            accent: new THREE.Color('#ff6b00'),
+            wash: new THREE.Color('#8b8177'),
           }
 
-          ctx!.beginPath()
-          ctx!.arc(x, y, 1, 0, Math.PI * 2)
-          ctx!.fillStyle = `${dotBase}${alpha})`
-          ctx!.fill()
+    const uniforms = {
+      time: { value: 0 },
+      resolution: { value: new THREE.Vector2(1, 1) },
+      points: { value: trail },
+      strengths: { value: strengths },
+      anchors: { value: anchors },
+      anchorStrengths: { value: anchorStrengths },
+      activation: { value: 0 },
+      ambient: { value: theme === 'dark' ? 0.34 : 0.24 },
+      colorA: { value: palette.base },
+      colorB: { value: palette.accent },
+      colorC: { value: palette.wash },
+    }
+
+    const material = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      uniforms,
+      vertexShader: `
+        void main() {
+          gl_Position = vec4(position, 1.0);
         }
+      `,
+      fragmentShader: `
+        precision highp float;
+
+        uniform vec2 resolution;
+        uniform float time;
+        uniform vec2 points[5];
+        uniform float strengths[5];
+        uniform vec2 anchors[2];
+        uniform float anchorStrengths[2];
+        uniform float activation;
+        uniform float ambient;
+        uniform vec3 colorA;
+        uniform vec3 colorB;
+        uniform vec3 colorC;
+
+        float rippleField(vec2 uv, vec2 point, float tOffset) {
+          float d = length(uv - point);
+          float signal = 0.0;
+
+          for (int i = 1; i <= 3; i++) {
+            float fi = float(i);
+            signal += 0.0016 * fi * fi /
+              abs(fract(time * 0.065 + tOffset + fi * 0.03) * 4.5 - d * 3.2 + mod(uv.x + uv.y, 0.24));
+          }
+
+          return signal * smoothstep(0.82, 0.02, d);
+        }
+
+        void main() {
+          vec2 uv = gl_FragCoord.xy / resolution.xy;
+          vec2 centered = uv * 2.0 - 1.0;
+          centered.x *= resolution.x / resolution.y;
+
+          float field = 0.0;
+          float anchorField = 0.0;
+          float minDist = 10.0;
+
+          for (int i = 0; i < 5; i++) {
+            vec2 point = points[i] * 2.0 - 1.0;
+            point.x *= resolution.x / resolution.y;
+
+            float d = length(centered - point);
+            minDist = min(minDist, d);
+            field += rippleField(centered, point, float(i) * 0.09) * strengths[i];
+          }
+
+          for (int i = 0; i < 2; i++) {
+            vec2 point = anchors[i] * 2.0 - 1.0;
+            point.x *= resolution.x / resolution.y;
+
+            float d = length(centered - point);
+            minDist = min(minDist, d);
+            anchorField += rippleField(centered, point, float(i) * 0.17 + 0.31) * anchorStrengths[i];
+          }
+
+          field = anchorField * (ambient + 0.22) + field * (ambient + activation * 0.9);
+          field = clamp(field, 0.0, 1.2);
+
+          float haze = (ambient * 0.4 + activation) * smoothstep(0.95, 0.0, minDist) * 0.12;
+          vec3 color = colorA * field * 0.5 + colorB * field * 0.95 + colorC * pow(field, 1.35) * 0.4;
+          color += mix(colorC, colorB, 0.55) * haze;
+
+          float alpha = clamp(field * 0.84 + haze, 0.0, 0.78);
+          gl_FragColor = vec4(color, alpha);
+        }
+      `,
+    })
+
+    const mesh = new THREE.Mesh(geometry, material)
+    scene.add(mesh)
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8))
+    renderer.setClearColor(0x000000, 0)
+    renderer.domElement.style.width = '100%'
+    renderer.domElement.style.height = '100%'
+    renderer.domElement.style.display = 'block'
+    container.appendChild(renderer.domElement)
+
+    let activationTarget = 0.22
+    let rafId = 0
+
+    const resize = () => {
+      const width = container.clientWidth
+      const height = container.clientHeight
+      if (!width || !height) return
+
+      renderer.setSize(width, height, false)
+      uniforms.resolution.value.set(
+        width * renderer.getPixelRatio(),
+        height * renderer.getPixelRatio()
+      )
+    }
+
+    const setPointer = (clientX: number, clientY: number) => {
+      const rect = host.getBoundingClientRect()
+      const x = (clientX - rect.left) / rect.width
+      const y = 1 - (clientY - rect.top) / rect.height
+
+      target.set(
+        THREE.MathUtils.clamp(x, 0, 1),
+        THREE.MathUtils.clamp(y, 0, 1)
+      )
+    }
+
+    const onPointerMove = (event: PointerEvent) => {
+      setPointer(event.clientX, event.clientY)
+      activationTarget = 1
+    }
+
+    const onPointerEnter = (event: PointerEvent) => {
+      setPointer(event.clientX, event.clientY)
+      activationTarget = 1
+    }
+
+    const onPointerLeave = () => {
+      activationTarget = 0.22
+    }
+
+    const draw = () => {
+      uniforms.time.value += 0.035
+      uniforms.activation.value = THREE.MathUtils.lerp(
+        uniforms.activation.value,
+        activationTarget,
+        0.08
+      )
+
+      // Alternate two shards: shard B starts rising only after shard A drops to ~10%, then swap.
+      const phase = (uniforms.time.value * 0.055) % 2
+      let shardA = 0
+      let shardB = 0
+
+      if (phase < 1) {
+        const p = phase
+        shardA = 1 - Math.min(p / 0.9, 1)
+        shardB = p <= 0.9 ? 0 : (p - 0.9) / 0.1
+      } else {
+        const p = phase - 1
+        shardB = 1 - Math.min(p / 0.9, 1)
+        shardA = p <= 0.9 ? 0 : (p - 0.9) / 0.1
       }
 
-      rafId = requestAnimationFrame(draw)
-    }
+      uniforms.anchorStrengths.value[0] = 0.72 * shardA
+      uniforms.anchorStrengths.value[1] = 0.66 * shardB
 
-    function onMouse(e: MouseEvent) {
-      const rect = canvas!.getBoundingClientRect()
-      mouseX = e.clientX - rect.left
-      mouseY = e.clientY - rect.top
+      trail[0].lerp(target, 0.16)
+      for (let i = 1; i < trail.length; i++) {
+        trail[i].lerp(trail[i - 1], Math.max(0.06, 0.14 - i * 0.012))
+      }
+
+      renderer.render(scene, camera)
+      rafId = window.requestAnimationFrame(draw)
     }
-    function onLeave() { mouseX = -9999; mouseY = -9999 }
 
     resize()
-    if (!reduced) {
-      draw()
-      window.addEventListener('mousemove', onMouse, { passive: true })
-      canvas.parentElement!.addEventListener('mouseleave', onLeave)
-    } else {
-      draw()
-      cancelAnimationFrame(rafId)
-    }
-
     const ro = new ResizeObserver(resize)
-    ro.observe(canvas.parentElement!)
+    ro.observe(container)
+    host.addEventListener('pointermove', onPointerMove)
+    host.addEventListener('pointerenter', onPointerEnter)
+    host.addEventListener('pointerleave', onPointerLeave)
+    draw()
 
     return () => {
-      cancelAnimationFrame(rafId)
+      window.cancelAnimationFrame(rafId)
       ro.disconnect()
-      window.removeEventListener('mousemove', onMouse)
-      canvas.parentElement?.removeEventListener('mouseleave', onLeave)
+      host.removeEventListener('pointermove', onPointerMove)
+      host.removeEventListener('pointerenter', onPointerEnter)
+      host.removeEventListener('pointerleave', onPointerLeave)
+      if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement)
+      renderer.dispose()
+      geometry.dispose()
+      material.dispose()
     }
-  }, [canvasRef, theme])
+  }, [containerRef, hostRef, theme])
 }
 
-// ── Per-character bounce on hover ─────────────────────────────────────
-function BounceText({ text, style }: { text: string; style?: React.CSSProperties }) {
+function BounceText({ text, style }: { text: string; style?: CSSProperties }) {
   return (
     <span style={{ display: 'inline-block', ...style }}>
       {text.split('').map((ch, i) => (
@@ -100,8 +253,12 @@ function BounceText({ text, style }: { text: string; style?: React.CSSProperties
             display: 'inline-block',
             transition: `transform 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 20}ms`,
           }}
-          onMouseEnter={e => { (e.currentTarget as HTMLSpanElement).style.transform = 'translateY(-7px)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLSpanElement).style.transform = 'translateY(0)' }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = 'translateY(-7px)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = 'translateY(0)'
+          }}
         >
           {ch === ' ' ? '\u00A0' : ch}
         </span>
@@ -110,16 +267,16 @@ function BounceText({ text, style }: { text: string; style?: React.CSSProperties
   )
 }
 
-// ── Hero ──────────────────────────────────────────────────────────────
 export default function Hero() {
   const [word, setWord] = useState('AI-native')
   const [clock, setClock] = useState('')
   const [revealed, setRevealed] = useState(false)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const heroRef = useRef<HTMLElement>(null)
+  const shaderRef = useRef<HTMLDivElement>(null)
   const stateRef = useRef({ wi: 0, ci: 9, del: false })
   const { theme } = useTheme()
 
-  useDotGrid(canvasRef as React.RefObject<HTMLCanvasElement>)
+  useCursorShader(heroRef as RefObject<HTMLElement>, shaderRef)
 
   const isDark = theme === 'dark'
   const metaPillBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.52)'
@@ -127,49 +284,63 @@ export default function Hero() {
   const metaText = isDark ? 'rgba(255,255,255,0.88)' : 'rgba(26,26,26,0.82)'
   const metaDivider = isDark ? 'rgba(255,255,255,0.18)' : 'rgba(26,26,26,0.16)'
 
-  // Clip-path reveal on mount
   useEffect(() => {
     const id = setTimeout(() => setRevealed(true), 80)
     return () => clearTimeout(id)
   }, [])
 
-  // Typewriter
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
-    function tick() {
+
+    const tick = () => {
       const s = stateRef.current
-      const w = WORDS[s.wi]
+      const currentWord = WORDS[s.wi]
+
       if (!s.del) {
         s.ci++
-        setWord(w.slice(0, s.ci))
-        if (s.ci === w.length) { s.del = true; timer = setTimeout(tick, 1900); return }
+        setWord(currentWord.slice(0, s.ci))
+        if (s.ci === currentWord.length) {
+          s.del = true
+          timer = setTimeout(tick, 1900)
+          return
+        }
       } else {
         s.ci--
-        setWord(w.slice(0, s.ci))
-        if (s.ci === 0) { s.del = false; s.wi = (s.wi + 1) % WORDS.length }
+        setWord(currentWord.slice(0, s.ci))
+        if (s.ci === 0) {
+          s.del = false
+          s.wi = (s.wi + 1) % WORDS.length
+        }
       }
+
       timer = setTimeout(tick, s.del ? 52 : 92)
     }
+
     timer = setTimeout(tick, 1200)
     return () => clearTimeout(timer)
   }, [])
 
-  // IST clock
   useEffect(() => {
-    function tick() {
-      setClock(new Date().toLocaleTimeString('en-IN', {
-        hour: '2-digit', minute: '2-digit', second: '2-digit',
-        hour12: false, timeZone: 'Asia/Kolkata',
-      }))
+    const tick = () => {
+      setClock(
+        new Date().toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+          timeZone: 'Asia/Kolkata',
+        })
+      )
     }
+
     tick()
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
   }, [])
 
-  // Lenis smooth scroll
   useEffect(() => {
-    let lenis: any
+    let lenis: { stop: () => void; start: () => void; destroy: () => void; raf: (time: number) => void } | null = null
+
     const handleDrawerScrollLock = (event: Event) => {
       const locked = (event as CustomEvent<{ locked?: boolean }>).detail?.locked
       if (!lenis) return
@@ -179,221 +350,334 @@ export default function Hero() {
 
     window.addEventListener('drawer-scroll-lock', handleDrawerScrollLock)
 
-    import('lenis').then(({ default: Lenis }) => {
-      lenis = new Lenis({
-        duration: 1.2,
-        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothWheel: true,
+    import('lenis')
+      .then(({ default: Lenis }) => {
+        lenis = new Lenis({
+          duration: 1.2,
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+        })
+
+        const raf = (time: number) => {
+          lenis?.raf(time)
+          requestAnimationFrame(raf)
+        }
+
+        requestAnimationFrame(raf)
       })
-      function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf) }
-      requestAnimationFrame(raf)
-    }).catch(() => {})
+      .catch(() => {})
 
     return () => {
       window.removeEventListener('drawer-scroll-lock', handleDrawerScrollLock)
-      if (lenis) lenis.destroy()
+      lenis?.destroy()
     }
   }, [])
 
-  const clipStyle = (delay: string): React.CSSProperties => ({
+  const clipStyle = (delay: string): CSSProperties => ({
     clipPath: revealed ? 'inset(0% 0 0 0)' : 'inset(100% 0 0 0)',
     transition: `clip-path 0.6s cubic-bezier(0.16,1,0.3,1) ${delay}`,
     overflow: 'hidden',
   })
 
   return (
-    <section id="hero" style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'flex-end',
-      padding: '0 4rem 3.5rem',
-      position: 'relative',
-      overflow: 'hidden',
-      borderBottom: '1px solid var(--border)',
-      background: 'var(--bg)',
-    }}>
+    <section
+      id="hero"
+      ref={heroRef}
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        padding: '0 4rem 3.5rem',
+        position: 'relative',
+        overflow: 'hidden',
+        borderBottom: '1px solid var(--border)',
+        background: 'var(--bg)',
+      }}
+    >
+      <div
+        ref={shaderRef}
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
 
-      {/* Dot grid canvas */}
-      <canvas ref={canvasRef} aria-hidden style={{
-        position: 'absolute', inset: 0,
-        width: '100%', height: '100%',
-        pointerEvents: 'none', zIndex: 0,
-      }} />
-
-      {/* Radial vignette */}
-      <div aria-hidden style={{
-        position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 60% 70% at 40% 80%, var(--bg) 30%, transparent 100%)',
-      }} />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 1,
+          pointerEvents: 'none',
+          background: 'radial-gradient(ellipse 60% 70% at 40% 80%, var(--bg) 30%, transparent 100%)',
+        }}
+      />
 
       <div style={{ position: 'relative', zIndex: 2 }}>
-
-        {/* Status pill */}
         <div style={clipStyle('0.10s')}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
-            fontFamily: 'var(--font-m)', fontSize: '0.59rem',
-            letterSpacing: '0.1em', textTransform: 'uppercase',
-            color: 'var(--accent)', border: '1px solid var(--accent-b)',
-            padding: '0.27rem 0.7rem', borderRadius: '100px',
-            marginBottom: '1.1rem', width: 'fit-content',
-          }}>
-            <span style={{
-              width: 5, height: 5, borderRadius: '50%',
-              background: 'var(--accent)',
-              animation: 'pdot 2s ease-in-out infinite',
-            }} />
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              fontFamily: 'var(--font-m)',
+              fontSize: '0.59rem',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: 'var(--accent)',
+              border: '1px solid var(--accent-b)',
+              padding: '0.27rem 0.7rem',
+              borderRadius: '100px',
+              marginBottom: '1.1rem',
+              width: 'fit-content',
+            }}
+          >
+            <span
+              style={{
+                width: 5,
+                height: 5,
+                borderRadius: '50%',
+                background: 'var(--accent)',
+                animation: 'pdot 2s ease-in-out infinite',
+              }}
+            />
             Open to AI PM roles · 2026
             <style>{`@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.35;transform:scale(0.7)}}`}</style>
           </div>
         </div>
 
-        {/* Eyebrow + clock */}
         <div style={clipStyle('0.18s')}>
-          <div style={{
-            display: 'flex', alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-            width: 'min(100%, 1240px)',
-          }}>
-            <div style={{
-              fontFamily: 'var(--font-m)', fontSize: '0.67rem',
-              letterSpacing: '0.22em', textTransform: 'uppercase',
-              color: 'var(--fg-dim)',
-              display: 'flex', alignItems: 'center', gap: '1rem',
-            }}>
-              <span style={{ display: 'block', width: '2rem', height: 1, background: 'var(--fg-dimmer)' }} />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '1rem',
+              width: 'min(100%, 1240px)',
+            }}
+          >
+            <div
+              style={{
+                fontFamily: 'var(--font-m)',
+                fontSize: '0.67rem',
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                color: 'var(--fg-dim)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1rem',
+              }}
+            >
+              <span
+                style={{
+                  display: 'block',
+                  width: '2rem',
+                  height: 1,
+                  background: 'var(--fg-dimmer)',
+                }}
+              />
               AI Product Manager
             </div>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.7rem',
-              padding: '0.46rem 0.8rem',
-              borderRadius: '999px',
-              border: `1px solid ${metaPillBorder}`,
-              background: metaPillBg,
-              backdropFilter: 'blur(18px) saturate(160%)',
-              WebkitBackdropFilter: 'blur(18px) saturate(160%)',
-            }}>
-              <span style={{ fontFamily: 'var(--font-m)', fontSize: '0.7rem', letterSpacing: '0.08em', color: metaText }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.7rem',
+                padding: '0.46rem 0.8rem',
+                borderRadius: '999px',
+                border: `1px solid ${metaPillBorder}`,
+                background: metaPillBg,
+                backdropFilter: 'blur(18px) saturate(160%)',
+                WebkitBackdropFilter: 'blur(18px) saturate(160%)',
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: 'var(--font-m)',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.08em',
+                  color: metaText,
+                }}
+              >
                 Goa, India
               </span>
               <span style={{ width: 1, height: 12, background: metaDivider }} />
-              <span style={{
-                fontFamily: 'var(--font-m)',
-                fontSize: '0.7rem',
-                letterSpacing: '0.08em',
-                color: 'var(--accent)',
-                opacity: 0.9,
-              }}>{clock}</span>
+              <span
+                style={{
+                  fontFamily: 'var(--font-m)',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.08em',
+                  color: 'var(--accent)',
+                  opacity: 0.9,
+                }}
+              >
+                {clock}
+              </span>
               <span style={{ width: 1, height: 12, background: metaDivider }} />
-              <span style={{ fontFamily: 'var(--font-m)', fontSize: '0.7rem', letterSpacing: '0.08em', color: metaText }}>
+              <span
+                style={{
+                  fontFamily: 'var(--font-m)',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.08em',
+                  color: metaText,
+                }}
+              >
                 IST
               </span>
             </div>
           </div>
         </div>
 
-        {/* Name — static block, BounceText handles per-char hover */}
         <div style={clipStyle('0.26s')}>
           <div style={{ marginBottom: '1.5rem', userSelect: 'none' }}>
-            <div style={{
-              fontFamily: 'var(--font-d)',
-              fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
-              fontWeight: 700, lineHeight: 0.9,
-              letterSpacing: '-0.04em', color: 'var(--fg)',
-            }}>
+            <div
+              style={{
+                fontFamily: 'var(--font-d)',
+                fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
+                fontWeight: 700,
+                lineHeight: 0.9,
+                letterSpacing: '-0.04em',
+                color: 'var(--fg)',
+              }}
+            >
               <BounceText text="SHUBH" />
             </div>
-            <div style={{
-              fontFamily: 'var(--font-d)',
-              fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
-              fontWeight: 700, lineHeight: 0.9,
-              letterSpacing: '-0.04em',
-              color: 'transparent',
-              WebkitTextStroke: '2px var(--fg)',
-              paddingLeft: 'clamp(1.4rem, 3vw, 3.6rem)',
-            }}>
+            <div
+              style={{
+                fontFamily: 'var(--font-d)',
+                fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
+                fontWeight: 700,
+                lineHeight: 0.9,
+                letterSpacing: '-0.04em',
+                color: 'transparent',
+                WebkitTextStroke: '2px var(--fg)',
+                paddingLeft: 'clamp(1.4rem, 3vw, 3.6rem)',
+              }}
+            >
               <BounceText text="SANKALP" />
             </div>
-            <div style={{
-              fontFamily: 'var(--font-d)',
-              fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
-              fontWeight: 700, lineHeight: 0.95,
-              letterSpacing: '-0.03em',
-              color: 'var(--accent)',
-              paddingLeft: 'clamp(2.6rem, 5vw, 6rem)',
-            }}>
+            <div
+              style={{
+                fontFamily: 'var(--font-d)',
+                fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
+                fontWeight: 700,
+                lineHeight: 0.95,
+                letterSpacing: '-0.03em',
+                color: 'var(--accent)',
+                paddingLeft: 'clamp(2.6rem, 5vw, 6rem)',
+              }}
+            >
               <BounceText text="DAS" />
             </div>
           </div>
         </div>
 
-        {/* Typewriter + copy + CTAs */}
         <div style={clipStyle('0.36s')}>
-          <div style={{
-            display: 'flex', alignItems: 'flex-start',
-            gap: '3rem', maxWidth: 960, flexWrap: 'wrap',
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '3rem',
+              maxWidth: 960,
+              flexWrap: 'wrap',
+            }}
+          >
             <div style={{ flex: 1, minWidth: 280 }}>
-              <div style={{
-                fontFamily: 'var(--font-d)',
-                fontSize: 'clamp(1.1rem, 2vw, 1.6rem)',
-                fontWeight: 600, lineHeight: 1.25,
-                letterSpacing: '-0.02em', color: 'var(--fg)',
-                marginBottom: '0.9rem',
-              }}>
+              <div
+                style={{
+                  fontFamily: 'var(--font-d)',
+                  fontSize: 'clamp(1.1rem, 2vw, 1.6rem)',
+                  fontWeight: 600,
+                  lineHeight: 1.25,
+                  letterSpacing: '-0.02em',
+                  color: 'var(--fg)',
+                  marginBottom: '0.9rem',
+                }}
+              >
                 I build{' '}
                 <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>
-                  <span style={{
-                    borderRight: '2px solid var(--accent)',
-                    paddingRight: 2,
-                    animation: 'blink 0.88s step-end infinite',
-                  }}>{word}</span>
+                  <span
+                    style={{
+                      borderRight: '2px solid var(--accent)',
+                      paddingRight: 2,
+                      animation: 'blink 0.88s step-end infinite',
+                    }}
+                  >
+                    {word}
+                  </span>
                 </em>
-                <style>{`@keyframes blink{0%,100%{border-color:var(--accent)}50%{border-color:transparent}}`}</style>
-                {' '}products that ship.
+                <style>{`@keyframes blink{0%,100%{border-color:var(--accent)}50%{border-color:transparent}}`}</style>{' '}
+                products that ship.
               </div>
-              <p style={{
-                fontSize: '0.92rem', color: 'var(--fg-dim)',
-                lineHeight: 1.75, maxWidth: 380,
-              }}>
-                <strong style={{ color: 'var(--fg)', fontWeight: 500 }}>Currently</strong> building
-                AI-native tools at the intersection of LLM infrastructure and consumer experience.
-                Obsessed with what breaks in production, not what looks good in Figma.
+              <p
+                style={{
+                  fontSize: '0.92rem',
+                  color: 'var(--fg-dim)',
+                  lineHeight: 1.75,
+                  maxWidth: 380,
+                }}
+              >
+                <strong style={{ color: 'var(--fg)', fontWeight: 500 }}>Currently</strong>{' '}
+                building AI-native tools at the intersection of LLM infrastructure and consumer
+                experience. Obsessed with what breaks in production, not what looks good in Figma.
               </p>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', flexShrink: 0 }}>
-              <a href="#projects"
+              <a
+                href="#projects"
                 style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
-                  fontFamily: 'var(--font-m)', fontSize: '0.69rem', fontWeight: 500,
-                  letterSpacing: '0.08em', textTransform: 'uppercase',
-                  color: '#fff', background: 'var(--accent)',
-                  padding: '0.78rem 1.4rem', borderRadius: 'var(--r)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  fontFamily: 'var(--font-m)',
+                  fontSize: '0.69rem',
+                  fontWeight: 500,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  color: '#fff',
+                  background: 'var(--accent)',
+                  padding: '0.78rem 1.4rem',
+                  borderRadius: 'var(--r)',
                   transition: 'background 0.25s cubic-bezier(0.16,1,0.3,1)',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'var(--accent-dark)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'var(--accent)')}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'var(--accent-dark)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'var(--accent)'
+                }}
               >
                 See my work ↓
               </a>
-              <a href="/resume.pdf" style={{
-                display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
-                fontFamily: 'var(--font-m)', fontSize: '0.69rem', fontWeight: 400,
-                letterSpacing: '0.08em', textTransform: 'uppercase',
-                color: 'var(--fg-dim)', border: '1px solid var(--border-2)',
-                padding: '0.78rem 1.4rem', borderRadius: 'var(--r)',
-              }}>
+              <a
+                href="/resume.pdf"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  fontFamily: 'var(--font-m)',
+                  fontSize: '0.69rem',
+                  fontWeight: 400,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  color: 'var(--fg-dim)',
+                  border: '1px solid var(--border-2)',
+                  padding: '0.78rem 1.4rem',
+                  borderRadius: 'var(--r)',
+                }}
+              >
                 Download CV ↗
               </a>
             </div>
           </div>
         </div>
-
       </div>
     </section>
   )
