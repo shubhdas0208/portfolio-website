@@ -243,7 +243,15 @@ function useCursorShader(
   }, [containerRef, hostRef, theme])
 }
 
-function BounceText({ text, style }: { text: string; style?: CSSProperties }) {
+function BounceText({
+  text,
+  style,
+  charGap = '0em',
+}: {
+  text: string
+  style?: CSSProperties
+  charGap?: string
+}) {
   return (
     <span style={{ display: 'inline-block', ...style }}>
       {text.split('').map((ch, i) => (
@@ -252,6 +260,7 @@ function BounceText({ text, style }: { text: string; style?: CSSProperties }) {
           style={{
             display: 'inline-block',
             transition: `transform 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 20}ms`,
+            marginRight: i === text.length - 1 ? 0 : charGap,
           }}
           onMouseEnter={e => {
             e.currentTarget.style.transform = 'translateY(-7px)'
@@ -542,11 +551,13 @@ export default function Hero() {
                 fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
                 fontWeight: 700,
                 lineHeight: 0.9,
-                letterSpacing: '-0.04em',
+                letterSpacing: '-0.035em',
+                fontKerning: 'none',
+                fontVariantLigatures: 'none',
                 color: 'var(--fg)',
               }}
             >
-              <BounceText text="SHUBH" />
+              <BounceText text="SHUBH" charGap="0.02em" />
             </div>
             <div
               style={{
@@ -554,13 +565,15 @@ export default function Hero() {
                 fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
                 fontWeight: 700,
                 lineHeight: 0.9,
-                letterSpacing: '-0.04em',
+                letterSpacing: '-0.035em',
+                fontKerning: 'none',
+                fontVariantLigatures: 'none',
                 color: 'transparent',
                 WebkitTextStroke: '2px var(--fg)',
                 paddingLeft: 'clamp(1.4rem, 3vw, 3.6rem)',
               }}
             >
-              <BounceText text="SANKALP" />
+              <BounceText text="SANKALP" charGap="0.02em" />
             </div>
             <div
               style={{
@@ -568,12 +581,14 @@ export default function Hero() {
                 fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
                 fontWeight: 700,
                 lineHeight: 0.95,
-                letterSpacing: '-0.03em',
+                letterSpacing: '-0.035em',
+                fontKerning: 'none',
+                fontVariantLigatures: 'none',
                 color: 'var(--fg)',
                 paddingLeft: 'clamp(1.4rem, 6.8vw, 7.8rem)',
               }}
             >
-              <BounceText text="DAS" />
+              <BounceText text="DAS" charGap="0.000008em" />
             </div>
           </div>
         </div>
