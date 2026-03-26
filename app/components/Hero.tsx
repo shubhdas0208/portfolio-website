@@ -569,8 +569,8 @@ export default function Hero() {
                 fontWeight: 700,
                 lineHeight: 0.95,
                 letterSpacing: '-0.03em',
-                color: 'var(--accent)',
-                paddingLeft: 'clamp(2.6rem, 5vw, 6rem)',
+                color: 'var(--fg)',
+                paddingLeft: 'clamp(1.4rem, 6.8vw, 7.8rem)',
               }}
             >
               <BounceText text="DAS" />

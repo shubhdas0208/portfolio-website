@@ -76,16 +76,18 @@ export default function FloatNav() {
   }, [])
 
   const isDark = theme === 'dark'
-  const navBg = 'rgba(17,17,16,0.94)'
-  const baseText = 'rgba(255,255,255,0.82)'
-  const dividerColor = 'rgba(255,255,255,0.12)'
-  const toggleBg = 'rgba(255,255,255,0.07)'
-  const toggleBgHover = 'rgba(255,255,255,0.15)'
-  const toggleColor = 'rgba(255,255,255,0.6)'
-  const hoverPill = 'rgba(255,255,255,0.10)'
+  const navBg = isDark ? 'rgba(17,17,16,0.94)' : 'rgba(255,255,255,0.96)'
+  const baseText = isDark ? 'rgba(255,255,255,0.82)' : 'rgba(17,17,16,0.8)'
+  const dividerColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,17,16,0.16)'
+  const toggleBg = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(17,17,16,0.08)'
+  const toggleBgHover = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(17,17,16,0.16)'
+  const toggleColor = isDark ? 'rgba(255,255,255,0.6)' : 'rgba(17,17,16,0.62)'
+  const hoverPill = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(17,17,16,0.08)'
+  const homeIconColor = isDark ? '#ffffff' : 'rgba(17,17,16,0.85)'
+  const homeBg = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(17,17,16,0.08)'
   const navShadow = isDark
     ? '0 0 0 1px rgba(255,255,255,0.08), 0 0 28px rgba(255,255,255,0.12), 0 10px 36px rgba(0,0,0,0.42)'
-    : '0 8px 40px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.14)'
+    : '0 6px 26px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08)'
 
   return (
     <nav
@@ -103,7 +105,7 @@ export default function FloatNav() {
         padding: '5px',
         boxShadow: navShadow,
         backdropFilter: 'blur(14px)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(17,17,16,0.08)',
         transition: 'background 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s',
       }}
     >
@@ -143,10 +145,10 @@ export default function FloatNav() {
                 fontWeight: isActive ? 500 : 400,
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
-                color: isHome ? '#ffffff' : isActive ? '#ffffff' : baseText,
+                color: isHome ? homeIconColor : isActive ? '#ffffff' : baseText,
                 transition: 'color 0.2s cubic-bezier(0.16,1,0.3,1)',
                 zIndex: 0,
-                background: isHome ? 'rgba(255,255,255,0.10)' : undefined,
+                background: isHome ? homeBg : undefined,
               }}
             >
               {!isHome && isActive && (
