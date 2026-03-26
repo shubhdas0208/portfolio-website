@@ -1,5 +1,4 @@
-import SideNav from './components/SideNav'
-import TopBar from './components/TopBar'
+import FloatNav from './components/FloatNav'
 import Hero from './components/Hero'
 import Projects from './components/Projects'
 import Blog from './components/Blog'
@@ -10,20 +9,17 @@ import Contact from './components/Contact'
 
 export default function Home() {
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <SideNav />
-      <div style={{ marginLeft: 'var(--side-w)', flex: 1, minWidth: 0 }}>
-        <TopBar />
-        <main>
-          <Hero />
-          <Projects />
-          <Blog />
-          <About />
-          <Now />
-          <Experience />
-          <Contact />
-        </main>
-      </div>
-    </div>
+    <>
+      <FloatNav />
+      <main>
+        <Hero />
+        <Projects />
+        <Blog />
+        <About />
+        <Now />
+        <Experience />
+        <Contact />
+      </main>
+    </>
   )
 }

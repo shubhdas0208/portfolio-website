@@ -1,31 +1,32 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 
 const NAV_ITEMS = [
-  { id: 'hero',       label: 'Intro' },
-  { id: 'projects',   label: 'Projects' },
-  { id: 'blog',       label: 'Blogs' },
-  { id: 'about',      label: 'About' },
-  { id: 'now',        label: 'Now' },
-  { id: 'experience', label: 'Work Exp' },
-  { id: 'contact',    label: 'Contact' },
+  { id: 'hero',       label: '01 — Intro' },
+  { id: 'projects',   label: '02 — Projects' },
+  { id: 'blog',       label: '03 — Writing' },
+  { id: 'about',      label: '04 — About' },
+  { id: 'now',        label: '05 — Now' },
+  { id: 'experience', label: '06 — Work Exp' },
+  { id: 'contact',    label: '07 — Contact' },
 ]
+
+const DOT_GAP = 28 // px between dot centres
 
 export default function SideNav() {
   const [activeId, setActiveId] = useState('hero')
+  const [hoverId, setHoverId] = useState<string | null>(null)
   const [fillPct, setFillPct] = useState(0)
 
   useEffect(() => {
-    const sections = NAV_ITEMS.map(item => document.getElementById(item.id)).filter(Boolean) as HTMLElement[]
+    const sections = NAV_ITEMS.map(n => document.getElementById(n.id)).filter(Boolean) as HTMLElement[]
 
     function onScroll() {
-      const scrollY = window.scrollY
-      const windowH = window.innerHeight
       let current = 'hero'
       sections.forEach(sec => {
-        const top = sec.getBoundingClientRect().top + scrollY
-        if (scrollY >= top - windowH * 0.4) current = sec.id
+        if (sec.getBoundingClientRect().top <= window.innerHeight * 0.5) current = sec.id
       })
       setActiveId(current)
       const idx = NAV_ITEMS.findIndex(n => n.id === current)
@@ -37,79 +38,120 @@ export default function SideNav() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  const trackHeight = (NAV_ITEMS.length - 1) * DOT_GAP
+
   return (
     <aside style={{
-      position: 'fixed', left: 0, top: 0, bottom: 0, width: 'var(--side-w)', zIndex: 90,
-      display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start',
-      padding: '0 1.75rem',
-      borderRight: '1px solid var(--border)',
-      background: 'rgba(10,10,9,0.85)', backdropFilter: 'blur(18px)',
+      position: 'fixed',
+      left: '1.5rem',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      zIndex: 90,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
     }}>
-      {/* Logo */}
-      <a href="#hero" style={{ position: 'absolute', top: '1.6rem', left: '1.75rem', fontFamily: 'var(--font-d)', fontSize: '1rem', fontWeight: 700 }}>
-        S<span style={{ color: 'var(--accent)' }}>.</span>D
-      </a>
 
-      {/* Track */}
-      <nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative' }}>
-        {/* Background line */}
-        <div style={{ position: 'absolute', left: 5, top: 6, bottom: 6, width: 1, background: 'var(--border-2)', zIndex: 0 }} />
-        {/* Accent fill line — orange rgba values */}
+      {/* Dot track */}
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: `${DOT_GAP - 12}px` }}>
+
+        {/* Background track line */}
         <div style={{
-          position: 'absolute', left: 5, top: 6, width: 1,
-          height: `${fillPct}%`,
-          background: 'linear-gradient(to bottom, var(--accent), rgba(249,115,22,0.3))',
-          boxShadow: '0 0 6px var(--accent), 0 0 12px rgba(249,115,22,0.3)',
-          zIndex: 1,
-          transition: 'height 0.4s ease',
+          position: 'absolute',
+          left: '50%', transform: 'translateX(-50%)',
+          top: 6, width: 1,
+          height: trackHeight,
+          background: 'var(--border-2)',
+          zIndex: 0,
         }} />
+
+        {/* Accent fill line */}
+        <motion.div
+          style={{
+            position: 'absolute',
+            left: '50%', transform: 'translateX(-50%)',
+            top: 6, width: 1,
+            background: 'var(--accent)',
+            zIndex: 1,
+            transformOrigin: 'top',
+          }}
+          animate={{ height: `${(fillPct / 100) * trackHeight}px` }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        />
+
         {NAV_ITEMS.map(item => {
           const isActive = activeId === item.id
+          const isHovered = hoverId === item.id
+
           return (
             <a
               key={item.id}
               href={`#${item.id}`}
+              onMouseEnter={() => setHoverId(item.id)}
+              onMouseLeave={() => setHoverId(null)}
               style={{
-                display: 'flex', alignItems: 'center', gap: '0.85rem',
-                padding: '0.58rem 0', cursor: 'pointer', position: 'relative', zIndex: 2,
+                position: 'relative', zIndex: 2,
+                display: 'flex', alignItems: 'center',
+                gap: '10px',
+                width: 32, // accessible hitbox
+                justifyContent: 'center',
                 textDecoration: 'none',
               }}
             >
-              <span style={{
-                width: 12, height: 12, borderRadius: '50%', flexShrink: 0,
-                border: `1px solid ${isActive ? 'var(--accent)' : 'var(--fg-dimmer)'}`,
-                background: isActive ? 'var(--accent)' : 'var(--bg)',
-                boxShadow: isActive ? '0 0 8px var(--accent), 0 0 16px rgba(249,115,22,0.4)' : 'none',
-                transition: 'all 0.25s',
-                position: 'relative', zIndex: 2,
-              }} />
-              <span style={{
-                fontFamily: 'var(--font-m)', fontSize: '0.63rem', letterSpacing: '0.12em',
-                textTransform: 'uppercase', whiteSpace: 'nowrap',
-                color: isActive ? 'var(--accent)' : 'var(--fg-dimmer)',
-                fontWeight: isActive ? 500 : 400,
-                transition: 'color 0.25s',
-              }}>
+              {/* Dot — morphs to pill when active */}
+              <motion.span
+                layoutId={isActive ? 'active-dot' : undefined}
+                animate={{
+                  width: isActive ? 4 : 4,
+                  height: isActive ? 16 : 4,
+                  backgroundColor: isActive
+                    ? 'var(--accent)'
+                    : isHovered
+                      ? 'var(--fg-dim)'
+                      : 'var(--border-2)',
+                  borderRadius: isActive ? 4 : 50,
+                }}
+                transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                style={{ display: 'block', flexShrink: 0 }}
+              />
+
+              {/* Slide-out label on hover */}
+              <motion.span
+                animate={{
+                  opacity: isHovered ? 1 : 0,
+                  x: isHovered ? 0 : -4,
+                  pointerEvents: isHovered ? 'none' : 'none',
+                }}
+                transition={{ duration: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                style={{
+                  position: 'absolute',
+                  left: '100%',
+                  marginLeft: 10,
+                  fontFamily: 'var(--font-m)',
+                  fontSize: '0.65rem',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  color: 'var(--fg-dim)',
+                  whiteSpace: 'nowrap',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border)',
+                  padding: '3px 8px',
+                  borderRadius: 4,
+                }}
+              >
                 {item.label}
-              </span>
+              </motion.span>
             </a>
           )
         })}
-      </nav>
-
-      {/* Footer links */}
-      <div style={{ position: 'absolute', bottom: '1.75rem', left: '1.75rem', display: 'flex', gap: '1rem' }}>
-        {[
-          { label: 'Li', href: 'https://linkedin.com/in/shubhsankalpd' },
-          { label: 'Gh', href: 'https://github.com/shubhsd' },
-          { label: 'Em', href: 'mailto:shubhsankalp@gmail.com' },
-        ].map(l => (
-          <a key={l.label} href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined}
-            style={{ fontFamily: 'var(--font-m)', fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--fg-dimmer)' }}>
-            {l.label}
-          </a>
-        ))}
       </div>
+
+      {/* Mobile: hide entire sidenav below 768px via CSS */}
+      <style>{`
+        @media (max-width: 768px) {
+          aside { display: none !important; }
+        }
+      `}</style>
     </aside>
   )
 }
