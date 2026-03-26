@@ -9,9 +9,9 @@
   --fg:        #f2efe8;
   --fg-dim:    #8a8780;
   --fg-dimmer: #3d3c39;
-  --accent:    #c8f060;
-  --accent-dim:rgba(200,240,96,0.09);
-  --accent-b:  rgba(200,240,96,0.25);
+  --accent:    #f97316;
+  --accent-dim:rgba(249,115,22,0.09);
+  --accent-b:  rgba(249,115,22,0.25);
   --border:    rgba(242,239,232,0.07);
   --border-2:  rgba(242,239,232,0.12);
   --font-d:    'Clash Display', sans-serif;
@@ -84,6 +84,46 @@ section { padding: 5rem 4rem; border-bottom: 1px solid var(--border); padding-to
   padding: 1px;
 }
 .glow-card:hover::before { opacity: 1; }
+
+/* Live clock */
+.live-clock {
+  font-family: var(--font-m);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  opacity: 0.65;
+}
+
+/* Marquee — footer scroll text */
+.marquee-track {
+  overflow: hidden;
+  white-space: nowrap;
+  border-top: 1px solid var(--border);
+  padding: 2.25rem 0;
+}
+.marquee-inner {
+  display: inline-block;
+  animation: marquee 22s linear infinite;
+}
+.marquee-track:hover .marquee-inner {
+  animation-play-state: paused;
+}
+.marquee-inner span {
+  font-family: var(--font-d);
+  font-size: clamp(2.2rem, 5vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: rgba(242,239,232,0.06);
+  margin-right: 2.5rem;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-inner { animation: none; }
+  .fu { opacity: 1; transform: none; transition: none; }
+}
 
 @media (max-width: 900px) {
   section { padding: 4rem 1.5rem; padding-top: calc(var(--nav-h) + 3rem); }

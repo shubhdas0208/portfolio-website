@@ -54,19 +54,56 @@ export default function Experience() {
       </a>
       <div className="fu s2" style={{ borderLeft: '1px solid var(--border-2)', paddingLeft: '2.5rem', marginLeft: '0.5rem' }}>
         {EXP.map((exp, i) => (
-          <div key={i} style={{ position: 'relative', paddingBottom: '2.5rem' }}>
-            {/* Timeline dot */}
+          <div key={i} style={{ position: 'relative', paddingBottom: '3.5rem' }}>
+            {/* Timeline dot — scaled up to stay proportional with large titles */}
             <div style={{
-              position: 'absolute', left: '-2.86rem', top: '0.3rem',
-              width: 6, height: 6, borderRadius: '50%',
+              position: 'absolute', left: '-2.75rem', top: '0.6rem',
+              width: 10, height: 10, borderRadius: '50%',
               background: 'var(--fg-dimmer)', border: '2px solid var(--bg)',
             }} />
-            <div style={{ fontFamily: 'var(--font-m)', fontSize: '0.6rem', color: 'var(--fg-dimmer)', letterSpacing: '0.08em', marginBottom: '0.3rem' }}>{exp.dates}</div>
-            <div style={{ fontFamily: 'var(--font-d)', fontSize: '1.05rem', fontWeight: 600, letterSpacing: '-0.02em', marginBottom: '0.18rem' }}>{exp.role}</div>
-            <div style={{ fontSize: '0.83rem', color: 'var(--fg-dim)', fontWeight: 400, marginBottom: '0.85rem' }}>{exp.company}</div>
+
+            {/* Dates */}
+            <div style={{
+              fontFamily: 'var(--font-m)', fontSize: '0.6rem',
+              color: 'var(--fg-dimmer)', letterSpacing: '0.08em', marginBottom: '0.4rem',
+            }}>
+              {exp.dates}
+            </div>
+
+            {/* Role — editorial scale, Clash Display headline */}
+            <div style={{
+              fontFamily: 'var(--font-d)',
+              fontSize: 'clamp(1.9rem, 3.5vw, 3.2rem)',
+              fontWeight: 700,
+              letterSpacing: '-0.03em',
+              lineHeight: 1.0,
+              color: 'var(--fg)',
+              marginBottom: '0.45rem',
+            }}>
+              {exp.role}
+            </div>
+
+            {/* Company — accent color, small, three-tier hierarchy */}
+            <div style={{
+              fontSize: '0.83rem',
+              color: 'var(--accent)',
+              fontWeight: 400,
+              fontFamily: 'var(--font-m)',
+              letterSpacing: '0.04em',
+              marginBottom: '1.1rem',
+              opacity: 0.85,
+            }}>
+              {exp.company}
+            </div>
+
+            {/* Bullets */}
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
               {exp.bullets.map((b, j) => (
-                <li key={j} style={{ fontSize: '0.86rem', fontWeight: 400, color: 'var(--fg-dim)', lineHeight: 1.65, paddingLeft: '1.1rem', position: 'relative' }}>
+                <li key={j} style={{
+                  fontSize: '0.86rem', fontWeight: 400,
+                  color: 'var(--fg-dim)', lineHeight: 1.65,
+                  paddingLeft: '1.1rem', position: 'relative',
+                }}>
                   <span style={{ position: 'absolute', left: 0, color: 'var(--fg-dimmer)', fontSize: '0.75rem' }}>—</span>
                   <strong style={{ color: 'var(--fg)', fontWeight: 500 }}>{b.bold}</strong>{b.rest}
                 </li>

@@ -25,7 +25,7 @@ export default function TopBar() {
       <a href="mailto:shubhsankalp@gmail.com" style={{
         fontFamily: 'var(--font-m)', fontSize: '0.67rem', fontWeight: 500,
         letterSpacing: '0.08em', textTransform: 'uppercase',
-        color: 'var(--bg)', background: 'var(--accent)',
+        color: '#0a0a09', background: 'var(--accent)',
         padding: '0.44rem 1.1rem', borderRadius: 'var(--r)',
       }}>
         Get in touch

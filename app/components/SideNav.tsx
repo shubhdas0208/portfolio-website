@@ -54,12 +54,12 @@ export default function SideNav() {
       <nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative' }}>
         {/* Background line */}
         <div style={{ position: 'absolute', left: 5, top: 6, bottom: 6, width: 1, background: 'var(--border-2)', zIndex: 0 }} />
-        {/* Accent fill line */}
+        {/* Accent fill line — orange rgba values */}
         <div style={{
           position: 'absolute', left: 5, top: 6, width: 1,
           height: `${fillPct}%`,
-          background: 'linear-gradient(to bottom, var(--accent), rgba(200,240,96,0.3))',
-          boxShadow: '0 0 6px var(--accent), 0 0 12px rgba(200,240,96,0.3)',
+          background: 'linear-gradient(to bottom, var(--accent), rgba(249,115,22,0.3))',
+          boxShadow: '0 0 6px var(--accent), 0 0 12px rgba(249,115,22,0.3)',
           zIndex: 1,
           transition: 'height 0.4s ease',
         }} />
@@ -79,7 +79,7 @@ export default function SideNav() {
                 width: 12, height: 12, borderRadius: '50%', flexShrink: 0,
                 border: `1px solid ${isActive ? 'var(--accent)' : 'var(--fg-dimmer)'}`,
                 background: isActive ? 'var(--accent)' : 'var(--bg)',
-                boxShadow: isActive ? '0 0 8px var(--accent), 0 0 16px rgba(200,240,96,0.4)' : 'none',
+                boxShadow: isActive ? '0 0 8px var(--accent), 0 0 16px rgba(249,115,22,0.4)' : 'none',
                 transition: 'all 0.25s',
                 position: 'relative', zIndex: 2,
               }} />
