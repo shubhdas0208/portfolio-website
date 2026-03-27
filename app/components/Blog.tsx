@@ -1,8 +1,21 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { POSTS, type Post } from '../lib/post'
+import { supabase } from '../lib/supabase'
 import BlogDrawer from './BlogDrawer'
+
+export interface Post {
+  id: string
+  slug: string
+  title: string
+  summary: string
+  tag: string
+  body: string
+  reading_time: string
+  cover_image_url?: string
+  is_published: boolean
+  created_at: string
+}
 
 function trackGlow(el: HTMLElement, e: MouseEvent) {
   const r = el.getBoundingClientRect()
@@ -11,8 +24,18 @@ function trackGlow(el: HTMLElement, e: MouseEvent) {
 }
 
 export default function Blog() {
+  const [posts, setPosts] = useState<Post[]>([])
   const [activePost, setActivePost] = useState<Post | null>(null)
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  useEffect(() => {
+    supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('is_published', true)
+      .order('created_at', { ascending: false })
+      .then(({ data }) => { if (data) setPosts(data) })
+  }, [])
 
   useEffect(() => {
     const obs = new IntersectionObserver(es => {
@@ -32,7 +55,7 @@ export default function Blog() {
       obs.disconnect()
       handlers.forEach(({ el, fn }) => el.removeEventListener('mousemove', fn))
     }
-  }, [])
+  }, [posts])
 
   return (
     <>
@@ -55,92 +78,88 @@ export default function Blog() {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1.25rem' }}>
-          {POSTS.map((post, i) => (
-            <div
-              key={post.slug}
-              ref={el => { cardRefs.current[i] = el }}
-              className={`glow-card blog-card fu s${i}`}
-              onClick={() => setActivePost(post)}
-              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setActivePost(post) }}
-              tabIndex={0}
-              role="button"
-              aria-label={`Read ${post.title}`}
-              style={{
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border)',
-                borderRadius: 10,
-                overflow: 'hidden',
-                display: 'flex', flexDirection: 'column',
-                cursor: 'pointer',
-                textDecoration: 'none',
-                opacity: post.status === 'soon' ? 0.65 : 1,
-                transition: 'opacity 0.2s',
-              }}
-            >
-              {/* Thumbnail */}
-              <div style={{ overflow: 'hidden', aspectRatio: '4/3', position: 'relative', flexShrink: 0 }}>
-                {post.img ? (
-                  <img
-                    src={post.img}
-                    alt={post.title}
-                    loading="lazy"
-                    style={{
-                      width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-                      transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
-                    }}
-                    className="blog-img"
-                  />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', background: 'var(--bg-3)' }} />
-                )}
-              </div>
-
-              {/* Body */}
-              <div style={{
-                padding: '1.3rem 1.4rem 1.5rem',
-                display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1,
-                position: 'relative', zIndex: 1,
-              }}>
-                <div style={{
-                  fontFamily: 'var(--font-d)',
-                  fontSize: '1rem', fontWeight: 600,
-                  lineHeight: 1.28, letterSpacing: '-0.02em',
-                  color: 'var(--fg)',
-                }}>
-                  {post.title}
-                </div>
-                <div style={{
-                  fontSize: '0.82rem', color: 'var(--fg-dim)',
-                  lineHeight: 1.62, flex: 1,
-                }}>
-                  {post.desc}
-                </div>
-
-                {/* Arrow CTA */}
-                <span className="blog-arrow">
-                  {post.status === 'soon' ? (
-                    <span style={{
-                      fontFamily: 'var(--font-m)', fontSize: '0.68rem',
-                      letterSpacing: '0.06em', color: 'var(--fg-dimmer)',
-                    }}>
-                      Coming Soon
-                    </span>
+        {posts.length === 0 ? (
+          <p style={{ fontSize: '0.88rem', color: 'var(--fg-dimmer)' }}>No posts published yet.</p>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1.25rem' }}>
+            {posts.map((post, i) => (
+              <div
+                key={post.slug}
+                ref={el => { cardRefs.current[i] = el }}
+                className="glow-card blog-card fu"
+                onClick={() => setActivePost(post)}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setActivePost(post) }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Read ${post.title}`}
+                style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 10,
+                  overflow: 'hidden',
+                  display: 'flex', flexDirection: 'column',
+                  cursor: 'pointer',
+                }}
+              >
+                <div style={{ overflow: 'hidden', aspectRatio: '4/3', position: 'relative', flexShrink: 0 }}>
+                  {post.cover_image_url ? (
+                    <img
+                      src={post.cover_image_url}
+                      alt={post.title}
+                      loading="lazy"
+                      style={{
+                        width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                        transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
+                      }}
+                      className="blog-img"
+                    />
                   ) : (
-                    <>
-                      <span style={{ fontFamily: 'var(--font-m)', fontSize: '0.68rem', letterSpacing: '0.06em' }}>
-                        Read
-                      </span>
-                      <span style={{ fontSize: '0.85rem' }}>→</span>
-                    </>
+                    <div style={{ width: '100%', height: '100%', background: 'var(--bg-3)' }} />
                   )}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+                </div>
 
-        {/* Image zoom on card hover */}
+                <div style={{
+                  padding: '1.3rem 1.4rem 1.5rem',
+                  display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1,
+                  position: 'relative', zIndex: 1,
+                }}>
+                  {post.tag && (
+                    <span style={{
+                      fontFamily: 'var(--font-m)', fontSize: '0.58rem',
+                      letterSpacing: '0.08em', textTransform: 'uppercase',
+                      color: 'var(--accent)', border: '1px solid var(--accent-b)',
+                      padding: '0.15rem 0.5rem', borderRadius: '100px',
+                      alignSelf: 'flex-start',
+                    }}>
+                      {post.tag}
+                    </span>
+                  )}
+                  <div style={{
+                    fontFamily: 'var(--font-d)',
+                    fontSize: '1rem', fontWeight: 600,
+                    lineHeight: 1.28, letterSpacing: '-0.02em',
+                    color: 'var(--fg)',
+                  }}>
+                    {post.title}
+                  </div>
+                  <div style={{
+                    fontSize: '0.82rem', color: 'var(--fg-dim)',
+                    lineHeight: 1.62, flex: 1,
+                  }}>
+                    {post.summary}
+                  </div>
+                  <span className="blog-arrow">
+                    <span style={{ fontFamily: 'var(--font-m)', fontSize: '0.68rem', letterSpacing: '0.06em' }}>
+                      Read
+                    </span>
+                    <span style={{ fontSize: '0.85rem' }}>→</span>
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         <style>{`
           .blog-card:hover .blog-img { transform: scale(1.04); }
         `}</style>

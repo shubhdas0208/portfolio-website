@@ -1,31 +1,48 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabase'
 
-const NOW_ITEMS = [
-  {
-    label: 'Building',
-    text: 'A RAG-based document filter using OpenAI embeddings + Pinecone. Currently solving cold-start latency — first request after idle takes 4s, target sub-800ms. Testing a Vercel cron pre-warm strategy.',
-    bold: 'RAG-based document filter',
-  },
-  {
-    label: 'Reading',
-    text: 'Building ML Powered Applications by Emmanuel Ameisen — specifically the chapter on product iteration loops. Also working through Anthropic\'s model cards to understand how safety constraints become product constraints.',
-    bold: 'Building ML Powered Applications',
-  },
-  {
-    label: 'Thinking About',
-    text: 'Why LLM evals fail silently in production. Offline evals pass, but user behavior signals something different. How should a PM design a feedback loop that catches this gap before it becomes a retention problem?',
-    bold: 'LLM evals fail silently in production.',
-  },
-]
+interface NowData {
+  building: string
+  reading: string
+  thinking: string
+  updated_at: string
+}
 
 export default function Now() {
+  const [data, setData] = useState<NowData | null>(null)
+
   useEffect(() => {
-    const obs = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target) } }) }, { threshold: 0.07 })
+    supabase
+      .from('now')
+      .select('*')
+      .eq('id', 1)
+      .single()
+      .then(({ data }) => { if (data) setData(data) })
+  }, [])
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(es => {
+      es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target) } })
+    }, { threshold: 0.07 })
     document.querySelectorAll('#now .fu').forEach(el => obs.observe(el))
     return () => obs.disconnect()
   }, [])
+
+  const items = data ? [
+    { label: 'Building', text: data.building },
+    { label: 'Reading', text: data.reading },
+    { label: 'Thinking About', text: data.thinking },
+  ] : [
+    { label: 'Building', text: '...' },
+    { label: 'Reading', text: '...' },
+    { label: 'Thinking About', text: '...' },
+  ]
+
+  const updatedAt = data?.updated_at
+    ? new Date(data.updated_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+    : 'Recently'
 
   return (
     <section id="now" style={{ background: 'var(--bg-2)' }}>
@@ -42,7 +59,7 @@ export default function Now() {
           marginTop: '0.75rem',
         }}
       >
-        {NOW_ITEMS.map(item => (
+        {items.map(item => (
           <div
             key={item.label}
             className="glow-card"
@@ -66,25 +83,17 @@ export default function Now() {
               marginBottom: '1rem',
             }}>{item.label}</div>
             <p style={{ fontSize: '0.89rem', fontWeight: 400, color: 'var(--fg-dim)', lineHeight: 1.72 }}>
-              {item.text.includes(item.bold)
-                ? <>
-                    {item.text.split(item.bold)[0]}
-                    <strong style={{ color: 'var(--fg)', fontWeight: 500 }}>{item.bold}</strong>
-                    {item.text.split(item.bold)[1]}
-                  </>
-                : item.text}
+              {item.text}
             </p>
           </div>
         ))}
       </div>
       <p className="fu s2" style={{ fontFamily: 'var(--font-m)', fontSize: '0.6rem', color: 'var(--fg-dimmer)', marginTop: '2.25rem', letterSpacing: '0.1em' }}>
-        Last updated: <span style={{ color: 'var(--accent)' }}>March 2026</span>
+        Last updated: <span style={{ color: 'var(--accent)' }}>{updatedAt}</span>
       </p>
       <style>{`
         @media (max-width: 900px) {
-          #now .now-grid {
-            grid-template-columns: 1fr;
-          }
+          #now .now-grid { grid-template-columns: 1fr; }
         }
       `}</style>
     </section>

@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import type { Post } from '../lib/post'
+import ReactMarkdown from 'react-markdown'
+import type { Post } from './Blog'
 import { useDrawerScrollLock } from '../lib/useDrawerScrollLock'
 
 interface Props {
@@ -16,10 +17,7 @@ export default function BlogDrawer({ post, onClose }: Props) {
   useDrawerScrollLock(isOpen, scrollRef)
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
   }, [onClose])
@@ -29,10 +27,7 @@ export default function BlogDrawer({ post, onClose }: Props) {
       <div
         className="detail-drawer-overlay"
         onClick={onClose}
-        style={{
-          opacity: isOpen ? 1 : 0,
-          pointerEvents: isOpen ? 'all' : 'none',
-        }}
+        style={{ opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? 'all' : 'none' }}
       />
 
       <div
@@ -45,40 +40,22 @@ export default function BlogDrawer({ post, onClose }: Props) {
       >
         <div className="detail-drawer-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <span
-              style={{
+            {post?.tag && (
+              <span style={{
                 fontFamily: 'var(--font-m)',
-                fontSize: '0.62rem',
-                letterSpacing: '0.15em',
+                fontSize: '0.58rem',
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                color: 'var(--fg-dimmer)',
-              }}
-            >
-              {post?.label ?? 'Writing'}
-            </span>
-            {post?.status === 'soon' && (
-              <span
-                style={{
-                  fontFamily: 'var(--font-m)',
-                  fontSize: '0.58rem',
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  color: 'var(--accent)',
-                  border: '1px solid var(--accent-b)',
-                  padding: '0.15rem 0.5rem',
-                  borderRadius: '100px',
-                }}
-              >
-                Coming Soon
+                color: 'var(--accent)',
+                border: '1px solid var(--accent-b)',
+                padding: '0.15rem 0.5rem',
+                borderRadius: '100px',
+              }}>
+                {post.tag}
               </span>
             )}
           </div>
-
-          <button
-            onClick={onClose}
-            className="detail-drawer-close"
-            aria-label="Close blog drawer"
-          >
+          <button onClick={onClose} className="detail-drawer-close" aria-label="Close blog drawer">
             &times;
           </button>
         </div>
@@ -88,198 +65,85 @@ export default function BlogDrawer({ post, onClose }: Props) {
             <>
               <div className="detail-drawer-media-shell">
                 <div className="detail-drawer-media">
-                  {post.img ? (
+                  {post.cover_image_url ? (
                     <img
-                      src={post.img}
+                      src={post.cover_image_url}
                       alt={post.title}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        display: 'block',
-                      }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                     />
                   ) : (
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-m)',
-                        fontSize: '0.62rem',
-                        letterSpacing: '0.15em',
-                        textTransform: 'uppercase',
-                        color: 'var(--fg-dimmer)',
-                      }}
-                    >
-                      No cover image
-                    </span>
+                    <div style={{ width: '100%', height: '100%', background: 'var(--bg-3)' }} />
                   )}
                 </div>
               </div>
 
-              <div
-                style={{
-                  padding: '2rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '1.5rem',
-                }}
-              >
+              <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-m)',
-                      fontSize: '0.6rem',
-                      letterSpacing: '0.1em',
-                      color: 'var(--fg-dimmer)',
-                    }}
-                  >
-                    {post.publishDate}
+                  <span style={{
+                    fontFamily: 'var(--font-m)', fontSize: '0.6rem',
+                    letterSpacing: '0.1em', color: 'var(--fg-dimmer)',
+                  }}>
+                    {new Date(post.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </span>
-                  <span
-                    style={{
-                      width: 3,
-                      height: 3,
-                      borderRadius: '50%',
-                      background: 'var(--fg-dimmer)',
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-m)',
-                      fontSize: '0.6rem',
-                      letterSpacing: '0.1em',
-                      color: 'var(--fg-dimmer)',
-                    }}
-                  >
-                    {post.readTime}
+                  <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--fg-dimmer)' }} />
+                  <span style={{
+                    fontFamily: 'var(--font-m)', fontSize: '0.6rem',
+                    letterSpacing: '0.1em', color: 'var(--fg-dimmer)',
+                  }}>
+                    {post.reading_time}
                   </span>
-                  {post.tags.map(tag => (
-                    <span
-                      key={tag}
-                      style={{
-                        fontFamily: 'var(--font-m)',
-                        fontSize: '0.58rem',
-                        letterSpacing: '0.08em',
-                        textTransform: 'uppercase',
-                        color: 'var(--accent)',
-                        border: '1px solid var(--accent-b)',
-                        padding: '0.15rem 0.5rem',
-                        borderRadius: '100px',
-                        background: 'rgba(255,255,255,0.34)',
-                      }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
                 </div>
 
-                <div>
-                  <h2
-                    style={{
-                      fontFamily: 'var(--font-d)',
-                      fontSize: '1.6rem',
-                      fontWeight: 700,
-                      letterSpacing: '-0.03em',
-                      lineHeight: 1.15,
-                      color: 'var(--fg)',
-                    }}
-                  >
-                    {post.title}
-                  </h2>
-                </div>
+                <h2 style={{
+                  fontFamily: 'var(--font-d)',
+                  fontSize: '1.6rem', fontWeight: 700,
+                  letterSpacing: '-0.03em', lineHeight: 1.15,
+                  color: 'var(--fg)',
+                }}>
+                  {post.title}
+                </h2>
 
                 <div style={{ height: 1, background: 'var(--border)' }} />
 
-                <div
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.16))',
-                    border: '1px solid var(--border)',
-                    borderRadius: '18px',
-                    padding: '1.1rem 1.3rem',
-                    boxShadow: '0 10px 26px rgba(0,0,0,0.06)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-m)',
-                      fontSize: '0.58rem',
-                      letterSpacing: '0.2em',
-                      textTransform: 'uppercase',
-                      color: 'var(--accent)',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    TL;DR
-                  </div>
-                  <p
-                    style={{
-                      fontSize: '0.88rem',
-                      color: 'var(--fg-dim)',
-                      lineHeight: 1.7,
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    {post.tldr}
-                  </p>
+                <div className="drawer-markdown" style={{ paddingBottom: '2rem' }}>
+                  <ReactMarkdown>{post.body ?? ''}</ReactMarkdown>
                 </div>
 
-                <div style={{ height: 1, background: 'var(--border)' }} />
-
-                {post.sections.map((section, i) => (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                    <h3
-                      style={{
-                        fontFamily: 'var(--font-d)',
-                        fontSize: '1.05rem',
-                        fontWeight: 600,
-                        letterSpacing: '-0.02em',
-                        lineHeight: 1.2,
-                        color: 'var(--fg)',
-                      }}
-                    >
-                      {section.heading}
-                    </h3>
-                    <p
-                      style={{
-                        fontSize: '0.89rem',
-                        color: 'var(--fg-dim)',
-                        lineHeight: 1.78,
-                      }}
-                    >
-                      {section.body}
-                    </p>
-                  </div>
-                ))}
-
-                <div style={{ height: 1, background: 'var(--border)' }} />
-
-                <div style={{ paddingBottom: '2rem' }}>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-m)',
-                      fontSize: '0.58rem',
-                      letterSpacing: '0.2em',
-                      textTransform: 'uppercase',
-                      color: 'var(--fg-dimmer)',
-                      marginBottom: '0.55rem',
-                    }}
-                  >
-                    Takeaway
-                  </div>
-                  <p
-                    style={{
-                      fontSize: '0.89rem',
-                      color: 'var(--fg-dim)',
-                      lineHeight: 1.75,
-                    }}
-                  >
-                    {post.takeaway}
-                  </p>
-                </div>
               </div>
             </>
           )}
         </div>
       </div>
+
+      <style>{`
+        .drawer-markdown { font-size: 0.89rem; color: var(--fg-dim); line-height: 1.78; }
+        .drawer-markdown h1, .drawer-markdown h2, .drawer-markdown h3 {
+          font-family: var(--font-d); color: var(--fg);
+          font-weight: 600; letter-spacing: -0.02em; margin: 1.5rem 0 0.5rem;
+        }
+        .drawer-markdown h1 { font-size: 1.3rem; }
+        .drawer-markdown h2 { font-size: 1.1rem; }
+        .drawer-markdown h3 { font-size: 0.95rem; }
+        .drawer-markdown p { margin: 0 0 1rem; }
+        .drawer-markdown strong { color: var(--fg); font-weight: 500; }
+        .drawer-markdown ul, .drawer-markdown ol { padding-left: 1.5rem; margin: 0 0 1rem; }
+        .drawer-markdown li { margin-bottom: 0.35rem; }
+        .drawer-markdown code {
+          font-family: var(--font-m); font-size: 0.82rem;
+          background: var(--bg-3); padding: 0.15rem 0.4rem;
+          border-radius: 4px; color: var(--accent);
+        }
+        .drawer-markdown blockquote {
+          border-left: 2px solid var(--accent);
+          margin: 1rem 0; padding: 0.5rem 1rem;
+          color: var(--fg-dim); font-style: italic;
+        }
+        .drawer-markdown hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+        .drawer-markdown table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.84rem; }
+        .drawer-markdown th { font-family: var(--font-m); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-dimmer); padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); text-align: left; }
+        .drawer-markdown td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); color: var(--fg-dim); }
+      `}</style>
     </>
   )
 }
