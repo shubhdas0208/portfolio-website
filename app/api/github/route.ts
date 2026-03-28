@@ -35,7 +35,7 @@ export async function GET() {
   const weeks = data?.data?.user?.contributionsCollection?.contributionCalendar?.weeks ?? []
 
   const allDays = weeks.flatMap((w: any) => w.contributionDays)
-  const last14 = allDays.slice(-14)
+  const last14 = allDays.slice(-30)
 
   return NextResponse.json({ days: last14 })
 }
