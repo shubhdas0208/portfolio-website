@@ -60,7 +60,7 @@ export default function Contact() {
   return (
     <>
       <section id="contact" style={{ background: 'var(--bg-2)' }}>
-        <div className="eyebrow">07 - Contact</div>
+        <div className="eyebrow">06 - Contact</div>
 
         <div className="contact-wrap">
           <div className="fu">

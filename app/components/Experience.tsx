@@ -55,7 +55,7 @@ export default function Experience() {
 
   return (
     <section id="experience">
-      <div className="eyebrow">06 — Work Experience</div>
+      <div className="eyebrow">05 — Work Experience</div>
       <div className="fu">
         <h2 className="sec-title">Where I&apos;ve<br /><em>worked.</em></h2>
       </div>
