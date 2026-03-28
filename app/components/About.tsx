@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-
 interface NowData {
   thinking: string
+  thinking_2: string
+  thinking_3: string
   obsessing: string
   obsessing_label: string
   obsessing_image_url: string
@@ -94,7 +95,7 @@ export default function About() {
         </div>
 
         {/* ROW 1 COL 4: Thinking About */}
-        <div className="about-card" style={{ gridColumn: 4, gridRow: 1, display: 'flex', flexDirection: 'column' }}>
+        <div className="about-card" style={{ gridColumn: 4, gridRow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div className="about-label">Thinking about</div>
           <p style={{
             borderLeft: '2px solid var(--accent)',
@@ -108,31 +109,38 @@ export default function About() {
           }}>
             {now?.thinking ?? '...'}
           </p>
-          <div style={{
-            flex: 1,
-            marginTop: '1rem',
-            borderRadius: 6,
-            border: '1px dashed var(--border)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: 60,
-            opacity: 0.4,
-          }}>
-            <span style={{
-              fontFamily: 'var(--font-m)',
-              fontSize: '0.55rem',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: 'var(--fg-dimmer)',
+          {now?.thinking_2 && (
+            <p style={{
+              borderLeft: '2px solid var(--accent)',
+              paddingLeft: '0.75rem',
+              fontSize: '0.88rem',
+              fontStyle: 'italic',
+              color: 'var(--fg)',
+              lineHeight: 1.65,
+              margin: '1.5rem 0 0',
+              fontWeight: 500,
             }}>
-              Coming soon
-            </span>
-          </div>
+              {now.thinking_2}
+            </p>
+          )}
+          {now?.thinking_3 && (
+            <p style={{
+              borderLeft: '2px solid var(--accent)',
+              paddingLeft: '0.75rem',
+              fontSize: '0.88rem',
+              fontStyle: 'italic',
+              color: 'var(--fg)',
+              lineHeight: 1.65,
+              margin: '1.5rem 0 0',
+              fontWeight: 500,
+            }}>
+              {now.thinking_3}
+            </p>
+          )}
         </div>
 
         {/* ROW 1+2 COL 5: GitHub + Reading stacked */}
-        <div style={{ gridRow: 'span 2', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ gridRow: 'span 2', display: 'flex', flexDirection: 'column', gap: 10, alignSelf: 'start' }}>
 
           {/* Reading */}
           <div className="about-card" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -267,7 +275,7 @@ export default function About() {
           grid-template-rows: auto auto;
           gap: 10px;
           margin-top: 0.5rem;
-          align-items: start;
+          align-items: stretch;
         }
         .about-card {
           background: var(--bg-2);
