@@ -96,7 +96,7 @@ export default function About() {
 
         {/* ROW 1 COL 4: Thinking About */}
         <div className="about-card" style={{ gridColumn: 4, gridRow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div className="about-label">Thinking about</div>
+          <div className="about-label"><span className="about-live-dot" />Thinking about</div>
           <p style={{
             borderLeft: '2px solid var(--accent)',
             paddingLeft: '0.75rem',
@@ -220,7 +220,7 @@ export default function About() {
 
         {/* ROW 2 COL 1: How I Think */}
         <div className="about-card" style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
-          <div className="about-label">How I think</div>
+          <div className="about-label"><span className="about-live-dot" />How I think</div>
           <p style={{ fontSize: '0.84rem', color: 'var(--fg-dim)', lineHeight: 1.68, margin: 0 }}>
             Electronics taught me how systems fail. Finance taught me how incentives shape behavior. In AI products, model behavior is not a technical constraint — it is a design surface.
           </p>
@@ -228,7 +228,7 @@ export default function About() {
 
         {/* ROW 2 COL 2: Why AI PM */}
         <div className="about-card" style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
-          <div className="about-label">Why AI PM</div>
+          <div className="about-label"><span className="about-live-dot" />Why AI PM</div>
           <p style={{ fontSize: '0.84rem', color: 'var(--fg-dim)', lineHeight: 1.68, margin: 0 }}>
             The technology is genuinely ahead of the use cases. I want to be in the room figuring out what the new problems are.
           </p>
@@ -236,7 +236,7 @@ export default function About() {
 
         {/* ROW 2 COL 3: One More Thing */}
         <div className="about-card" style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
-          <div className="about-label">Outside work</div>
+          <div className="about-label"><span className="about-live-dot" />Outside work</div>
           <p style={{ fontSize: '0.84rem', color: 'var(--fg-dim)', lineHeight: 1.68, margin: 0 }}>
             Outside of work I train, read, and travel when I can. Currently working through history and mythology — a surprisingly good lens for why people and institutions behave the way they do.
           </p>
@@ -244,7 +244,7 @@ export default function About() {
 
         {/* ROW 2 COL 4: Obsessing Over */}
         <div className="about-card" style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
-          <div className="about-label">Obsessing over</div>
+          <div className="about-label"><span className="about-live-dot" />Obsessing over</div>
           {now?.obsessing_image_url ? (
             <img
               src={now.obsessing_image_url}

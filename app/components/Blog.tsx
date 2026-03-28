@@ -13,6 +13,7 @@ export interface Post {
   body: string
   reading_time: string
   cover_image_url?: string
+  hero_image_url?: string
   coming_soon?: boolean
   is_published: boolean
   created_at: string
@@ -175,6 +176,17 @@ export default function Blog() {
                   }}>
                     {post.summary}
                   </div>
+                  {post.reading_time && (
+                    <span style={{
+                      fontFamily: 'var(--font-m)',
+                      fontSize: '0.6rem',
+                      letterSpacing: '0.08em',
+                      color: 'var(--fg-dimmer)',
+                      textTransform: 'uppercase',
+                    }}>
+                      {post.reading_time}
+                    </span>
+                  )}
                   <span className="blog-arrow">
                     <span style={{ fontFamily: 'var(--font-m)', fontSize: '0.68rem', letterSpacing: '0.06em' }}>
                       Read
