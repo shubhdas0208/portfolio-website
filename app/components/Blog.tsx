@@ -13,6 +13,7 @@ export interface Post {
   body: string
   reading_time: string
   cover_image_url?: string
+  coming_soon?: boolean
   is_published: boolean
   created_at: string
 }
@@ -99,9 +100,35 @@ export default function Blog() {
                   overflow: 'hidden',
                   display: 'flex', flexDirection: 'column',
                   cursor: 'pointer',
+                  opacity: post.coming_soon ? 0.55 : 1,
+                }}
+                onMouseEnter={post.coming_soon ? undefined : e => {
+                  e.currentTarget.style.boxShadow = '0 0 0 1px var(--accent-b), 0 8px 32px rgba(0,0,0,0.12)'
+                }}
+                onMouseLeave={post.coming_soon ? undefined : e => {
+                  e.currentTarget.style.boxShadow = ''
                 }}
               >
                 <div style={{ overflow: 'hidden', aspectRatio: '4/3', position: 'relative', flexShrink: 0 }}>
+                  {post.coming_soon && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '0.75rem',
+                      left: '0.75rem',
+                      padding: '0.25rem 0.65rem',
+                      borderRadius: 999,
+                      background: 'var(--accent-b)',
+                      border: '1px solid var(--accent)',
+                      color: 'var(--accent)',
+                      fontSize: '0.6rem',
+                      fontFamily: 'var(--font-m)',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      zIndex: 2,
+                    }}>
+                      Coming soon
+                    </div>
+                  )}
                   {post.cover_image_url ? (
                     <img
                       src={post.cover_image_url}

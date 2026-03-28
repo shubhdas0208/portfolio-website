@@ -63,56 +63,102 @@ export default function BlogDrawer({ post, onClose }: Props) {
 
         <div ref={scrollRef} className="detail-drawer-scroll" tabIndex={-1}>
           {post && (
-            <>
-              <div className="detail-drawer-media-shell">
-                <div className="detail-drawer-media">
-                  {post.cover_image_url ? (
-                    <img
-                      src={post.cover_image_url}
-                      alt={post.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                    />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', background: 'var(--bg-3)' }} />
-                  )}
+            post.coming_soon ? (
+              <div style={{
+                padding: '3rem 2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                gap: '1rem',
+                minHeight: '40vh',
+              }}>
+                <div style={{
+                  padding: '0.3rem 0.8rem',
+                  borderRadius: 999,
+                  background: 'var(--accent-b)',
+                  border: '1px solid var(--accent)',
+                  color: 'var(--accent)',
+                  fontSize: '0.65rem',
+                  fontFamily: 'var(--font-m)',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                }}>
+                  Coming soon
                 </div>
-              </div>
-
-              <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                  <span style={{
-                    fontFamily: 'var(--font-m)', fontSize: '0.6rem',
-                    letterSpacing: '0.1em', color: 'var(--fg-dimmer)',
-                  }}>
-                    {new Date(post.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                  </span>
-                  <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--fg-dimmer)' }} />
-                  <span style={{
-                    fontFamily: 'var(--font-m)', fontSize: '0.6rem',
-                    letterSpacing: '0.1em', color: 'var(--fg-dimmer)',
-                  }}>
-                    {post.reading_time}
-                  </span>
-                </div>
-
                 <h2 style={{
                   fontFamily: 'var(--font-d)',
-                  fontSize: '1.6rem', fontWeight: 700,
-                  letterSpacing: '-0.03em', lineHeight: 1.15,
+                  fontSize: '1.6rem',
+                  fontWeight: 700,
+                  letterSpacing: '-0.03em',
                   color: 'var(--fg)',
+                  margin: 0,
                 }}>
                   {post.title}
                 </h2>
-
-                <div style={{ height: 1, background: 'var(--border)' }} />
-
-                <div className="drawer-markdown" style={{ paddingBottom: '2rem' }}>
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.body ?? ''}</ReactMarkdown>
+                <p style={{
+                  fontSize: '0.85rem',
+                  color: 'var(--fg-dim)',
+                  lineHeight: 1.65,
+                  maxWidth: 340,
+                  margin: 0,
+                }}>
+                  This post is currently being written. Check back soon.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="detail-drawer-media-shell">
+                  <div className="detail-drawer-media">
+                    {post.cover_image_url ? (
+                      <img
+                        src={post.cover_image_url}
+                        alt={post.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', background: 'var(--bg-3)' }} />
+                    )}
+                  </div>
                 </div>
 
-              </div>
-            </>
+                <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                    <span style={{
+                      fontFamily: 'var(--font-m)', fontSize: '0.6rem',
+                      letterSpacing: '0.1em', color: 'var(--fg-dimmer)',
+                    }}>
+                      {new Date(post.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </span>
+                    <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--fg-dimmer)' }} />
+                    <span style={{
+                      fontFamily: 'var(--font-m)', fontSize: '0.6rem',
+                      letterSpacing: '0.1em', color: 'var(--fg-dimmer)',
+                    }}>
+                      {post.reading_time}
+                    </span>
+                  </div>
+
+                  <h2 style={{
+                    fontFamily: 'var(--font-d)',
+                    fontSize: '1.6rem', fontWeight: 700,
+                    letterSpacing: '-0.03em', lineHeight: 1.15,
+                    color: 'var(--fg)',
+                  }}>
+                    {post.title}
+                  </h2>
+
+                  <div style={{ height: 1, background: 'var(--border)' }} />
+
+                  <div className="drawer-markdown" style={{ paddingBottom: '2rem' }}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.body ?? ''}</ReactMarkdown>
+                  </div>
+
+                </div>
+              </>
+            )
           )}
         </div>
       </div>
