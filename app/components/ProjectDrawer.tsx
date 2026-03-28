@@ -56,113 +56,159 @@ export default function ProjectDrawer({ project, onClose }: Props) {
 
         <div ref={scrollRef} className="detail-drawer-scroll" tabIndex={-1}>
           {project && (
-            <>
-              <div className="detail-drawer-media-shell">
-                <div className="detail-drawer-media">
-                  {project.cover_image_url ? (
-                    project.live_url ? (
-                      <a href={project.live_url} target="_blank" rel="noreferrer" style={{ display: 'block', width: '100%', height: '100%' }}>
+            project.coming_soon ? (
+              <div style={{
+                padding: '3rem 2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                gap: '1rem',
+                minHeight: '40vh',
+              }}>
+                <div style={{
+                  padding: '0.3rem 0.8rem',
+                  borderRadius: 999,
+                  background: 'rgba(249,115,22,0.12)',
+                  border: '1px solid rgba(249,115,22,0.35)',
+                  color: '#f97316',
+                  fontSize: '0.65rem',
+                  fontFamily: 'var(--font-m)',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                }}>
+                  Coming soon
+                </div>
+                <h2 style={{
+                  fontFamily: 'var(--font-d)',
+                  fontSize: '1.6rem',
+                  fontWeight: 700,
+                  letterSpacing: '-0.03em',
+                  color: 'var(--fg)',
+                  margin: 0,
+                }}>
+                  {project.title}
+                </h2>
+                <p style={{
+                  fontSize: '0.85rem',
+                  color: 'var(--fg-dim)',
+                  lineHeight: 1.65,
+                  maxWidth: 340,
+                  margin: 0,
+                }}>
+                  This project is currently in progress. Case study and live demo coming soon.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="detail-drawer-media-shell">
+                  <div className="detail-drawer-media">
+                    {project.cover_image_url ? (
+                      project.live_url ? (
+                        <a href={project.live_url} target="_blank" rel="noreferrer" style={{ display: 'block', width: '100%', height: '100%' }}>
+                          <img
+                            src={project.cover_image_url}
+                            alt={project.title}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                          />
+                        </a>
+                      ) : (
                         <img
                           src={project.cover_image_url}
                           alt={project.title}
                           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                         />
-                      </a>
+                      )
                     ) : (
-                      <img
-                        src={project.cover_image_url}
-                        alt={project.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                      />
-                    )
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', background: 'var(--bg-3)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{
-                        fontFamily: 'var(--font-m)', fontSize: '0.62rem',
-                        letterSpacing: '0.15em', textTransform: 'uppercase',
-                        color: 'var(--fg-dimmer)',
-                      }}>
-                        No cover image
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-
-                <div>
-                  <div style={{
-                    fontFamily: 'var(--font-m)', fontSize: '0.58rem',
-                    letterSpacing: '0.15em', textTransform: 'uppercase',
-                    color: 'var(--fg-dimmer)', marginBottom: '0.45rem',
-                  }}>
-                    {project.tags?.join(' · ') ?? 'Case Study'}
-                  </div>
-                  <h2 style={{
-                    fontFamily: 'var(--font-d)',
-                    fontSize: '1.7rem', fontWeight: 700,
-                    letterSpacing: '-0.03em', lineHeight: 1.1,
-                    color: 'var(--fg)',
-                  }}>
-                    {project.title}
-                  </h2>
-                  {project.live_url && (
-                    <a
-                      href={project.live_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
-                        marginTop: '0.75rem',
-                        padding: '0.3rem 0.75rem',
-                        borderRadius: 999,
-                        background: 'rgba(249,115,22,0.12)',
-                        border: '1px solid rgba(249,115,22,0.35)',
-                        color: '#f97316',
-                        fontSize: '0.72rem',
-                        fontFamily: 'var(--font-m)',
-                        letterSpacing: '0.04em',
-                        textDecoration: 'none',
-                        transition: 'background 0.2s',
-                      }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(249,115,22,0.22)')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(249,115,22,0.12)')}
-                    >
-                      View live project ↗
-                    </a>
-                  )}
-                </div>
-
-                <div style={{ height: 1, background: 'var(--border)' }} />
-
-                {project.diagram_url && (
-                  <>
-                    <div>
-                      <div style={{
-                        fontFamily: 'var(--font-m)', fontSize: '0.58rem',
-                        letterSpacing: '0.2em', textTransform: 'uppercase',
-                        color: 'var(--fg-dimmer)', marginBottom: '0.75rem',
-                      }}>
-                        System Diagram
+                      <div style={{ width: '100%', height: '100%', background: 'var(--bg-3)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{
+                          fontFamily: 'var(--font-m)', fontSize: '0.62rem',
+                          letterSpacing: '0.15em', textTransform: 'uppercase',
+                          color: 'var(--fg-dimmer)',
+                        }}>
+                          No cover image
+                        </span>
                       </div>
-                      <img
-                        src={project.diagram_url}
-                        alt="System architecture diagram"
-                        style={{ width: '100%', borderRadius: 8, border: '1px solid var(--border)' }}
-                      />
-                    </div>
-                    <div style={{ height: 1, background: 'var(--border)' }} />
-                  </>
-                )}
-
-                <div className="drawer-markdown" style={{ paddingBottom: '2rem' }}>
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.body ?? ''}</ReactMarkdown>
+                    )}
+                  </div>
                 </div>
 
-              </div>
-            </>
+                <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+
+                  <div>
+                    <div style={{
+                      fontFamily: 'var(--font-m)', fontSize: '0.58rem',
+                      letterSpacing: '0.15em', textTransform: 'uppercase',
+                      color: 'var(--fg-dimmer)', marginBottom: '0.45rem',
+                    }}>
+                      {project.tags?.join(' · ') ?? 'Case Study'}
+                    </div>
+                    <h2 style={{
+                      fontFamily: 'var(--font-d)',
+                      fontSize: '1.7rem', fontWeight: 700,
+                      letterSpacing: '-0.03em', lineHeight: 1.1,
+                      color: 'var(--fg)',
+                    }}>
+                      {project.title}
+                    </h2>
+                    {project.live_url && (
+                      <a
+                        href={project.live_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                          marginTop: '0.75rem',
+                          padding: '0.3rem 0.75rem',
+                          borderRadius: 999,
+                          background: 'rgba(249,115,22,0.12)',
+                          border: '1px solid rgba(249,115,22,0.35)',
+                          color: '#f97316',
+                          fontSize: '0.72rem',
+                          fontFamily: 'var(--font-m)',
+                          letterSpacing: '0.04em',
+                          textDecoration: 'none',
+                          transition: 'background 0.2s',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(249,115,22,0.22)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'rgba(249,115,22,0.12)')}
+                      >
+                        View live project ↗
+                      </a>
+                    )}
+                  </div>
+
+                  <div style={{ height: 1, background: 'var(--border)' }} />
+
+                  {project.diagram_url && (
+                    <>
+                      <div>
+                        <div style={{
+                          fontFamily: 'var(--font-m)', fontSize: '0.58rem',
+                          letterSpacing: '0.2em', textTransform: 'uppercase',
+                          color: 'var(--fg-dimmer)', marginBottom: '0.75rem',
+                        }}>
+                          System Diagram
+                        </div>
+                        <img
+                          src={project.diagram_url}
+                          alt="System architecture diagram"
+                          style={{ width: '100%', borderRadius: 8, border: '1px solid var(--border)' }}
+                        />
+                      </div>
+                      <div style={{ height: 1, background: 'var(--border)' }} />
+                    </>
+                  )}
+
+                  <div className="drawer-markdown" style={{ paddingBottom: '2rem' }}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.body ?? ''}</ReactMarkdown>
+                  </div>
+
+                </div>
+              </>
+            )
           )}
         </div>
       </div>

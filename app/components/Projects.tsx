@@ -14,6 +14,7 @@ export interface Project {
   cover_image_url?: string
   diagram_url?: string
   live_url?: string
+  coming_soon?: boolean
   is_published: boolean
   created_at: string
   label?: string
@@ -82,11 +83,12 @@ export default function Projects() {
                   overflow: 'hidden',
                   position: 'relative',
                   transition: 'box-shadow 0.3s cubic-bezier(0.16,1,0.3,1)',
+                  ...(project.coming_soon ? { opacity: 0.6 } : {}),
                 }}
-                onMouseEnter={e => {
+                onMouseEnter={project.coming_soon ? undefined : e => {
                   e.currentTarget.style.boxShadow = '0 0 0 1px var(--accent-b), 0 8px 32px rgba(0,0,0,0.12)'
                 }}
-                onMouseLeave={e => {
+                onMouseLeave={project.coming_soon ? undefined : e => {
                   e.currentTarget.style.boxShadow = ''
                 }}
               >
@@ -100,7 +102,27 @@ export default function Projects() {
                     borderRadius: '8px 8px 0 0',
                     background: 'var(--bg-3)',
                     flexShrink: 0,
+                    position: 'relative',
                   }}>
+                    {project.coming_soon && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '0.75rem',
+                        left: '0.75rem',
+                        padding: '0.25rem 0.65rem',
+                        borderRadius: 999,
+                        background: 'rgba(249,115,22,0.15)',
+                        border: '1px solid rgba(249,115,22,0.4)',
+                        color: '#f97316',
+                        fontSize: '0.6rem',
+                        fontFamily: 'var(--font-m)',
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        zIndex: 2,
+                      }}>
+                        Coming soon
+                      </div>
+                    )}
                     {project.cover_image_url ? (
                       <img
                         src={project.cover_image_url}
