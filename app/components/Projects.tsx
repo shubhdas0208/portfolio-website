@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import ProjectDrawer from './ProjectDrawer'
 
@@ -19,23 +19,9 @@ export interface Project {
   label?: string
 }
 
-function trackGlow(el: HTMLElement, e: MouseEvent) {
-  const r = el.getBoundingClientRect()
-  el.style.setProperty('--gx', ((e.clientX - r.left) / r.width * 100) + '%')
-  el.style.setProperty('--gy', ((e.clientY - r.top) / r.height * 100) + '%')
-}
-
-const CARD_STYLES: Record<number, { gridColumn: string; gridRow: string }> = {
-  0: { gridColumn: 'span 2', gridRow: 'span 2' },
-  1: { gridColumn: 'span 1', gridRow: 'span 1' },
-  2: { gridColumn: 'span 1', gridRow: 'span 1' },
-  3: { gridColumn: 'span 2', gridRow: 'span 1' },
-}
-
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([])
   const [active, setActive] = useState<Project | null>(null)
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
     supabase
@@ -51,18 +37,7 @@ export default function Projects() {
       es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target) } })
     }, { threshold: 0.07 })
     document.querySelectorAll('#projects .fu').forEach(el => obs.observe(el))
-
-    const handlers: Array<{ el: HTMLElement; fn: (e: MouseEvent) => void }> = []
-    cardRefs.current.forEach(el => {
-      if (!el) return
-      const fn = (e: MouseEvent) => trackGlow(el, e)
-      el.addEventListener('mousemove', fn)
-      handlers.push({ el, fn })
-    })
-    return () => {
-      obs.disconnect()
-      handlers.forEach(({ el, fn }) => el.removeEventListener('mousemove', fn))
-    }
+    return () => { obs.disconnect() }
   }, [projects])
 
   return (
@@ -87,14 +62,12 @@ export default function Projects() {
         ) : (
           <div className="fu s1" style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3,1fr)',
-            gridAutoRows: 220,
-            gap: 10,
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 16,
           }}>
-            {projects.map((project, i) => (
+            {projects.map((project) => (
               <div
                 key={project.slug}
-                ref={el => { cardRefs.current[i] = el }}
                 className="glow-card"
                 onClick={() => setActive(project)}
                 onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setActive(project) }}
@@ -102,10 +75,9 @@ export default function Projects() {
                 role="button"
                 aria-label={`Open ${project.title} case study`}
                 style={{
-                  ...(CARD_STYLES[i] ?? {}),
                   borderRadius: 10,
                   border: '1px solid var(--border)',
-                  background: i === 0 ? 'var(--bg-3)' : 'var(--bg-card)',
+                  background: 'var(--bg-card)',
                   cursor: 'pointer',
                   overflow: 'hidden',
                   position: 'relative',
@@ -118,48 +90,82 @@ export default function Projects() {
                   e.currentTarget.style.boxShadow = ''
                 }}
               >
-                <div style={{
-                  position: 'relative', zIndex: 1, height: '100%',
-                  padding: '1.5rem',
-                  display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-                }}>
-                  <div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+
+                  {/* Image area */}
+                  <div style={{
+                    width: '100%',
+                    aspectRatio: '16/9',
+                    overflow: 'hidden',
+                    borderRadius: '8px 8px 0 0',
+                    background: 'var(--bg-3)',
+                    flexShrink: 0,
+                  }}>
+                    {project.cover_image_url ? (
+                      <img
+                        src={project.cover_image_url}
+                        alt={project.title}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          display: 'block',
+                        }}
+                      />
+                    ) : (
+                      <div style={{
+                        width: '100%', height: '100%',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <span style={{
+                          fontFamily: 'var(--font-m)', fontSize: '0.58rem',
+                          letterSpacing: '0.12em', textTransform: 'uppercase',
+                          color: 'var(--fg-dimmer)',
+                        }}>No image</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Text area */}
+                  <div style={{
+                    padding: '1rem 1.1rem 1.2rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.3rem',
+                    position: 'relative',
+                  }}>
                     <div style={{
-                      fontFamily: 'var(--font-m)', fontSize: '0.59rem',
-                      color: 'var(--fg-dimmer)', letterSpacing: '0.08em',
+                      fontFamily: 'var(--font-m)', fontSize: '0.55rem',
+                      color: 'var(--fg-dimmer)', letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
                     }}>
-                      {project.tags?.[0] ?? 'Project'}
+                      {project.tags?.join(' · ') ?? 'Project'}
                     </div>
-                    <span style={{
-                      position: 'absolute', top: '1.5rem', right: '1.5rem',
-                      fontSize: '0.95rem', color: 'var(--fg-dimmer)',
-                      transition: 'color 0.2s, transform 0.2s cubic-bezier(0.16,1,0.3,1)',
-                    }}
-                      onMouseEnter={e => {
-                        (e.currentTarget as HTMLSpanElement).style.color = 'var(--accent)'
-                        ;(e.currentTarget as HTMLSpanElement).style.transform = 'translate(2px,-2px)'
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLSpanElement).style.color = 'var(--fg-dimmer)'
-                        ;(e.currentTarget as HTMLSpanElement).style.transform = ''
-                      }}
-                    >↗</span>
                     <h3 style={{
                       fontFamily: 'var(--font-d)',
-                      fontSize: i === 0 ? '1.3rem' : '1.05rem',
-                      fontWeight: 600, lineHeight: 1.2,
-                      letterSpacing: '-0.02em', marginTop: '0.5rem',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      lineHeight: 1.25,
+                      letterSpacing: '-0.02em',
                       color: 'var(--fg)',
+                      margin: 0,
                     }}>
                       {project.title}
                     </h3>
                     <p style={{
-                      fontSize: '0.82rem', color: 'var(--fg-dim)',
-                      lineHeight: 1.58, marginTop: '0.4rem',
+                      fontSize: '0.8rem',
+                      color: 'var(--fg-dim)',
+                      lineHeight: 1.55,
+                      margin: 0,
                     }}>
-                      {i === 0 ? project.summary : project.tags.join(' · ')}
+                      {project.summary}
                     </p>
+                    <span style={{
+                      position: 'absolute', top: '1rem', right: '1rem',
+                      fontSize: '0.85rem', color: 'var(--fg-dimmer)',
+                    }}>↗</span>
                   </div>
+
                 </div>
               </div>
             ))}

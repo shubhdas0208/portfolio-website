@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import type { Project } from './Projects'
 import { useDrawerScrollLock } from '../lib/useDrawerScrollLock'
 
@@ -157,7 +158,7 @@ export default function ProjectDrawer({ project, onClose }: Props) {
                 )}
 
                 <div className="drawer-markdown" style={{ paddingBottom: '2rem' }}>
-                  <ReactMarkdown>{project.body ?? ''}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.body ?? ''}</ReactMarkdown>
                 </div>
 
               </div>

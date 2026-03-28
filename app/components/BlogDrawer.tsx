@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import type { Post } from './Blog'
 import { useDrawerScrollLock } from '../lib/useDrawerScrollLock'
 
@@ -107,7 +108,7 @@ export default function BlogDrawer({ post, onClose }: Props) {
                 <div style={{ height: 1, background: 'var(--border)' }} />
 
                 <div className="drawer-markdown" style={{ paddingBottom: '2rem' }}>
-                  <ReactMarkdown>{post.body ?? ''}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.body ?? ''}</ReactMarkdown>
                 </div>
 
               </div>
