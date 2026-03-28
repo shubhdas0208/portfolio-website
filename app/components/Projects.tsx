@@ -13,6 +13,7 @@ export interface Project {
   body: string
   cover_image_url?: string
   diagram_url?: string
+  live_url?: string
   is_published: boolean
   created_at: string
   label?: string

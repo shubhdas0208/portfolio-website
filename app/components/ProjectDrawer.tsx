@@ -59,11 +59,21 @@ export default function ProjectDrawer({ project, onClose }: Props) {
               <div className="detail-drawer-media-shell">
                 <div className="detail-drawer-media">
                   {project.cover_image_url ? (
-                    <img
-                      src={project.cover_image_url}
-                      alt={project.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                    />
+                    project.live_url ? (
+                      <a href={project.live_url} target="_blank" rel="noreferrer" style={{ display: 'block', width: '100%', height: '100%' }}>
+                        <img
+                          src={project.cover_image_url}
+                          alt={project.title}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        />
+                      </a>
+                    ) : (
+                      <img
+                        src={project.cover_image_url}
+                        alt={project.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                    )
                   ) : (
                     <div style={{ width: '100%', height: '100%', background: 'var(--bg-3)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -97,6 +107,31 @@ export default function ProjectDrawer({ project, onClose }: Props) {
                   }}>
                     {project.title}
                   </h2>
+                  {project.live_url && (
+                    <a
+                      href={project.live_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                        marginTop: '0.75rem',
+                        padding: '0.3rem 0.75rem',
+                        borderRadius: 999,
+                        background: 'rgba(249,115,22,0.12)',
+                        border: '1px solid rgba(249,115,22,0.35)',
+                        color: '#f97316',
+                        fontSize: '0.72rem',
+                        fontFamily: 'var(--font-m)',
+                        letterSpacing: '0.04em',
+                        textDecoration: 'none',
+                        transition: 'background 0.2s',
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(249,115,22,0.22)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(249,115,22,0.12)')}
+                    >
+                      View live project ↗
+                    </a>
+                  )}
                 </div>
 
                 <div style={{ height: 1, background: 'var(--border)' }} />
