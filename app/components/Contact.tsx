@@ -53,7 +53,7 @@ export default function Contact() {
       resetTimerRef.current = setTimeout(() => setSendState('idle'), 3000)
     } catch {
       setSendState('idle')
-      alert('Something went wrong. Please email me directly at shubhsankalp@gmail.com')
+      alert('Something went wrong. Please email me directly at dasshriyans2802@gmail.com')
     }
   }
 
@@ -183,7 +183,7 @@ export default function Contact() {
                     className={`send-btn ${sendState}`}
                     disabled={sendState === 'sending'}
                     style={{
-                      border: '1px solid rgba(255,255,255,0.18)',
+                      border: '1px solid var(--border-2)',
                       borderRadius: 6,
                       padding: '0.45rem 1rem',
                       background: 'transparent',
@@ -201,7 +201,7 @@ export default function Contact() {
                       }
                     }}
                     onMouseLeave={e => {
-                      (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.18)'
+                      (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border-2)'
                       ;(e.currentTarget as HTMLButtonElement).style.color = 'var(--fg-dim)'
                     }}
                   >
