@@ -646,7 +646,9 @@ export default function Hero() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', flexShrink: 0 }}>
               <a
-                href="#projects"
+                href="https://drive.google.com/file/d/1BA4IKjQMZAQbHeRM5nver6vW0qQF7s7Y/view"
+                target="_blank"
+                rel="noreferrer"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -669,10 +671,10 @@ export default function Hero() {
                   e.currentTarget.style.background = 'var(--accent)'
                 }}
               >
-                See my work ↓
+                Download CV ↗
               </a>
               <a
-                href="/resume.pdf"
+                href="#projects"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -688,7 +690,7 @@ export default function Hero() {
                   borderRadius: 'var(--r)',
                 }}
               >
-                Download CV ↗
+                See my work ↓
               </a>
             </div>
           </div>

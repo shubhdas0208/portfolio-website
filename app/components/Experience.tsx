@@ -59,12 +59,40 @@ export default function Experience() {
       <div className="fu">
         <h2 className="sec-title">Where I&apos;ve<br /><em>worked.</em></h2>
       </div>
-      <a href="/resume.pdf" className="fu s1" style={{
-        display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
-        fontFamily: 'var(--font-m)', fontSize: '0.65rem', letterSpacing: '0.1em',
-        textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '2.25rem',
-      }}>
-        Download full resume ↗
+      <a 
+        href="https://drive.google.com/file/d/1BA4IKjQMZAQbHeRM5nver6vW0qQF7s7Y/view?usp=sharing"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fu s1" 
+        style={{
+          display: 'inline-flex', 
+          alignItems: 'center', 
+          gap: '0.6rem',
+          padding: '0.65rem 1.2rem',
+          fontFamily: 'var(--font-m)', 
+          fontSize: '0.7rem', 
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase', 
+          color: 'var(--bg)',
+          backgroundColor: 'var(--accent)',
+          border: 'none',
+          borderRadius: '0.4rem',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          marginBottom: '2.25rem',
+          fontWeight: 500,
+          textDecoration: 'none',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.opacity = '0.85'
+          e.currentTarget.style.transform = 'translateY(-1px)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.opacity = '1'
+          e.currentTarget.style.transform = 'translateY(0)'
+        }}
+      >
+        Download resume ↗
       </a>
       <div className="fu s2" style={{ borderLeft: '1px solid var(--border-2)', paddingLeft: '2.5rem', marginLeft: '0.5rem' }}>
         {EXP.map((exp, i) => (
