@@ -187,7 +187,7 @@ export default function Contact() {
                       borderRadius: 6,
                       padding: '0.45rem 1rem',
                       background: 'transparent',
-                      color: '#f6f0e6',
+                      color: 'var(--fg-dim)',
                       fontFamily: 'var(--font-m)',
                       fontSize: '0.78rem',
                       letterSpacing: '0.06em',
@@ -202,7 +202,7 @@ export default function Contact() {
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.18)'
-                      ;(e.currentTarget as HTMLButtonElement).style.color = '#f6f0e6'
+                      ;(e.currentTarget as HTMLButtonElement).style.color = 'var(--fg-dim)'
                     }}
                   >
                     {sendState === 'idle' && '-> ./execute_send'}
