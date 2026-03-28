@@ -547,7 +547,7 @@ export default function Hero() {
           <div style={{ marginBottom: '1.5rem', userSelect: 'none' }}>
             <div
               style={{
-                fontFamily: 'var(--font-d)',
+                fontFamily: "'Clash Display', sans-serif",
                 fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
                 fontWeight: 700,
                 lineHeight: 0.9,
@@ -561,7 +561,7 @@ export default function Hero() {
             </div>
             <div
               style={{
-                fontFamily: 'var(--font-d)',
+                fontFamily: "'Clash Display', sans-serif",
                 fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
                 fontWeight: 700,
                 lineHeight: 0.9,
@@ -577,7 +577,7 @@ export default function Hero() {
             </div>
             <div
               style={{
-                fontFamily: 'var(--font-d)',
+                fontFamily: "'Clash Display', sans-serif",
                 fontSize: 'clamp(3.4rem, 9vw, 8.5rem)',
                 fontWeight: 700,
                 lineHeight: 0.95,

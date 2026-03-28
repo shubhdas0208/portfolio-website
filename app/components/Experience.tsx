@@ -4,30 +4,44 @@ import { useEffect } from 'react'
 
 const EXP = [
   {
-    dates: 'Jan 2024 — Present',
-    role: '[ Your Current Role ]',
-    company: '[ Company Name ] · Full-time',
+    dates: 'Jul 2025 — Dec 2025',
+    role: 'Product Intern',
+    company: 'Dezerv Investments Pvt. Ltd. · Internship · Bengaluru, India',
     bullets: [
-      { bold: '[ Metric first ]', rest: ' — then the how. Example: Reduced P95 latency by 40% by redesigning retrieval from sequential to parallel fetch, cutting avg response from 3.2s to 1.9s.' },
-      { bold: '[ Metric first ]', rest: ' — lead with a number or before/after, never a responsibility statement.' },
-      { bold: '[ Metric first ]', rest: ' — third bullet only if it adds different signal than the first two.' },
+      { bold: 'M1 retention lifted from 38% to 51%', rest: ' by conducting user research on weekly portfolio tracking needs and shipping the Portfolio Snapshot feature.' },
+      { bold: 'Status misclassification reduced from 94% to 2%', rest: ' by engineering a client call status identifier that analysed transcripts using classification rules.' },
+      { bold: '18% more conversions with the same RM capacity', rest: ' by developing an affluent user model using salary, spend, and investment patterns.' },
+      { bold: 'Session time increased 40% in a controlled cohort', rest: ' by discovering the need for actionable insights and integrating Thurro AI into the stocks page.' },
     ],
   },
   {
-    dates: 'Jun 2022 — Dec 2023',
-    role: '[ Previous Role ]',
-    company: '[ Company Name ] · Full-time',
+    dates: 'Apr 2024 — Apr 2025',
+    role: 'Investment Analyst Intern',
+    company: '91Ventures · Internship · Remote',
     bullets: [
-      { bold: '[ Metric first ]', rest: ' — what moved because of you. Revenue, retention, latency, error rate.' },
-      { bold: '[ Metric first ]', rest: ' — different outcome type than bullet one.' },
+      { bold: 'Portfolio review time reduced by 83%', rest: ' (30 to 5 minutes) by consolidating MIS reports into curated summaries for 200+ LPs.' },
+      { bold: 'Quarterly LP reporting effort cut by 98.9%', rest: ' (48 hours to 60 minutes) by programming Excel automation for the reporting workflow.' },
+      { bold: 'Deal closure time cut by 50%', rest: ' (60 days to 30 days) by establishing standardised deal documentation and communication workflows.' },
     ],
   },
   {
-    dates: '2021 — 2022',
-    role: '[ Earlier Role / Internship ]',
-    company: '[ Company Name ] · Internship',
+    dates: 'May 2024 — Jul 2024',
+    role: 'Business Analyst Intern',
+    company: 'Multigraphics Group · Internship · Delhi, India',
     bullets: [
-      { bold: '[ Metric first ]', rest: ' — even internship bullets need outcome-first framing. No number? Use a clear before/after.' },
+      { bold: 'Dealership inquiries increased 3x in 30 days', rest: ' (33 to 95) by identifying user drop-off due to lack of product context and redesigning the inquiry flow.' },
+      { bold: 'Conversion rate increased from under 1% to 1.8% in 60 days', rest: ' by analysing data identifying delivery drivers as the highest-intent cohort and restructuring outreach.' },
+      { bold: 'Bounce rate reduced from 92% to 27% within 45 days', rest: ' by restructuring homepage CTAs with product categories and test drive options.' },
+    ],
+  },
+  {
+    dates: 'Mar 2024 — Apr 2024',
+    role: 'Product Intern',
+    company: 'Product Space · Internship · Remote',
+    bullets: [
+      { bold: '+15% signups within 2 weeks', rest: ' by restructuring the website with testimonials and sample decks to address the trust barrier, validated via A/B testing.' },
+      { bold: '22% higher conversion rate than other traffic sources', rest: ' achieved by releasing a monthly Product Newsletter to drive cohort awareness.' },
+      { bold: 'Lead attribution time cut by 1 week, cost per signup reduced 25-30%', rest: ' by implementing a UTM-linked conversion dashboard tracking 9 sources.' },
     ],
   },
 ]
