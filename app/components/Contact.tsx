@@ -30,13 +30,31 @@ export default function Contact() {
     if (sendState === 'sending') return
 
     const form = event.currentTarget
+    const formData = new FormData(form)
+
     setSendState('sending')
-    // Frontend-only placeholder flow until backend mail integration is added.
-    await new Promise(resolve => setTimeout(resolve, 1200))
-    form.reset()
-    setSendState('sent')
-    if (resetTimerRef.current) clearTimeout(resetTimerRef.current)
-    resetTimerRef.current = setTimeout(() => setSendState('idle'), 1500)
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.get('name'),
+          email: formData.get('email'),
+          message: formData.get('message'),
+        }),
+      })
+
+      if (!response.ok) throw new Error('Failed')
+
+      form.reset()
+      setSendState('sent')
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current)
+      resetTimerRef.current = setTimeout(() => setSendState('idle'), 3000)
+    } catch {
+      setSendState('idle')
+      alert('Something went wrong. Please email me directly at shubhsankalp@gmail.com')
+    }
   }
 
   return (
@@ -164,6 +182,28 @@ export default function Contact() {
                     type="submit"
                     className={`send-btn ${sendState}`}
                     disabled={sendState === 'sending'}
+                    style={{
+                      border: '1px solid rgba(255,255,255,0.18)',
+                      borderRadius: 6,
+                      padding: '0.45rem 1rem',
+                      background: 'transparent',
+                      color: '#f6f0e6',
+                      fontFamily: 'var(--font-m)',
+                      fontSize: '0.78rem',
+                      letterSpacing: '0.06em',
+                      cursor: sendState === 'sending' ? 'wait' : 'pointer',
+                      transition: 'border-color 0.2s, color 0.2s',
+                    }}
+                    onMouseEnter={e => {
+                      if (sendState === 'idle') {
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--accent)'
+                        ;(e.currentTarget as HTMLButtonElement).style.color = 'var(--accent)'
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.18)'
+                      ;(e.currentTarget as HTMLButtonElement).style.color = '#f6f0e6'
+                    }}
                   >
                     {sendState === 'idle' && '-> ./execute_send'}
                     {sendState === 'sending' && '-> [ sending... ]'}
@@ -361,6 +401,11 @@ export default function Contact() {
 
         [data-theme=light] .contact-command,
         [data-theme=light] .send-btn {
+          color: #1f1f1f;
+        }
+
+        [data-theme=light] .send-btn {
+          border-color: rgba(26,26,26,0.18);
           color: #1f1f1f;
         }
 
