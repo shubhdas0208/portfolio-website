@@ -464,7 +464,7 @@ section {
 .resume-gradient-btn::before {
   content: '';
   position: absolute;
-  inset: -1.5px;
+  inset: -1px;
   border-radius: 100px;
   background: conic-gradient(
     from var(--resume-angle),
@@ -479,7 +479,7 @@ section {
 .resume-gradient-btn::after {
   content: '';
   position: absolute;
-  inset: 1.5px;
+  inset: 1px;
   border-radius: 100px;
   background: rgba(17,17,16,0.96);
   z-index: 1;
