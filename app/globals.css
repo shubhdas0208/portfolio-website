@@ -446,18 +446,48 @@ section {
   }
 }
 
-.resume-nav-btn::before {
+@property --resume-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes resume-spin {
+  0% { --resume-angle: 0deg; }
+  100% { --resume-angle: 360deg; }
+}
+.resume-gradient-btn {
+  outline: none;
+  position: relative !important;
+  display: inline-block;
+  border-radius: 100px;
+}
+.resume-gradient-btn::before {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -1.5px;
   border-radius: 100px;
-  background: linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.15) 50%, transparent 100%);
-  background-size: 200% auto;
-  animation: resume-shimmer 2.5s linear infinite;
-  pointer-events: none;
+  background: conic-gradient(
+    from var(--resume-angle),
+    transparent 0deg,
+    #f97316 60deg,
+    #fb923c 120deg,
+    transparent 180deg
+  );
+  animation: resume-spin 2s linear infinite;
+  z-index: 0;
 }
-@keyframes resume-shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+.resume-gradient-btn::after {
+  content: '';
+  position: absolute;
+  inset: 1.5px;
+  border-radius: 100px;
+  background: rgba(17,17,16,0.96);
+  z-index: 1;
 }
+.resume-gradient-btn > div {
+  position: relative;
+  z-index: 2;
+}
+.resume-gradient-glow { display: none; }
+.resume-gradient-line { display: none; }
 
