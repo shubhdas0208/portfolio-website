@@ -195,7 +195,7 @@ export default function About() {
                     width: activeBook === i ? 16 : 6,
                     height: 6,
                     borderRadius: 999,
-                    background: activeBook === i ? 'var(--accent)' : 'rgba(255,255,255,0.25)',
+                    background: activeBook === i ? 'var(--accent)' : 'var(--fg-dimmer)',
                     cursor: 'pointer',
                     transition: 'width 0.3s cubic-bezier(0.34,1.56,0.64,1), background 0.2s',
                   }}

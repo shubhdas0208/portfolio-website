@@ -80,8 +80,7 @@ export default function FloatNav() {
   const dividerColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,17,16,0.16)'
   const toggleBg = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(17,17,16,0.08)'
   const toggleBgHover = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(17,17,16,0.16)'
-  const toggleColor = isDark ? 'rgba(255,255,255,0.6)' : 'rgba(17,17,16,0.62)'
-  const hoverPill = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(17,17,16,0.08)'
+const hoverPill = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(17,17,16,0.08)'
   const homeIconColor = isDark ? '#ffffff' : 'rgba(17,17,16,0.85)'
   const homeBg = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(17,17,16,0.08)'
   const navShadow = isDark
@@ -157,7 +156,7 @@ export default function FloatNav() {
             background: toggleBg,
             border: 'none',
             cursor: 'pointer',
-            color: toggleColor,
+            color: isDark ? '#ffffff' : 'rgba(17,17,16,0.85)',
             transition: 'background 0.2s, transform 0.2s',
             flexShrink: 0,
           }}
@@ -317,43 +316,43 @@ export default function FloatNav() {
         target="_blank"
         rel="noreferrer"
         aria-label="Download Resume"
-        className="resume-nav-btn"
+        className="resume-gradient-btn"
         style={{
-          height: 36,
+          position: 'relative',
+          display: 'inline-block',
           borderRadius: '100px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '0.4rem',
-          padding: '0 0.85rem',
-          color: toggleColor,
+          padding: '2px',
+          background: 'transparent',
           textDecoration: 'none',
           flexShrink: 0,
+        }}
+      >
+        <span className="resume-gradient-glow" />
+        <div style={{
+          position: 'relative',
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.4rem',
+          height: 32,
+          padding: '0 0.85rem',
+          borderRadius: '100px',
+          background: isDark ? 'rgba(17,17,16,0.95)' : 'rgba(245,245,244,0.95)',
           fontFamily: 'var(--font-m)',
           fontSize: '0.62rem',
           letterSpacing: '0.07em',
           textTransform: 'uppercase',
-          position: 'relative',
-          overflow: 'hidden',
-          border: '1px solid rgba(249,115,22,0.25)',
-          background: toggleBg,
-          transition: 'background 0.2s, transform 0.2s',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.background = toggleBgHover
-          e.currentTarget.style.transform = 'scale(1.05)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = toggleBg
-          e.currentTarget.style.transform = 'scale(1)'
-        }}
-      >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        Resume
+          color: isDark ? '#ffffff' : 'rgba(17,17,16,0.85)',
+          whiteSpace: 'nowrap',
+        }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Resume
+        </div>
+        <span className="resume-gradient-line" />
       </a>
 
 
