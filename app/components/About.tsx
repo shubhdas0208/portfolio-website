@@ -148,17 +148,6 @@ export default function About() {
               <span className="about-live-dot" />
               Currently reading
             </div>
-            <div style={{
-              fontFamily: 'var(--font-m)',
-              fontSize: '0.55rem',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: 'var(--fg-dimmer)',
-              marginBottom: '0.4rem',
-              marginTop: '0.25rem',
-            }}>
-              Click to explore
-            </div>
             <div style={{ display: 'flex', gap: 8, flex: 1 }}>
               {books.map((book, i) => (
                 <div
@@ -191,6 +180,29 @@ export default function About() {
                 </div>
               ))}
             </div>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 5,
+              marginTop: '0.5rem',
+            }}>
+              {books.map((_, i) => (
+                <div
+                  key={i}
+                  onClick={() => setActiveBook(i)}
+                  style={{
+                    width: activeBook === i ? 16 : 6,
+                    height: 6,
+                    borderRadius: 999,
+                    background: activeBook === i ? 'var(--accent)' : 'rgba(255,255,255,0.25)',
+                    cursor: 'pointer',
+                    transition: 'width 0.3s cubic-bezier(0.34,1.56,0.64,1), background 0.2s',
+                  }}
+                />
+              ))}
+            </div>
+
             {books[activeBook] && (
               <div style={{ marginTop: '0.6rem', paddingTop: '0.6rem', borderTop: '1px solid var(--border)' }}>
                 <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--fg)', marginBottom: '0.15rem' }}>{books[activeBook].title}</div>
