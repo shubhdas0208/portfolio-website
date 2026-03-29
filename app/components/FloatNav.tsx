@@ -25,9 +25,9 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
+  { id: 'about', label: 'About' },
   { id: 'projects', label: 'Projects' },
   { id: 'blog', label: 'Blogs' },
-  { id: 'about', label: 'About' },
   { id: 'experience', label: 'Work Exp' },
   { id: 'contact', label: 'Contact' },
 ]
@@ -108,20 +108,127 @@ export default function FloatNav() {
         transition: 'background 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s',
       }}
     >
-      {NAV_ITEMS.map(item => {
-        const isActive = activeId === item.id
-        const isHovered = hoverId === item.id
-        const isHome = item.id === 'hero'
-
-        return (
-          <div
-            key={item.id}
+      {/* Home icon */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <a
+          href="#hero"
+          onMouseEnter={() => setHoverId('hero')}
+          onMouseLeave={() => setHoverId(null)}
+          onClick={() => setActiveId('hero')}
+          style={{
+            position: 'relative',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 36,
+            width: 36,
+            minWidth: 36,
+            padding: 0,
+            borderRadius: '100px',
+            textDecoration: 'none',
+            color: homeIconColor,
+            zIndex: 0,
+            background: homeBg,
+          }}
+        >
+          <span
             style={{
-              display: 'flex',
+              position: 'relative',
+              zIndex: 1,
+              display: 'inline-flex',
               alignItems: 'center',
-              gap: isHome ? '8px' : 0,
+              justifyContent: 'center',
+              lineHeight: 0,
             }}
           >
+            {NAV_ITEMS[0].label}
+          </span>
+        </a>
+        <button
+          onClick={toggle}
+          aria-label="Toggle theme"
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: toggleBg,
+            border: 'none',
+            cursor: 'pointer',
+            color: toggleColor,
+            transition: 'background 0.2s, transform 0.2s',
+            flexShrink: 0,
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = toggleBgHover
+            e.currentTarget.style.transform = 'scale(1.1)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = toggleBg
+            e.currentTarget.style.transform = 'scale(1)'
+          }}
+        >
+          <AnimatePresence mode="wait">
+            {isDark ? (
+              <motion.svg
+                key="sun"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </motion.svg>
+            ) : (
+              <motion.svg
+                key="moon"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+              </motion.svg>
+            )}
+          </AnimatePresence>
+        </button>
+
+        <span style={{ width: 1, height: 18, background: dividerColor, flexShrink: 0 }} />
+      </div>
+
+      {/* Nav links */}
+      {NAV_ITEMS.slice(1).map(item => {
+        const isActive = activeId === item.id
+        const isHovered = hoverId === item.id
+
+        return (
+          <div key={item.id} style={{ display: 'flex', alignItems: 'center' }}>
             <a
               href={`#${item.id}`}
               onMouseEnter={() => setHoverId(item.id)}
@@ -132,10 +239,8 @@ export default function FloatNav() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: isHome ? 48 : 36,
-                width: isHome ? 48 : 'auto',
-                minWidth: isHome ? 48 : undefined,
-                padding: isHome ? 0 : '0 0.85rem',
+                height: 36,
+                padding: '0 0.85rem',
                 borderRadius: '100px',
                 fontFamily: 'var(--font-m)',
                 fontSize: '0.62rem',
@@ -144,13 +249,12 @@ export default function FloatNav() {
                 fontWeight: isActive ? 500 : 400,
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
-                color: isHome ? homeIconColor : isActive ? '#ffffff' : baseText,
+                color: isActive ? '#ffffff' : baseText,
                 transition: 'color 0.2s cubic-bezier(0.16,1,0.3,1)',
                 zIndex: 0,
-                background: isHome ? homeBg : undefined,
               }}
             >
-              {!isHome && isActive && (
+              {isActive && (
                 <motion.span
                   layoutId="float-active-pill"
                   style={{
@@ -164,7 +268,7 @@ export default function FloatNav() {
                 />
               )}
 
-              {!isHome && !isActive && isHovered && (
+              {!isActive && isHovered && (
                 <motion.span
                   layoutId="float-hover-bg"
                   initial={{ opacity: 0 }}
@@ -194,17 +298,6 @@ export default function FloatNav() {
                 {item.label}
               </span>
             </a>
-
-            {isHome && (
-              <span
-                style={{
-                  width: 1,
-                  height: 18,
-                  background: dividerColor,
-                  flexShrink: 0,
-                }}
-              />
-            )}
           </div>
         )
       })}
@@ -219,80 +312,51 @@ export default function FloatNav() {
         }}
       />
 
-      <button
-        onClick={toggle}
-        aria-label="Toggle theme"
+      <a
+        href="https://drive.google.com/file/d/1BA4IKjQMZAQbHeRM5nver6vW0qQF7s7Y/view"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Download Resume"
+        className="resume-nav-btn"
         style={{
-          width: 36,
           height: 36,
-          borderRadius: '50%',
+          borderRadius: '100px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: toggleBg,
-          border: 'none',
-          cursor: 'pointer',
+          gap: '0.4rem',
+          padding: '0 0.85rem',
           color: toggleColor,
-          transition: 'background 0.2s, transform 0.2s',
+          textDecoration: 'none',
           flexShrink: 0,
+          fontFamily: 'var(--font-m)',
+          fontSize: '0.62rem',
+          letterSpacing: '0.07em',
+          textTransform: 'uppercase',
+          position: 'relative',
+          overflow: 'hidden',
+          border: '1px solid rgba(249,115,22,0.25)',
+          background: toggleBg,
+          transition: 'background 0.2s, transform 0.2s',
         }}
         onMouseEnter={e => {
           e.currentTarget.style.background = toggleBgHover
-          e.currentTarget.style.transform = 'scale(1.1)'
+          e.currentTarget.style.transform = 'scale(1.05)'
         }}
         onMouseLeave={e => {
           e.currentTarget.style.background = toggleBg
           e.currentTarget.style.transform = 'scale(1)'
         }}
       >
-        <AnimatePresence mode="wait">
-          {isDark ? (
-            <motion.svg
-              key="sun"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <circle cx="12" cy="12" r="5" />
-              <line x1="12" y1="1" x2="12" y2="3" />
-              <line x1="12" y1="21" x2="12" y2="23" />
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-              <line x1="1" y1="12" x2="3" y2="12" />
-              <line x1="21" y1="12" x2="23" y2="12" />
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-            </motion.svg>
-          ) : (
-            <motion.svg
-              key="moon"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-            </motion.svg>
-          )}
-        </AnimatePresence>
-      </button>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Resume
+      </a>
+
+
     </nav>
   )
 }

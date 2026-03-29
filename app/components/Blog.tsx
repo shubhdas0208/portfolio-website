@@ -62,7 +62,7 @@ export default function Blog() {
   return (
     <>
       <section id="blog">
-        <div className="eyebrow">03 — Blogs</div>
+        <div className="eyebrow">04 — Blogs</div>
 
         <div className="fu" style={{ marginBottom: '3rem' }}>
           <h2 style={{

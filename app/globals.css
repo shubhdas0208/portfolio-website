@@ -445,3 +445,19 @@ section {
     border-radius: 18px;
   }
 }
+
+.resume-nav-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  background: linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.15) 50%, transparent 100%);
+  background-size: 200% auto;
+  animation: resume-shimmer 2.5s linear infinite;
+  pointer-events: none;
+}
+@keyframes resume-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+

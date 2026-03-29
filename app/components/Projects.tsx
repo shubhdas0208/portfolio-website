@@ -44,7 +44,7 @@ export default function Projects() {
   return (
     <>
       <section id="projects">
-        <div className="eyebrow">02 — Projects</div>
+        <div className="eyebrow">03 — Projects</div>
 
         <div className="fu" style={{ marginBottom: '2.5rem' }}>
           <h2 style={{

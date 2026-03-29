@@ -67,7 +67,7 @@ export default function About() {
 
   return (
     <section id="about">
-      <div className="eyebrow">04 — About</div>
+      <div className="eyebrow">02 — About</div>
 
       <div className="fu about-bento">
 
@@ -148,11 +148,28 @@ export default function About() {
               <span className="about-live-dot" />
               Currently reading
             </div>
-            <div style={{ display: 'flex', gap: 8, marginTop: '0.6rem', flex: 1 }}>
+            <div style={{
+              fontFamily: 'var(--font-m)',
+              fontSize: '0.55rem',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: 'var(--fg-dimmer)',
+              marginBottom: '0.4rem',
+              marginTop: '0.25rem',
+            }}>
+              Click to explore
+            </div>
+            <div style={{ display: 'flex', gap: 8, flex: 1 }}>
               {books.map((book, i) => (
                 <div
                   key={book.id}
                   onClick={() => setActiveBook(i)}
+                  onMouseEnter={e => {
+                    if (i !== activeBook) e.currentTarget.style.transform = 'translateY(-4px)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
                   style={{
                     flex: 1,
                     aspectRatio: '2/3',
@@ -161,7 +178,7 @@ export default function About() {
                     cursor: 'pointer',
                     border: activeBook === i ? '2px solid var(--accent)' : '1px solid var(--border)',
                     background: 'var(--bg-3)',
-                    transition: 'border-color 0.2s',
+                    transition: 'border-color 0.2s, transform 0.2s',
                   }}
                 >
                   {book.cover_url ? (
@@ -222,7 +239,7 @@ export default function About() {
         <div className="about-card" style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
           <div className="about-label"><span className="about-live-dot" />How I think</div>
           <p style={{ fontSize: '0.84rem', color: 'var(--fg-dim)', lineHeight: 1.68, margin: 0 }}>
-            Electronics taught me how systems fail. Finance taught me how incentives shape behavior. In AI products, model behavior is not a technical constraint — it is a design surface.
+            Electronics taught me how systems fail. Finance taught me how incentives shape behavior. In AI products, model behavior is not a technical constraint, it is a design surface.
           </p>
         </div>
 
@@ -238,7 +255,7 @@ export default function About() {
         <div className="about-card" style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
           <div className="about-label"><span className="about-live-dot" />Outside work</div>
           <p style={{ fontSize: '0.84rem', color: 'var(--fg-dim)', lineHeight: 1.68, margin: 0 }}>
-            Outside of work I train, read, and travel when I can. Currently working through history and mythology — a surprisingly good lens for why people and institutions behave the way they do.
+            Outside of work I train, read, and travel when I can. Currently working through history and mythology, a surprisingly good lens for why people and institutions behave the way they do.
           </p>
         </div>
 

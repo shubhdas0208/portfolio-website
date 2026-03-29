@@ -237,16 +237,6 @@ export default function Contact() {
         >
           {'\u00A9'} 2026 Shubh Sankalp Das - All rights reserved.
         </span>
-        <span
-          style={{
-            fontFamily: 'var(--font-m)',
-            fontSize: '0.59rem',
-            color: 'var(--fg-dimmer)',
-            letterSpacing: '0.1em',
-          }}
-        >
-          Next.js · Supabase · Vercel
-        </span>
       </footer>
 
       <style>{`
