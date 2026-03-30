@@ -83,7 +83,7 @@ export default function Blog() {
         {posts.length === 0 ? (
           <p style={{ fontSize: '0.88rem', color: 'var(--fg-dimmer)' }}>No posts published yet.</p>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1.25rem' }}>
+          <div className="blog-grid" style={{ display: 'grid', gap: '1.25rem' }}>
             {posts.map((post, i) => (
               <div
                 key={post.slug}
@@ -200,6 +200,19 @@ export default function Blog() {
         )}
 
         <style>{`
+          .blog-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+          @media (max-width: 900px) {
+            .blog-grid {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+          @media (max-width: 560px) {
+            .blog-grid {
+              grid-template-columns: 1fr;
+            }
+          }
           .blog-card:hover .blog-img { transform: scale(1.04); }
         `}</style>
       </section>

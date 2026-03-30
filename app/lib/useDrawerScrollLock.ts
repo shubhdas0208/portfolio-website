@@ -31,11 +31,25 @@ export function useDrawerScrollLock(
 
     scrollEl.focus({ preventScroll: true })
 
-    let lastTouchY: number | null = null
+    // --- Wheel (desktop): intercept and apply to drawer with smooth interpolation ---
+    let scrollVelocity = 0
+    let scrollRaf = 0
+
+    const applyMomentum = () => {
+      if (Math.abs(scrollVelocity) < 0.5) {
+        scrollVelocity = 0
+        scrollRaf = 0
+        return
+      }
+      scrollEl.scrollTop += scrollVelocity
+      scrollVelocity *= 0.92 // friction — decays smoothly
+      scrollRaf = requestAnimationFrame(applyMomentum)
+    }
 
     const handleWheel = (event: WheelEvent) => {
       event.preventDefault()
       event.stopPropagation()
+
       const delta =
         event.deltaMode === WheelEvent.DOM_DELTA_LINE
           ? event.deltaY * 16
@@ -43,28 +57,21 @@ export function useDrawerScrollLock(
             ? event.deltaY * scrollEl.clientHeight
             : event.deltaY
 
-      scrollEl.scrollBy({ top: delta, behavior: 'auto' })
-    }
+      scrollVelocity += delta * 0.4
 
-    const handleTouchStart = (event: TouchEvent) => {
-      lastTouchY = event.touches[0]?.clientY ?? null
-    }
-
-    const handleTouchMove = (event: TouchEvent) => {
-      const currentTouchY = event.touches[0]?.clientY
-      if (currentTouchY == null) return
-
-      if (lastTouchY == null) {
-        lastTouchY = currentTouchY
-        return
+      if (!scrollRaf) {
+        scrollRaf = requestAnimationFrame(applyMomentum)
       }
-
-      event.preventDefault()
-      event.stopPropagation()
-      scrollEl.scrollBy({ top: lastTouchY - currentTouchY, behavior: 'auto' })
-      lastTouchY = currentTouchY
     }
 
+    // --- Touch (mobile): let the browser handle it natively for momentum scrolling ---
+    const handleTouchMove = (event: TouchEvent) => {
+      // Only block touch scroll outside the drawer scroll area
+      if (scrollEl.contains(event.target as Node)) return
+      event.preventDefault()
+    }
+
+    // --- Keyboard ---
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null
       const tagName = target?.tagName
@@ -105,27 +112,18 @@ export function useDrawerScrollLock(
 
       event.preventDefault()
       event.stopPropagation()
-      scrollEl.scrollTo({ top: nextScrollTop, behavior: 'auto' })
-    }
-
-    const resetTouch = () => {
-      lastTouchY = null
+      scrollEl.scrollTo({ top: nextScrollTop, behavior: 'smooth' })
     }
 
     document.addEventListener('wheel', handleWheel, { passive: false, capture: true })
-    document.addEventListener('touchstart', handleTouchStart, { passive: true, capture: true })
     document.addEventListener('touchmove', handleTouchMove, { passive: false, capture: true })
     document.addEventListener('keydown', handleKeyDown, true)
-    document.addEventListener('touchend', resetTouch)
-    document.addEventListener('touchcancel', resetTouch)
 
     return () => {
+      if (scrollRaf) cancelAnimationFrame(scrollRaf)
       document.removeEventListener('wheel', handleWheel, true)
-      document.removeEventListener('touchstart', handleTouchStart, true)
       document.removeEventListener('touchmove', handleTouchMove, true)
       document.removeEventListener('keydown', handleKeyDown, true)
-      document.removeEventListener('touchend', resetTouch)
-      document.removeEventListener('touchcancel', resetTouch)
 
       html.style.overflow = prevHtmlOverflow
       html.style.overscrollBehavior = prevHtmlOverscroll

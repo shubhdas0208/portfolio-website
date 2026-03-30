@@ -297,56 +297,6 @@ export default function About() {
         Last updated <span style={{ color: 'var(--accent)' }}>{updatedAt}</span>
       </p>
 
-      <style>{`
-        .about-bento {
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr 1fr 1.5fr;
-          grid-template-rows: auto auto;
-          gap: 10px;
-          margin-top: 0.5rem;
-          align-items: stretch;
-        }
-        .about-card {
-          background: var(--bg-2);
-          border: 1px solid var(--border);
-          border-radius: 10px;
-          padding: 1rem 1.1rem;
-        }
-        .about-label {
-          font-family: var(--font-m);
-          font-size: 0.58rem;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          color: var(--accent);
-          margin-bottom: 0.4rem;
-          display: flex;
-          align-items: center;
-          gap: 5px;
-        }
-        .about-live-dot {
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: var(--accent);
-          display: inline-block;
-          animation: about-pulse 2s ease-in-out infinite;
-        }
-        @keyframes about-pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(0.85); }
-        }
-        @media (max-width: 1024px) {
-          .about-bento {
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: unset;
-          }
-        }
-        @media (max-width: 680px) {
-          .about-bento {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
     </section>
   )
 }

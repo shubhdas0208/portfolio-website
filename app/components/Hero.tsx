@@ -463,12 +463,15 @@ export default function Hero() {
 
         <div style={clipStyle('0.18s')}>
           <div
+            className="hero-meta-row"
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               marginBottom: '1rem',
               width: 'min(100%, 1240px)',
+              flexWrap: 'wrap',
+              gap: '0.75rem',
             }}
           >
             <div
@@ -595,6 +598,7 @@ export default function Hero() {
 
         <div style={clipStyle('0.36s')}>
           <div
+            className="hero-cta-row"
             style={{
               display: 'flex',
               alignItems: 'flex-start',
@@ -603,7 +607,7 @@ export default function Hero() {
               flexWrap: 'wrap',
             }}
           >
-            <div style={{ flex: 1, minWidth: 280 }}>
+            <div className="hero-cta-text" style={{ flex: 1, minWidth: 280 }}>
               <div
                 style={{
                   fontFamily: 'var(--font-d)',
@@ -696,6 +700,26 @@ export default function Hero() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 600px) {
+          #hero {
+            padding: 0 1.5rem 2.5rem !important;
+          }
+          .hero-meta-row {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 0.5rem !important;
+          }
+          .hero-cta-row {
+            flex-direction: column !important;
+            gap: 1.5rem !important;
+          }
+          .hero-cta-text {
+            min-width: 0 !important;
+          }
+        }
+      `}</style>
     </section>
   )
 }

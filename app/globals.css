@@ -407,9 +407,14 @@ section {
 
 /* ── Responsive ─────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
+  html, body {
+    overflow-x: hidden;
+  }
   section {
     padding: 4rem 1.5rem;
     padding-top: calc(var(--nav-h) + 0.3rem);
+    max-width: 100vw;
+    overflow-x: hidden;
   }
   #projects,
   #blog {
@@ -490,4 +495,63 @@ section {
 }
 .resume-gradient-glow { display: none; }
 .resume-gradient-line { display: none; }
+
+/* ── About bento ───────────────────────────────────────────────────── */
+.about-bento {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1.5fr;
+  grid-template-rows: auto auto;
+  gap: 10px;
+  margin-top: 0.5rem;
+  align-items: stretch;
+}
+.about-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+}
+.about-label {
+  font-family: var(--font-m);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.about-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+  animation: about-pulse 2s ease-in-out infinite;
+}
+@keyframes about-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+@media (max-width: 1024px) {
+  .about-bento {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: unset;
+  }
+  .about-bento > * {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+}
+@media (max-width: 680px) {
+  .about-bento {
+    grid-template-columns: 1fr;
+  }
+  .about-bento > * {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+}
+
 

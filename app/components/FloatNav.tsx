@@ -28,14 +28,24 @@ const NAV_ITEMS = [
   { id: 'about', label: 'About' },
   { id: 'projects', label: 'Projects' },
   { id: 'blog', label: 'Blogs' },
-  { id: 'experience', label: 'Work Exp' },
+  { id: 'experience', label: 'Work Exp', mobileLabel: 'Work' },
   { id: 'contact', label: 'Contact' },
 ]
+
+const MOBILE_BREAKPOINT = 640
 
 export default function FloatNav() {
   const [activeId, setActiveId] = useState('hero')
   const [hoverId, setHoverId] = useState<string | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
   const { theme, toggle } = useTheme()
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   useEffect(() => {
     let rafId = 0
@@ -80,15 +90,224 @@ export default function FloatNav() {
   const dividerColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,17,16,0.16)'
   const toggleBg = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(17,17,16,0.08)'
   const toggleBgHover = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(17,17,16,0.16)'
-const hoverPill = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(17,17,16,0.08)'
+  const hoverPill = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(17,17,16,0.08)'
   const homeIconColor = isDark ? '#ffffff' : 'rgba(17,17,16,0.85)'
   const homeBg = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(17,17,16,0.08)'
   const navShadow = isDark
     ? '0 0 0 1px rgba(255,255,255,0.08), 0 0 28px rgba(255,255,255,0.12), 0 10px 36px rgba(0,0,0,0.42)'
     : '0 6px 26px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08)'
 
+  const linkSize = isMobile ? 30 : 36
+  const linkPadding = isMobile ? '0 0.5rem' : '0 0.85rem'
+  const linkFont = isMobile ? '0.52rem' : '0.62rem'
+
+  const ThemeButton = (
+    <button
+      onClick={toggle}
+      aria-label="Toggle theme"
+      style={{
+        width: isMobile ? 30 : 36,
+        height: isMobile ? 30 : 36,
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: toggleBg,
+        border: 'none',
+        cursor: 'pointer',
+        color: isDark ? '#ffffff' : 'rgba(17,17,16,0.85)',
+        transition: 'background 0.2s, transform 0.2s',
+        flexShrink: 0,
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.background = toggleBgHover
+        e.currentTarget.style.transform = 'scale(1.1)'
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background = toggleBg
+        e.currentTarget.style.transform = 'scale(1)'
+      }}
+    >
+      <AnimatePresence mode="wait">
+        {isDark ? (
+          <motion.svg
+            key="sun"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={{ rotate: -90, opacity: 0 }}
+            animate={{ rotate: 0, opacity: 1 }}
+            exit={{ rotate: 90, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </motion.svg>
+        ) : (
+          <motion.svg
+            key="moon"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={{ rotate: 90, opacity: 0 }}
+            animate={{ rotate: 0, opacity: 1 }}
+            exit={{ rotate: -90, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </motion.svg>
+        )}
+      </AnimatePresence>
+    </button>
+  )
+
+  const ResumeLink = (
+    <a
+      href="https://drive.google.com/file/d/1BA4IKjQMZAQbHeRM5nver6vW0qQF7s7Y/view"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Download Resume"
+      className="resume-gradient-btn"
+      style={{
+        position: 'relative',
+        display: 'inline-block',
+        borderRadius: '100px',
+        padding: '2px',
+        background: 'transparent',
+        textDecoration: 'none',
+        flexShrink: 0,
+      }}
+    >
+      <span className="resume-gradient-glow" />
+      <div style={{
+        position: 'relative',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.4rem',
+        height: isMobile ? 26 : 32,
+        padding: isMobile ? '0 0.55rem' : '0 0.85rem',
+        borderRadius: '100px',
+        background: isDark ? 'rgba(17,17,16,0.95)' : 'rgba(245,245,244,0.95)',
+        fontFamily: 'var(--font-m)',
+        fontSize: isMobile ? '0.52rem' : '0.62rem',
+        letterSpacing: '0.07em',
+        textTransform: 'uppercase',
+        color: isDark ? '#ffffff' : 'rgba(17,17,16,0.85)',
+        whiteSpace: 'nowrap',
+      }}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Resume
+      </div>
+      <span className="resume-gradient-line" />
+    </a>
+  )
+
+  const NavLinks = NAV_ITEMS.slice(1).map(item => {
+    const isActive = activeId === item.id
+    const isHovered = hoverId === item.id
+
+    return (
+      <div key={item.id} style={{ display: 'flex', alignItems: 'center' }}>
+        <a
+          href={`#${item.id}`}
+          onMouseEnter={() => setHoverId(item.id)}
+          onMouseLeave={() => setHoverId(null)}
+          onClick={() => setActiveId(item.id)}
+          style={{
+            position: 'relative',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: linkSize,
+            padding: linkPadding,
+            borderRadius: '100px',
+            fontFamily: 'var(--font-m)',
+            fontSize: linkFont,
+            letterSpacing: '0.07em',
+            textTransform: 'uppercase',
+            fontWeight: isActive ? 500 : 400,
+            textDecoration: 'none',
+            whiteSpace: 'nowrap',
+            color: isActive ? '#ffffff' : baseText,
+            transition: 'color 0.2s cubic-bezier(0.16,1,0.3,1)',
+            zIndex: 0,
+          }}
+        >
+          {isActive && (
+            <motion.span
+              layoutId="float-active-pill"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '100px',
+                background: 'var(--accent)',
+                zIndex: -1,
+              }}
+              transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+            />
+          )}
+
+          {!isActive && isHovered && (
+            <motion.span
+              layoutId="float-hover-bg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '100px',
+                background: hoverPill,
+                zIndex: -1,
+              }}
+            />
+          )}
+
+          <span
+            style={{
+              position: 'relative',
+              zIndex: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              lineHeight: 0,
+            }}
+          >
+            {isMobile && 'mobileLabel' in item ? (item as { mobileLabel: string }).mobileLabel : item.label}
+          </span>
+        </a>
+      </div>
+    )
+  })
+
+  const Divider = <span style={{ width: 1, height: 18, background: dividerColor, flexShrink: 0 }} />
+
   return (
     <nav
+      className="float-nav-shell"
       style={{
         position: 'fixed',
         bottom: '1.75rem',
@@ -100,190 +319,48 @@ const hoverPill = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(17,17,16,0.08)'
         gap: '2px',
         background: navBg,
         borderRadius: '100px',
-        padding: '5px',
+        padding: isMobile ? '4px' : '5px',
         boxShadow: navShadow,
         backdropFilter: 'blur(14px)',
         border: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(17,17,16,0.08)',
         transition: 'background 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s',
+        maxWidth: isMobile ? 'calc(100vw - 1rem)' : undefined,
       }}
     >
-      {/* Home icon */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <a
-          href="#hero"
-          onMouseEnter={() => setHoverId('hero')}
-          onMouseLeave={() => setHoverId(null)}
-          onClick={() => setActiveId('hero')}
-          style={{
-            position: 'relative',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: 36,
-            width: 36,
-            minWidth: 36,
-            padding: 0,
-            borderRadius: '100px',
-            textDecoration: 'none',
-            color: homeIconColor,
-            zIndex: 0,
-            background: homeBg,
-          }}
-        >
-          <span
-            style={{
-              position: 'relative',
-              zIndex: 1,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              lineHeight: 0,
-            }}
-          >
-            {NAV_ITEMS[0].label}
-          </span>
-        </a>
-        <button
-          onClick={toggle}
-          aria-label="Toggle theme"
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: toggleBg,
-            border: 'none',
-            cursor: 'pointer',
-            color: isDark ? '#ffffff' : 'rgba(17,17,16,0.85)',
-            transition: 'background 0.2s, transform 0.2s',
-            flexShrink: 0,
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = toggleBgHover
-            e.currentTarget.style.transform = 'scale(1.1)'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = toggleBg
-            e.currentTarget.style.transform = 'scale(1)'
-          }}
-        >
-          <AnimatePresence mode="wait">
-            {isDark ? (
-              <motion.svg
-                key="sun"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </motion.svg>
-            ) : (
-              <motion.svg
-                key="moon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                initial={{ rotate: 90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: -90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-              </motion.svg>
-            )}
-          </AnimatePresence>
-        </button>
-
-        <span style={{ width: 1, height: 18, background: dividerColor, flexShrink: 0 }} />
-      </div>
-
-      {/* Nav links */}
-      {NAV_ITEMS.slice(1).map(item => {
-        const isActive = activeId === item.id
-        const isHovered = hoverId === item.id
-
-        return (
-          <div key={item.id} style={{ display: 'flex', alignItems: 'center' }}>
+      {isMobile ? (
+        <>
+          {/* Mobile: Resume | divider | nav links | divider | theme toggle */}
+          {ResumeLink}
+          {Divider}
+          {NavLinks}
+          {Divider}
+          {ThemeButton}
+        </>
+      ) : (
+        <>
+          {/* Desktop: Home + Theme + divider | nav links | divider | Resume */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <a
-              href={`#${item.id}`}
-              onMouseEnter={() => setHoverId(item.id)}
+              href="#hero"
+              onMouseEnter={() => setHoverId('hero')}
               onMouseLeave={() => setHoverId(null)}
-              onClick={() => setActiveId(item.id)}
+              onClick={() => setActiveId('hero')}
               style={{
                 position: 'relative',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: 36,
-                padding: '0 0.85rem',
+                width: 36,
+                minWidth: 36,
+                padding: 0,
                 borderRadius: '100px',
-                fontFamily: 'var(--font-m)',
-                fontSize: '0.62rem',
-                letterSpacing: '0.07em',
-                textTransform: 'uppercase',
-                fontWeight: isActive ? 500 : 400,
                 textDecoration: 'none',
-                whiteSpace: 'nowrap',
-                color: isActive ? '#ffffff' : baseText,
-                transition: 'color 0.2s cubic-bezier(0.16,1,0.3,1)',
+                color: homeIconColor,
                 zIndex: 0,
+                background: homeBg,
               }}
             >
-              {isActive && (
-                <motion.span
-                  layoutId="float-active-pill"
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '100px',
-                    background: 'var(--accent)',
-                    zIndex: -1,
-                  }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                />
-              )}
-
-              {!isActive && isHovered && (
-                <motion.span
-                  layoutId="float-hover-bg"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '100px',
-                    background: hoverPill,
-                    zIndex: -1,
-                  }}
-                />
-              )}
-
               <span
                 style={{
                   position: 'relative',
@@ -294,68 +371,28 @@ const hoverPill = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(17,17,16,0.08)'
                   lineHeight: 0,
                 }}
               >
-                {item.label}
+                {NAV_ITEMS[0].label}
               </span>
             </a>
+            {ThemeButton}
+            {Divider}
           </div>
-        )
-      })}
 
-      <span
-        style={{
-          width: 1,
-          height: 18,
-          background: dividerColor,
-          margin: '0 4px',
-          flexShrink: 0,
-        }}
-      />
+          {NavLinks}
 
-      <a
-        href="https://drive.google.com/file/d/1BA4IKjQMZAQbHeRM5nver6vW0qQF7s7Y/view"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Download Resume"
-        className="resume-gradient-btn"
-        style={{
-          position: 'relative',
-          display: 'inline-block',
-          borderRadius: '100px',
-          padding: '2px',
-          background: 'transparent',
-          textDecoration: 'none',
-          flexShrink: 0,
-        }}
-      >
-        <span className="resume-gradient-glow" />
-        <div style={{
-          position: 'relative',
-          zIndex: 10,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.4rem',
-          height: 32,
-          padding: '0 0.85rem',
-          borderRadius: '100px',
-          background: isDark ? 'rgba(17,17,16,0.95)' : 'rgba(245,245,244,0.95)',
-          fontFamily: 'var(--font-m)',
-          fontSize: '0.62rem',
-          letterSpacing: '0.07em',
-          textTransform: 'uppercase',
-          color: isDark ? '#ffffff' : 'rgba(17,17,16,0.85)',
-          whiteSpace: 'nowrap',
-        }}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          Resume
-        </div>
-        <span className="resume-gradient-line" />
-      </a>
+          <span
+            style={{
+              width: 1,
+              height: 18,
+              background: dividerColor,
+              margin: '0 4px',
+              flexShrink: 0,
+            }}
+          />
 
-
+          {ResumeLink}
+        </>
+      )}
     </nav>
   )
 }

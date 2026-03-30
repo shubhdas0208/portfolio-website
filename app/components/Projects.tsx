@@ -61,9 +61,8 @@ export default function Projects() {
         {projects.length === 0 ? (
           <p style={{ fontSize: '0.88rem', color: 'var(--fg-dimmer)' }}>No projects published yet.</p>
         ) : (
-          <div className="fu s1" style={{
+          <div className="fu s1 projects-grid" style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
             gap: 16,
           }}>
             {projects.map((project) => (
@@ -196,6 +195,22 @@ export default function Projects() {
       </section>
 
       <ProjectDrawer project={active} onClose={() => setActive(null)} />
+
+      <style>{`
+        .projects-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        @media (max-width: 900px) {
+          .projects-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 560px) {
+          .projects-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
     </>
   )
 }
