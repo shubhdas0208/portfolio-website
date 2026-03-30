@@ -347,10 +347,12 @@ section {
   z-index: 1;
   flex: 1;
   min-height: 0;
+  height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .detail-drawer-media-shell {
