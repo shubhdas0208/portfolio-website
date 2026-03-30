@@ -648,7 +648,7 @@ export default function Hero() {
               </p>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', flexShrink: 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', flexShrink: 0, minWidth: 200 }}>
               <a
                 href="https://drive.google.com/file/d/1BA4IKjQMZAQbHeRM5nver6vW0qQF7s7Y/view"
                 target="_blank"
@@ -656,6 +656,7 @@ export default function Hero() {
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '0.45rem',
                   fontFamily: 'var(--font-m)',
                   fontSize: '0.69rem',
@@ -667,6 +668,7 @@ export default function Hero() {
                   padding: '0.78rem 1.4rem',
                   borderRadius: 'var(--r)',
                   transition: 'background 0.25s cubic-bezier(0.16,1,0.3,1)',
+                  width: '100%',
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.background = 'var(--accent-dark)'
@@ -675,13 +677,19 @@ export default function Hero() {
                   e.currentTarget.style.background = 'var(--accent)'
                 }}
               >
-                Download CV ↗
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download Resume
               </a>
               <a
-                href="#projects"
+                href="#experience"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '0.45rem',
                   fontFamily: 'var(--font-m)',
                   fontSize: '0.69rem',
@@ -692,6 +700,7 @@ export default function Hero() {
                   border: '1px solid var(--border-2)',
                   padding: '0.78rem 1.4rem',
                   borderRadius: 'var(--r)',
+                  width: '100%',
                 }}
               >
                 See my work ↓

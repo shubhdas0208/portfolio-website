@@ -97,7 +97,7 @@ export default function Contact() {
 
             <div className="fu s2" style={{ display: 'flex', gap: '1.1rem', flexWrap: 'wrap' }}>
               {[
-                { label: 'Email ->', href: 'mailto:shubhsankalp@gmail.com' },
+                { label: 'Email ->', href: 'mailto:dasshriyans2802@gmail.com' },
                 { label: 'LinkedIn ->', href: 'https://www.linkedin.com/in/shubhsankalpdas/' },
                 { label: 'GitHub ->', href: 'https://github.com/shubhdas0208' },
               ].map(link => (
@@ -106,6 +106,7 @@ export default function Contact() {
                   href={link.href}
                   target={link.href.startsWith('http') ? '_blank' : undefined}
                   rel={link.href.startsWith('http') ? 'noreferrer' : undefined}
+                  onClick={link.href.startsWith('mailto:') ? (e) => { e.preventDefault(); window.location.href = link.href } : undefined}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',

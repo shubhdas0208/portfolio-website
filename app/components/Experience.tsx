@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const EXP = [
   {
@@ -47,10 +47,29 @@ const EXP = [
 ]
 
 export default function Experience() {
+  const timelineRef = useRef<HTMLDivElement>(null)
+  const [fillHeight, setFillHeight] = useState(0)
+
   useEffect(() => {
     const obs = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target) } }) }, { threshold: 0.07 })
     document.querySelectorAll('#experience .fu').forEach(el => obs.observe(el))
     return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!timelineRef.current) return
+      const rect = timelineRef.current.getBoundingClientRect()
+      const totalHeight = timelineRef.current.scrollHeight
+      const viewportMid = window.innerHeight * 0.6
+      const scrolled = viewportMid - rect.top
+      const pct = Math.max(0, Math.min(1, scrolled / totalHeight))
+      setFillHeight(pct * 100)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   return (
@@ -59,20 +78,20 @@ export default function Experience() {
       <div className="fu">
         <h2 className="sec-title">Where I&apos;ve<br /><em>worked.</em></h2>
       </div>
-      <a 
+      <a
         href="https://drive.google.com/file/d/1BA4IKjQMZAQbHeRM5nver6vW0qQF7s7Y/view?usp=sharing"
         target="_blank"
         rel="noopener noreferrer"
-        className="fu s1" 
+        className="fu s1"
         style={{
-          display: 'inline-flex', 
-          alignItems: 'center', 
+          display: 'inline-flex',
+          alignItems: 'center',
           gap: '0.6rem',
           padding: '0.65rem 1.2rem',
-          fontFamily: 'var(--font-m)', 
-          fontSize: '0.7rem', 
+          fontFamily: 'var(--font-m)',
+          fontSize: '0.7rem',
           letterSpacing: '0.08em',
-          textTransform: 'uppercase', 
+          textTransform: 'uppercase',
           color: 'var(--bg)',
           backgroundColor: 'var(--accent)',
           border: 'none',
@@ -94,66 +113,213 @@ export default function Experience() {
       >
         Download resume ↗
       </a>
-      <div className="fu s2" style={{ borderLeft: '1px solid var(--border-2)', paddingLeft: '2.5rem', marginLeft: '0.5rem' }}>
+      <div ref={timelineRef} className="fu s2 exp-timeline">
         {EXP.map((exp, i) => (
-          <div key={i} style={{ position: 'relative', paddingBottom: '3.5rem' }}>
-            {/* Timeline dot — scaled up to stay proportional with large titles */}
-            <div style={{
-              position: 'absolute', left: '-2.75rem', top: '0.6rem',
-              width: 10, height: 10, borderRadius: '50%',
-              background: 'var(--fg-dimmer)', border: '2px solid var(--bg)',
-            }} />
+          <div key={i} className="exp-entry">
+            <div className="exp-content">
+              {/* Dates */}
+              <div style={{
+                fontFamily: 'var(--font-m)', fontSize: '0.6rem',
+                color: 'var(--fg-dimmer)', letterSpacing: '0.08em', marginBottom: '0.4rem',
+              }}>
+                {exp.dates}
+              </div>
 
-            {/* Dates */}
-            <div style={{
-              fontFamily: 'var(--font-m)', fontSize: '0.6rem',
-              color: 'var(--fg-dimmer)', letterSpacing: '0.08em', marginBottom: '0.4rem',
-            }}>
-              {exp.dates}
+              {/* Role with dot aligned to it */}
+              <div className="exp-role-row">
+                <div className="exp-dot-wrap">
+                  <div className="exp-dot" />
+                  <div className="exp-dot-ring" />
+                </div>
+                <div className="exp-role">
+                  {exp.role}
+                </div>
+              </div>
+
+              {/* Company */}
+              <div style={{
+                fontSize: '0.83rem',
+                color: 'var(--accent)',
+                fontWeight: 400,
+                fontFamily: 'var(--font-m)',
+                letterSpacing: '0.04em',
+                marginBottom: '1.1rem',
+                opacity: 0.85,
+              }}>
+                {exp.company}
+              </div>
+
+              {/* Bullets */}
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
+                {exp.bullets.map((b, j) => (
+                  <li key={j} style={{
+                    fontSize: '0.86rem', fontWeight: 400,
+                    color: 'var(--fg-dim)', lineHeight: 1.65,
+                    paddingLeft: '1.1rem', position: 'relative',
+                  }}>
+                    <span style={{ position: 'absolute', left: 0, color: 'var(--fg-dimmer)', fontSize: '0.75rem' }}>—</span>
+                    <strong style={{ color: 'var(--fg)', fontWeight: 500 }}>{b.bold}</strong>{b.rest}
+                  </li>
+                ))}
+              </ul>
             </div>
-
-            {/* Role — editorial scale, Clash Display headline */}
-            <div style={{
-              fontFamily: 'var(--font-d)',
-              fontSize: 'clamp(1.9rem, 3.5vw, 3.2rem)',
-              fontWeight: 700,
-              letterSpacing: '-0.03em',
-              lineHeight: 1.0,
-              color: 'var(--fg)',
-              marginBottom: '0.45rem',
-            }}>
-              {exp.role}
-            </div>
-
-            {/* Company — accent color, small, three-tier hierarchy */}
-            <div style={{
-              fontSize: '0.83rem',
-              color: 'var(--accent)',
-              fontWeight: 400,
-              fontFamily: 'var(--font-m)',
-              letterSpacing: '0.04em',
-              marginBottom: '1.1rem',
-              opacity: 0.85,
-            }}>
-              {exp.company}
-            </div>
-
-            {/* Bullets */}
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.42rem' }}>
-              {exp.bullets.map((b, j) => (
-                <li key={j} style={{
-                  fontSize: '0.86rem', fontWeight: 400,
-                  color: 'var(--fg-dim)', lineHeight: 1.65,
-                  paddingLeft: '1.1rem', position: 'relative',
-                }}>
-                  <span style={{ position: 'absolute', left: 0, color: 'var(--fg-dimmer)', fontSize: '0.75rem' }}>—</span>
-                  <strong style={{ color: 'var(--fg)', fontWeight: 500 }}>{b.bold}</strong>{b.rest}
-                </li>
-              ))}
-            </ul>
           </div>
         ))}
+
+        {/* Timeline track (background) */}
+        <div className="exp-track" />
+        {/* Timeline track (accent fill, animated) */}
+        <div className="exp-track-fill" style={{ height: `${fillHeight}%` }} />
       </div>
+
+      <style>{`
+        .exp-timeline {
+          position: relative;
+          padding-left: 3rem;
+          margin-left: 0.5rem;
+        }
+
+        .exp-track {
+          position: absolute;
+          left: 5px;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          background: var(--border-2);
+          border-radius: 2px;
+          z-index: 0;
+        }
+
+        .exp-track-fill {
+          position: absolute;
+          left: 5px;
+          top: 0;
+          width: 2px;
+          background: var(--accent);
+          border-radius: 2px;
+          z-index: 1;
+          transition: height 0.3s ease-out;
+        }
+
+        .exp-entry {
+          position: relative;
+          display: flex;
+          gap: 0;
+          padding-bottom: 3.5rem;
+        }
+
+        .exp-entry:last-child {
+          padding-bottom: 0;
+        }
+
+        .exp-role-row {
+          display: flex;
+          align-items: center;
+          position: relative;
+        }
+
+        .exp-dot-wrap {
+          position: absolute;
+          left: -3rem;
+          width: 12px;
+          height: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 2;
+        }
+
+        .exp-dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: var(--accent);
+          border: 2.5px solid var(--bg);
+          box-shadow: 0 0 0 2px var(--accent);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+          z-index: 2;
+        }
+
+        .exp-dot-ring {
+          position: absolute;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 1.5px solid var(--accent);
+          opacity: 0;
+          animation: exp-ring-pulse 3s ease-in-out infinite;
+          z-index: 1;
+        }
+
+        .exp-entry:first-child .exp-dot-ring {
+          opacity: 1;
+        }
+
+        .exp-entry:hover .exp-dot {
+          transform: scale(1.3);
+          box-shadow: 0 0 0 3px var(--accent), 0 0 12px rgba(255, 107, 0, 0.3);
+        }
+
+        .exp-content {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .exp-role {
+          font-family: var(--font-d);
+          font-size: clamp(1.9rem, 3.5vw, 3.2rem);
+          font-weight: 700;
+          letter-spacing: -0.03em;
+          line-height: 1.0;
+          color: var(--fg);
+          margin-bottom: 0.45rem;
+        }
+
+        @keyframes exp-ring-pulse {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.5;
+          }
+          50% {
+            transform: scale(1.6);
+            opacity: 0;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .exp-timeline {
+            padding-left: 2rem;
+            margin-left: 0.25rem;
+          }
+
+          .exp-track,
+          .exp-track-fill {
+            left: 4px;
+          }
+
+          .exp-dot-wrap {
+            left: -2rem;
+            width: 10px;
+            height: 10px;
+          }
+
+          .exp-role {
+            font-size: clamp(1.5rem, 6vw, 2rem);
+            margin-bottom: 0.35rem;
+          }
+
+          .exp-dot {
+            width: 10px;
+            height: 10px;
+            border-width: 2px;
+          }
+
+          .exp-dot-ring {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      `}</style>
     </section>
   )
 }

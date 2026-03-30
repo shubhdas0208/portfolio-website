@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { ThemeProvider } from './lib/ThemeContext'
+import LoadingSpinner from './components/LoadingSpinner'
 
 export const metadata: Metadata = {
   title: 'Shubh Sankalp Das — AI PM',
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <ThemeProvider>
+          <LoadingSpinner />
           {children}
         </ThemeProvider>
       </body>
