@@ -101,8 +101,8 @@ export function useDrawerScrollLock(
       // Track velocity for momentum on release
       touchVelocity = deltaY / dt * 16 // normalize to ~60fps frame
 
-      // Apply scroll directly for responsive feel
-      scrollEl.scrollTop += deltaY
+      // Apply scroll directly — amplified for mobile responsiveness
+      scrollEl.scrollTop += deltaY * 1.8
 
       lastTouchY = currentY
       lastTouchTime = now
@@ -113,7 +113,7 @@ export function useDrawerScrollLock(
 
       // Apply momentum from touch velocity
       if (Math.abs(touchVelocity) > 1) {
-        addVelocity(touchVelocity * 0.6)
+        addVelocity(touchVelocity * 1.4)
       }
       touchVelocity = 0
     }
