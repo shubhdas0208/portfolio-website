@@ -362,9 +362,12 @@ export default function Hero() {
     import('lenis')
       .then(({ default: Lenis }) => {
         lenis = new Lenis({
-          duration: 1.2,
+          duration: 2.0,
           easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           smoothWheel: true,
+          wheelMultiplier: 0.55,
+          touchMultiplier: 1.2,
+          lerp: 0.07,
         })
 
         const raf = (time: number) => {

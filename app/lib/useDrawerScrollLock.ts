@@ -44,7 +44,7 @@ export function useDrawerScrollLock(
         return
       }
       scrollEl.scrollTop += velocity
-      velocity *= 0.95
+      velocity *= 0.88
       raf = requestAnimationFrame(applyMomentum)
     }
 
@@ -67,7 +67,7 @@ export function useDrawerScrollLock(
             ? event.deltaY * scrollEl.clientHeight
             : event.deltaY
 
-      addVelocity(delta * 0.4)
+      addVelocity(delta * 0.22)
     }
 
     // --- Touch (mobile) ---
