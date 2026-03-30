@@ -264,6 +264,7 @@ section {
   backdrop-filter: blur(8px) saturate(110%);
   z-index: 200;
   transition: opacity 0.3s var(--ease);
+  touch-action: none;
 }
 
 .detail-drawer-panel {

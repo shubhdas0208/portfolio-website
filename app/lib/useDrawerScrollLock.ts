@@ -42,7 +42,7 @@ export function useDrawerScrollLock(
         return
       }
       scrollEl.scrollTop += scrollVelocity
-      scrollVelocity *= 0.92 // friction — decays smoothly
+      scrollVelocity *= 0.92
       scrollRaf = requestAnimationFrame(applyMomentum)
     }
 
@@ -62,13 +62,6 @@ export function useDrawerScrollLock(
       if (!scrollRaf) {
         scrollRaf = requestAnimationFrame(applyMomentum)
       }
-    }
-
-    // --- Touch (mobile): let the browser handle it natively for momentum scrolling ---
-    const handleTouchMove = (event: TouchEvent) => {
-      // Only block touch scroll outside the drawer scroll area
-      if (scrollEl.contains(event.target as Node)) return
-      event.preventDefault()
     }
 
     // --- Keyboard ---
@@ -115,14 +108,17 @@ export function useDrawerScrollLock(
       scrollEl.scrollTo({ top: nextScrollTop, behavior: 'smooth' })
     }
 
+    // No touchmove listener — mobile scroll is handled purely by CSS:
+    // body overflow:hidden blocks background, overscroll-behavior:contain
+    // on .detail-drawer-scroll traps scroll inside the drawer, and the
+    // browser handles native momentum scrolling.
+
     document.addEventListener('wheel', handleWheel, { passive: false, capture: true })
-    document.addEventListener('touchmove', handleTouchMove, { passive: false, capture: true })
     document.addEventListener('keydown', handleKeyDown, true)
 
     return () => {
       if (scrollRaf) cancelAnimationFrame(scrollRaf)
       document.removeEventListener('wheel', handleWheel, true)
-      document.removeEventListener('touchmove', handleTouchMove, true)
       document.removeEventListener('keydown', handleKeyDown, true)
 
       html.style.overflow = prevHtmlOverflow
