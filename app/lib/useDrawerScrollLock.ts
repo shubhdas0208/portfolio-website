@@ -16,8 +16,7 @@ export function useDrawerScrollLock(
     const body = document.body
     const scrollbarGap = window.innerWidth - document.documentElement.clientWidth
 
-    // Save current scroll position and lock body with position:fixed
-    // This is the only reliable way to prevent background scroll on iOS Safari
+    // Lock background: position:fixed preserves scroll position
     const scrollY = window.scrollY
     const prevPosition = body.style.position
     const prevTop = body.style.top
@@ -34,21 +33,29 @@ export function useDrawerScrollLock(
     window.dispatchEvent(new CustomEvent('drawer-scroll-lock', { detail: { locked: true } }))
     scrollEl.focus({ preventScroll: true })
 
-    // --- Wheel (desktop): intercept and apply to drawer with momentum ---
-    let scrollVelocity = 0
-    let scrollRaf = 0
+    // --- Shared momentum engine ---
+    let velocity = 0
+    let raf = 0
 
     const applyMomentum = () => {
-      if (Math.abs(scrollVelocity) < 0.5) {
-        scrollVelocity = 0
-        scrollRaf = 0
+      if (Math.abs(velocity) < 0.5) {
+        velocity = 0
+        raf = 0
         return
       }
-      scrollEl.scrollTop += scrollVelocity
-      scrollVelocity *= 0.92
-      scrollRaf = requestAnimationFrame(applyMomentum)
+      scrollEl.scrollTop += velocity
+      velocity *= 0.95
+      raf = requestAnimationFrame(applyMomentum)
     }
 
+    const addVelocity = (delta: number) => {
+      velocity += delta
+      if (!raf) {
+        raf = requestAnimationFrame(applyMomentum)
+      }
+    }
+
+    // --- Wheel (desktop) ---
     const handleWheel = (event: WheelEvent) => {
       event.preventDefault()
       event.stopPropagation()
@@ -60,11 +67,55 @@ export function useDrawerScrollLock(
             ? event.deltaY * scrollEl.clientHeight
             : event.deltaY
 
-      scrollVelocity += delta * 0.4
+      addVelocity(delta * 0.4)
+    }
 
-      if (!scrollRaf) {
-        scrollRaf = requestAnimationFrame(applyMomentum)
+    // --- Touch (mobile) ---
+    let lastTouchY: number | null = null
+    let lastTouchTime = 0
+    let touchVelocity = 0
+
+    const handleTouchStart = (event: TouchEvent) => {
+      // Stop any ongoing momentum
+      velocity = 0
+
+      const touch = event.touches[0]
+      if (!touch) return
+      lastTouchY = touch.clientY
+      lastTouchTime = Date.now()
+      touchVelocity = 0
+    }
+
+    const handleTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0]
+      if (!touch || lastTouchY === null) return
+
+      // Always prevent default to stop background scroll
+      event.preventDefault()
+
+      const currentY = touch.clientY
+      const deltaY = lastTouchY - currentY
+      const now = Date.now()
+      const dt = Math.max(now - lastTouchTime, 1)
+
+      // Track velocity for momentum on release
+      touchVelocity = deltaY / dt * 16 // normalize to ~60fps frame
+
+      // Apply scroll directly for responsive feel
+      scrollEl.scrollTop += deltaY
+
+      lastTouchY = currentY
+      lastTouchTime = now
+    }
+
+    const handleTouchEnd = () => {
+      lastTouchY = null
+
+      // Apply momentum from touch velocity
+      if (Math.abs(touchVelocity) > 1) {
+        addVelocity(touchVelocity * 0.6)
       }
+      touchVelocity = 0
     }
 
     // --- Keyboard ---
@@ -112,14 +163,21 @@ export function useDrawerScrollLock(
     }
 
     document.addEventListener('wheel', handleWheel, { passive: false, capture: true })
+    document.addEventListener('touchstart', handleTouchStart, { passive: true, capture: true })
+    document.addEventListener('touchmove', handleTouchMove, { passive: false, capture: true })
+    document.addEventListener('touchend', handleTouchEnd, { passive: true })
+    document.addEventListener('touchcancel', handleTouchEnd, { passive: true })
     document.addEventListener('keydown', handleKeyDown, true)
 
     return () => {
-      if (scrollRaf) cancelAnimationFrame(scrollRaf)
+      if (raf) cancelAnimationFrame(raf)
       document.removeEventListener('wheel', handleWheel, true)
+      document.removeEventListener('touchstart', handleTouchStart, true)
+      document.removeEventListener('touchmove', handleTouchMove, true)
+      document.removeEventListener('touchend', handleTouchEnd)
+      document.removeEventListener('touchcancel', handleTouchEnd)
       document.removeEventListener('keydown', handleKeyDown, true)
 
-      // Restore body and scroll position
       body.style.position = prevPosition
       body.style.top = prevTop
       body.style.width = prevWidth
