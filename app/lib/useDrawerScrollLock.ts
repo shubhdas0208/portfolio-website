@@ -13,25 +13,28 @@ export function useDrawerScrollLock(
     const scrollEl = scrollRef.current
     if (!scrollEl) return
 
-    const html = document.documentElement
     const body = document.body
-    const prevHtmlOverflow = html.style.overflow
-    const prevHtmlOverscroll = html.style.overscrollBehavior
-    const prevBodyOverflow = body.style.overflow
-    const prevBodyOverscroll = body.style.overscrollBehavior
-    const prevBodyPaddingRight = body.style.paddingRight
-    const scrollbarGap = window.innerWidth - html.clientWidth
+    const scrollbarGap = window.innerWidth - document.documentElement.clientWidth
 
-    html.style.overflow = 'hidden'
-    html.style.overscrollBehavior = 'none'
+    // Save current scroll position and lock body with position:fixed
+    // This is the only reliable way to prevent background scroll on iOS Safari
+    const scrollY = window.scrollY
+    const prevPosition = body.style.position
+    const prevTop = body.style.top
+    const prevWidth = body.style.width
+    const prevOverflow = body.style.overflow
+    const prevPaddingRight = body.style.paddingRight
+
+    body.style.position = 'fixed'
+    body.style.top = `-${scrollY}px`
+    body.style.width = '100%'
     body.style.overflow = 'hidden'
-    body.style.overscrollBehavior = 'none'
     if (scrollbarGap > 0) body.style.paddingRight = `${scrollbarGap}px`
-    window.dispatchEvent(new CustomEvent('drawer-scroll-lock', { detail: { locked: true } }))
 
+    window.dispatchEvent(new CustomEvent('drawer-scroll-lock', { detail: { locked: true } }))
     scrollEl.focus({ preventScroll: true })
 
-    // --- Wheel (desktop): intercept and apply to drawer with smooth interpolation ---
+    // --- Wheel (desktop): intercept and apply to drawer with momentum ---
     let scrollVelocity = 0
     let scrollRaf = 0
 
@@ -108,11 +111,6 @@ export function useDrawerScrollLock(
       scrollEl.scrollTo({ top: nextScrollTop, behavior: 'smooth' })
     }
 
-    // No touchmove listener — mobile scroll is handled purely by CSS:
-    // body overflow:hidden blocks background, overscroll-behavior:contain
-    // on .detail-drawer-scroll traps scroll inside the drawer, and the
-    // browser handles native momentum scrolling.
-
     document.addEventListener('wheel', handleWheel, { passive: false, capture: true })
     document.addEventListener('keydown', handleKeyDown, true)
 
@@ -121,11 +119,14 @@ export function useDrawerScrollLock(
       document.removeEventListener('wheel', handleWheel, true)
       document.removeEventListener('keydown', handleKeyDown, true)
 
-      html.style.overflow = prevHtmlOverflow
-      html.style.overscrollBehavior = prevHtmlOverscroll
-      body.style.overflow = prevBodyOverflow
-      body.style.overscrollBehavior = prevBodyOverscroll
-      body.style.paddingRight = prevBodyPaddingRight
+      // Restore body and scroll position
+      body.style.position = prevPosition
+      body.style.top = prevTop
+      body.style.width = prevWidth
+      body.style.overflow = prevOverflow
+      body.style.paddingRight = prevPaddingRight
+      window.scrollTo(0, scrollY)
+
       window.dispatchEvent(new CustomEvent('drawer-scroll-lock', { detail: { locked: false } }))
     }
   }, [isOpen, scrollRef])
