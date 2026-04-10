@@ -217,7 +217,7 @@ export default function About() {
           {/* GitHub */}
           <div className="about-card">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <div className="about-label" style={{ margin: 0 }}>GitHub — 30 days</div>
+              <div className="about-label" style={{ margin: 0 }}>GitHub — 60 days</div>
               <a
                 href="https://github.com/shubhdas0208"
                 target="_blank"
