@@ -2,7 +2,7 @@
 
 AI Product Manager. I build at the intersection of LLM infrastructure and the consumer experiences that sit on top of it.
 
-This repo is the source for my personal site — **[shubhdas.com](https://shubhdas.com)** — where I keep my case studies, writing, and what I'm working on right now.
+This repo is the source for my personal site — **[portfolio-website-shubh-das.vercel.app](https://portfolio-website-shubh-das.vercel.app/)** — where I keep my case studies, writing, and what I'm working on right now.
 
 ## What I'm doing
 
@@ -26,7 +26,7 @@ For technical choices I force the lenses every time: build vs buy vs integrate, 
 
 - **Email** — [dasshriyans2802@gmail.com](mailto:dasshriyans2802@gmail.com)
 - **GitHub** — [@shubhdas0208](https://github.com/shubhdas0208)
-- **Site** — [shubhdas.com](https://shubhdas.com)
+- **Site** — [portfolio-website-shubh-das.vercel.app](https://portfolio-website-shubh-das.vercel.app/)
 
 The contact form on the site routes to my inbox via Resend.
 
