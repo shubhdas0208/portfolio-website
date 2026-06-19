@@ -4,24 +4,6 @@ AI Product Manager. I build at the intersection of LLM infrastructure and the co
 
 This repo is the source for my personal site — **[portfolio-website-shubh-das.vercel.app](https://portfolio-website-shubh-das.vercel.app/)** — where I keep my case studies, writing, and what I'm working on right now.
 
-## What I'm doing
-
-Joining **Dezerv** (wealthtech, Mumbai) as a Product Manager in **June 2026**, working on AI-driven product surfaces for Indian investors.
-
-Until then I'm sharpening the muscles that role asks for: AI pipeline automation, LLM evaluation, agentic workflows, and turning research-grade models into shippable consumer features.
-
-## What I'm building
-
-- **[YC Library](https://yc-report-web.vercel.app)** — a personal reading workspace that ingests every new YC batch, generates an opinionated deep-dive per startup, and lets me highlight, bookmark, and revisit them. Daily habit + my own evaluation set for AI synthesis pipelines.
-- **This portfolio** — Next.js, custom WebGL shader hero, Supabase-backed blog, Resend contact, GitHub contribution heatmap. The case studies are the point; the rest is the frame.
-- **Writing** — short posts on AI infra, product taste, and the gap between "demo-able" and "useable" in LLM products. Posted to the blog tab.
-
-## How I think about product
-
-I default to: **Problem → User → Metric → MVP → Risk.** Specific users, outcome-tied metrics, the smallest end-to-end loop that proves the riskiest assumption, then complexity only where it broke under real load.
-
-For technical choices I force the lenses every time: build vs buy vs integrate, latency / cost / accuracy tradeoffs, feedback-loop and data-flywheel design, and LLM limits as product constraints (context window, hallucination modes, prompt brittleness). The goal is senior AI PM fluency that holds up in a conversation with a staff ML engineer.
-
 ## Reach me
 
 - **Email** — [dasshriyans2802@gmail.com](mailto:dasshriyans2802@gmail.com)
