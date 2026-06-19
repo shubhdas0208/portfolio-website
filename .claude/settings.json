@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(npm install:*)",
-      "Bash(\"c:\\\\Users\\\\SHUBH SANKALP DAS\\\\Desktop\\\\Building\\\\portfolio-website\\\\app\\\\globals.css\")"
-    ]
-  }
-}
