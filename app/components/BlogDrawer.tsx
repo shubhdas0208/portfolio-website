@@ -113,7 +113,7 @@ export default function BlogDrawer({ post, onClose }: Props) {
                   <div className="detail-drawer-media">
                     {(post.hero_image_url ?? post.cover_image_url) ? (
                       <img
-                        src={post.hero_image_url ?? post.cover_image_url}
+                        src={post.hero_image_url ?? post.cover_image_url ?? undefined}
                         alt={post.title}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                       />

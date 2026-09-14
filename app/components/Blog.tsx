@@ -1,23 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { POSTS, type Post } from '../lib/content'
 import BlogDrawer from './BlogDrawer'
 
-export interface Post {
-  id: string
-  slug: string
-  title: string
-  summary: string
-  tag: string
-  body: string
-  reading_time: string
-  cover_image_url?: string
-  hero_image_url?: string
-  coming_soon?: boolean
-  is_published: boolean
-  created_at: string
-}
+export type { Post }
+
 
 function trackGlow(el: HTMLElement, e: MouseEvent) {
   const r = el.getBoundingClientRect()
@@ -26,18 +14,9 @@ function trackGlow(el: HTMLElement, e: MouseEvent) {
 }
 
 export default function Blog() {
-  const [posts, setPosts] = useState<Post[]>([])
+  const posts = POSTS
   const [activePost, setActivePost] = useState<Post | null>(null)
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
-
-  useEffect(() => {
-    supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('is_published', true)
-      .order('created_at', { ascending: false })
-      .then(({ data }) => { if (data) setPosts(data) })
-  }, [])
 
   useEffect(() => {
     const obs = new IntersectionObserver(es => {

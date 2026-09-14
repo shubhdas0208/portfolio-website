@@ -1,26 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { NOW } from '../lib/content'
 
-interface NowData {
-  building: string
-  reading: string
-  thinking: string
-  updated_at: string
-}
 
 export default function Now() {
-  const [data, setData] = useState<NowData | null>(null)
-
-  useEffect(() => {
-    supabase
-      .from('now')
-      .select('*')
-      .eq('id', 1)
-      .single()
-      .then(({ data }) => { if (data) setData(data) })
-  }, [])
+  const data = NOW
 
   useEffect(() => {
     const obs = new IntersectionObserver(es => {

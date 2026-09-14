@@ -1,25 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
-interface NowData {
-  thinking: string
-  thinking_2: string
-  thinking_3: string
-  obsessing: string
-  obsessing_label: string
-  obsessing_image_url: string
-  updated_at: string
-}
+import { NOW, BOOKS } from '../lib/content'
 
-interface Book {
-  id: number
-  title: string
-  author: string
-  cover_url: string
-  note: string
-  display_order: number
-}
 
 interface GitHubDay {
   date: string
@@ -27,16 +10,12 @@ interface GitHubDay {
 }
 
 export default function About() {
-  const [now, setNow] = useState<NowData | null>(null)
-  const [books, setBooks] = useState<Book[]>([])
+  const now = NOW
+  const books = BOOKS
   const [activeBook, setActiveBook] = useState(0)
   const [githubDays, setGithubDays] = useState<GitHubDay[]>([])
 
   useEffect(() => {
-    supabase.from('now').select('*').eq('id', 1).single()
-      .then(({ data }) => { if (data) setNow(data) })
-    supabase.from('books').select('*').eq('is_active', true).order('display_order')
-      .then(({ data }) => { if (data) setBooks(data) })
     fetch('/api/github').then(r => r.json()).then(d => {
       if (d.days) setGithubDays(d.days)
     }).catch(() => {})

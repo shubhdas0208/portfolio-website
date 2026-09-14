@@ -1,37 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { PROJECTS, type Project } from '../lib/content'
 import ProjectDrawer from './ProjectDrawer'
 
-export interface Project {
-  id: string
-  slug: string
-  title: string
-  summary: string
-  tags: string[]
-  body: string
-  cover_image_url?: string
-  diagram_url?: string
-  live_url?: string
-  coming_soon?: boolean
-  is_published: boolean
-  created_at: string
-  label?: string
-}
+export type { Project }
+
 
 export default function Projects() {
-  const [projects, setProjects] = useState<Project[]>([])
+  const projects = PROJECTS
   const [active, setActive] = useState<Project | null>(null)
-
-  useEffect(() => {
-    supabase
-      .from('projects')
-      .select('*')
-      .eq('is_published', true)
-      .order('created_at', { ascending: false })
-      .then(({ data }) => { if (data) setProjects(data) })
-  }, [])
 
   useEffect(() => {
     const obs = new IntersectionObserver(es => {
