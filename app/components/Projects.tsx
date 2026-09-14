@@ -1,194 +1,61 @@
-'use client'
+import Link from 'next/link'
+import { PROJECTS } from '../lib/content'
+import ToolMonkeyTrace from './ToolMonkeyTrace'
+import FiltrThemes from './FiltrThemes'
+import UnlitProject from './UnlitProject'
 
-import { useEffect, useState } from 'react'
-import { PROJECTS, type Project } from '../lib/content'
-import ProjectDrawer from './ProjectDrawer'
-
-export type { Project }
-
+const liveHost = (url?: string | null) => (url ? url.replace(/^https?:\/\//, '') : '')
 
 export default function Projects() {
-  const projects = PROJECTS
-  const [active, setActive] = useState<Project | null>(null)
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(es => {
-      es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target) } })
-    }, { threshold: 0.07 })
-    document.querySelectorAll('#projects .fu').forEach(el => obs.observe(el))
-    return () => { obs.disconnect() }
-  }, [projects])
+  const toolmonkey = PROJECTS.find(p => p.slug === 'toolmonkey-chaos-agent')
+  const filtr = PROJECTS.find(p => p.slug === 'filtr-rag-pm-tool')
+  const [tmName, tmSub] = (toolmonkey?.title ?? '').split(': ')
+  const [fName, fSub] = (filtr?.title ?? '').split(': ')
 
   return (
-    <>
-      <section id="projects">
-        <div className="eyebrow">03 — Projects</div>
-
-        <div className="fu" style={{ marginBottom: '2.5rem' }}>
-          <h2 style={{
-            fontFamily: 'var(--font-d)', fontSize: 'clamp(2rem,4vw,3.4rem)',
-            fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.03em',
-          }}>
-            Projects that <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>shipped.</em>
-          </h2>
-          <p style={{ fontSize: '0.88rem', color: 'var(--fg-dim)', marginTop: '0.6rem', maxWidth: 420, lineHeight: 1.65 }}>
-            Real products, real constraints, real things that broke. Click any card to open the full case study.
-          </p>
-        </div>
-
-        {projects.length === 0 ? (
-          <p style={{ fontSize: '0.88rem', color: 'var(--fg-dimmer)' }}>No projects published yet.</p>
-        ) : (
-          <div className="fu s1 projects-grid" style={{
-            display: 'grid',
-            gap: 16,
-          }}>
-            {projects.map((project) => (
-              <div
-                key={project.slug}
-                className="glow-card"
-                onClick={() => setActive(project)}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setActive(project) }}
-                tabIndex={0}
-                role="button"
-                aria-label={`Open ${project.title} case study`}
-                style={{
-                  borderRadius: 10,
-                  border: '1px solid var(--border)',
-                  background: 'var(--bg-card)',
-                  cursor: 'pointer',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  transition: 'box-shadow 0.3s cubic-bezier(0.16,1,0.3,1)',
-                  ...(project.coming_soon ? { opacity: 0.6 } : {}),
-                }}
-                onMouseEnter={project.coming_soon ? undefined : e => {
-                  e.currentTarget.style.boxShadow = '0 0 0 1px var(--accent-b), 0 8px 32px rgba(0,0,0,0.12)'
-                }}
-                onMouseLeave={project.coming_soon ? undefined : e => {
-                  e.currentTarget.style.boxShadow = ''
-                }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-
-                  {/* Image area */}
-                  <div style={{
-                    width: '100%',
-                    aspectRatio: '16/9',
-                    overflow: 'hidden',
-                    borderRadius: '8px 8px 0 0',
-                    background: 'var(--bg-3)',
-                    flexShrink: 0,
-                    position: 'relative',
-                  }}>
-                    {project.coming_soon && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '0.75rem',
-                        left: '0.75rem',
-                        padding: '0.25rem 0.65rem',
-                        borderRadius: 999,
-                        background: 'rgba(249,115,22,0.15)',
-                        border: '1px solid rgba(249,115,22,0.4)',
-                        color: '#f97316',
-                        fontSize: '0.6rem',
-                        fontFamily: 'var(--font-m)',
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
-                        zIndex: 2,
-                      }}>
-                        Coming soon
-                      </div>
-                    )}
-                    {project.cover_image_url ? (
-                      <img
-                        src={project.cover_image_url}
-                        alt={project.title}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          display: 'block',
-                        }}
-                      />
-                    ) : (
-                      <div style={{
-                        width: '100%', height: '100%',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        <span style={{
-                          fontFamily: 'var(--font-m)', fontSize: '0.58rem',
-                          letterSpacing: '0.12em', textTransform: 'uppercase',
-                          color: 'var(--fg-dimmer)',
-                        }}>No image</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Text area */}
-                  <div style={{
-                    padding: '1rem 1.1rem 1.2rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.3rem',
-                    position: 'relative',
-                  }}>
-                    <div style={{
-                      fontFamily: 'var(--font-m)', fontSize: '0.55rem',
-                      color: 'var(--fg-dimmer)', letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                    }}>
-                      {project.tags?.join(' · ') ?? 'Project'}
-                    </div>
-                    <h3 style={{
-                      fontFamily: 'var(--font-d)',
-                      fontSize: '1rem',
-                      fontWeight: 600,
-                      lineHeight: 1.25,
-                      letterSpacing: '-0.02em',
-                      color: 'var(--fg)',
-                      margin: 0,
-                    }}>
-                      {project.title}
-                    </h3>
-                    <p style={{
-                      fontSize: '0.8rem',
-                      color: 'var(--fg-dim)',
-                      lineHeight: 1.55,
-                      margin: 0,
-                    }}>
-                      {project.summary}
-                    </p>
-                    <span style={{
-                      position: 'absolute', top: '1rem', right: '1rem',
-                      fontSize: '0.85rem', color: 'var(--fg-dimmer)',
-                    }}>↗</span>
-                  </div>
-
-                </div>
+    <section className="sec wrap" id="projects">
+      <h2 className="h2">Projects that <em>shipped.</em></h2>
+      <div className="pj">
+        {toolmonkey && (
+          <article className="pr">
+            <div className="copy">
+              <h3>{tmName}<small>{tmSub}</small></h3>
+              <div className="stats">
+                <div><b>100%</b><span>of tasks completed</span></div>
+                <div><b className="hot">33%</b><span>of injected failures detected</span></div>
+                <div><b className="hot">25%</b><span>silent failures</span></div>
               </div>
-            ))}
-          </div>
+              <p>{toolmonkey.summary}</p>
+              <div className="ft">
+                <span>AgentEval · LLM · FastAPI · Python</span>
+                <Link href={`/projects/${toolmonkey.slug}`}>Read the case study →</Link>
+                {toolmonkey.live_url && <a href={toolmonkey.live_url} target="_blank" rel="noopener noreferrer">{liveHost(toolmonkey.live_url)} ↗</a>}
+              </div>
+            </div>
+            <div className="media"><ToolMonkeyTrace /></div>
+          </article>
         )}
-      </section>
-
-      <ProjectDrawer project={active} onClose={() => setActive(null)} />
-
-      <style>{`
-        .projects-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-        @media (max-width: 900px) {
-          .projects-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        @media (max-width: 560px) {
-          .projects-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
-    </>
+        {filtr && (
+          <article className="pr flip">
+            <div className="copy">
+              <h3>{fName}<small>{fSub}</small></h3>
+              <div className="stats">
+                <div><b>~45 s</b><span>upload to first insight</span></div>
+                <div><b>5</b><span>issue themes, ranked for you</span></div>
+                <div><b>3</b><span>sources: Slack, Jira, calls</span></div>
+              </div>
+              <p>{filtr.summary}</p>
+              <div className="ft">
+                <span>RAG · LLM · FastAPI · Pinecone</span>
+                <Link href={`/projects/${filtr.slug}`}>Read the case study →</Link>
+                {filtr.live_url && <a href={filtr.live_url} target="_blank" rel="noopener noreferrer">{liveHost(filtr.live_url)} ↗</a>}
+              </div>
+            </div>
+            <div className="media"><FiltrThemes /></div>
+          </article>
+        )}
+        <UnlitProject />
+      </div>
+    </section>
   )
 }

@@ -1,281 +1,116 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { NOW, BOOKS } from '../lib/content'
+import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
+import { BOOKS } from '../lib/content'
+import { LOG, SOCIALS, GITHUB_USER } from '../lib/site'
+import { useInViewOnce } from '../lib/hooks'
+import GitHubGraph from './GitHubGraph'
 
-
-interface GitHubDay {
-  date: string
-  contributionCount: number
+function Books() {
+  const [active, setActive] = useState(0)
+  const [swapping, setSwapping] = useState(false)
+  const [shown, setShown] = useState(0)
+  const pick = (i: number) => {
+    setActive(i)
+    setSwapping(true)
+    window.setTimeout(() => { setShown(i); setSwapping(false) }, 180)
+  }
+  const book = BOOKS[shown]
+  return (
+    <>
+      <p className="lab">Currently reading <span>{BOOKS.length} books</span></p>
+      <div className="fan" role="group" aria-label="Books">
+        {BOOKS.map((b, i) => (
+          <button key={b.id} type="button" aria-pressed={active === i} aria-label={b.title} onClick={() => pick(i)}>
+            <img src={b.cover_url} alt="" loading="lazy" />
+          </button>
+        ))}
+      </div>
+      <div className={`bk${swapping ? ' swap' : ''}`}>
+        <b>{book.title}</b>
+        <span>{book.author}</span>
+        <em>{book.note}</em>
+      </div>
+    </>
+  )
 }
 
 export default function About() {
-  const now = NOW
-  const books = BOOKS
-  const [activeBook, setActiveBook] = useState(0)
-  const [githubDays, setGithubDays] = useState<GitHubDay[]>([])
+  const bentoRef = useRef<HTMLDivElement>(null)
+  const inView = useInViewOnce(bentoRef, 0.15)
+  const [stage, setStage] = useState<'pre' | 'go' | 'settled'>('pre')
+  const [swept, setSwept] = useState(false)
+  const [dim, setDim] = useState(false)
 
   useEffect(() => {
-    fetch('/api/github').then(r => r.json()).then(d => {
-      if (d.days) setGithubDays(d.days)
-    }).catch(() => {})
-  }, [])
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setStage('settled'); setSwept(true); return }
+    if (!inView) return
+    setStage('go')
+    const a = window.setTimeout(() => setSwept(true), 380)
+    const b = window.setTimeout(() => setStage('settled'), 1500)
+    return () => { clearTimeout(a); clearTimeout(b) }
+  }, [inView])
 
   useEffect(() => {
-    const obs = new IntersectionObserver(es => {
-      es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target) } })
-    }, { threshold: 0.07 })
-    document.querySelectorAll('#about .fu').forEach(el => obs.observe(el))
-    return () => obs.disconnect()
+    const onScroll = () => { if (!bentoRef.current?.matches(':hover')) setDim(false) }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const updatedAt = now?.updated_at
-    ? new Date(now.updated_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
-    : 'Recently'
-
-  const maxContrib = Math.max(...githubDays.map(d => d.contributionCount), 1)
-
-  const getColor = (count: number) => {
-    if (count === 0) return 'var(--bg-3)'
-    const intensity = count / maxContrib
-    if (intensity < 0.25) return 'rgba(249,115,22,0.25)'
-    if (intensity < 0.5) return 'rgba(249,115,22,0.5)'
-    if (intensity < 0.75) return 'rgba(249,115,22,0.75)'
-    return '#f97316'
-  }
+  const cls = ['bento', stage === 'pre' ? 'pre' : stage === 'go' ? 'go' : 'go settled', dim ? 'dim' : ''].join(' ')
 
   return (
-    <section id="about">
-      <div className="eyebrow">02 — About</div>
-
-      <div className="fu about-bento">
-
-        {/* ROW 1 COL 1-3: About Me */}
-        <div className="about-card" style={{ gridColumn: 'span 3' }}>
-          <h2 style={{
-            fontFamily: 'var(--font-d)',
-            fontSize: 'clamp(2rem,4vw,3.4rem)',
-            fontWeight: 700,
-            lineHeight: 1.05,
-            letterSpacing: '-0.03em',
-            marginBottom: '1rem',
-            color: 'var(--fg)',
-          }}>
-            About <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>me.</em>
-          </h2>
-          <p style={{ fontSize: '0.9rem', color: 'var(--fg-dim)', lineHeight: 1.78, margin: '0 0 0.85rem' }}>
-            I am a final year Electronics and Instrumentation student at BITS Pilani Goa, with a Finance minor. I did not choose product deliberately. I drifted into it slowly, by noticing the questions I kept asking were never really about technical output. They were always about people. Why did this feature work the way it did? What would I have been thinking if I had built this? What does the way someone uses something tell you about what they actually needed?
-          </p>
-          <p style={{ fontSize: '0.9rem', color: 'var(--fg-dim)', lineHeight: 1.78, margin: 0 }}>
-            At some point that pattern became a career direction.{' '}
-            <span style={{ color: 'var(--accent)', fontWeight: 500 }}>The most interesting product problems are people problems.</span>
-            {' '}Not what the system does, but why people behave the way they do around it, what would shift that behavior, and what that tells you about what actually needs to be built.
-          </p>
+    <section className="sec wrap" id="about">
+      <h2 className="h2">About <em>me.</em></h2>
+      <div
+        ref={bentoRef}
+        className={cls}
+        onPointerMove={e => setDim(e.pointerType === 'mouse' && !!(e.target as HTMLElement).closest('.tile'))}
+        onPointerLeave={() => setDim(false)}
+      >
+        <div className="tile t-bio" style={{ ['--i' as string]: 0 }}>
+          <p>I studied Electronics and Instrumentation at BITS Pilani Goa, with a Finance minor. I drifted into product because my questions were never about technical output. They were about people. Now I&apos;m a Product Manager at Dezerv.</p>
+          <blockquote>The most interesting product problems are people problems.</blockquote>
         </div>
-
-        {/* ROW 1 COL 4: Thinking About */}
-        <div className="about-card" style={{ gridColumn: 4, gridRow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div className="about-label"><span className="about-live-dot" />Thinking about</div>
-          <p style={{
-            borderLeft: '2px solid var(--accent)',
-            paddingLeft: '0.75rem',
-            fontSize: '0.88rem',
-            fontStyle: 'italic',
-            color: 'var(--fg)',
-            lineHeight: 1.65,
-            margin: '0.5rem 0 0',
-            fontWeight: 500,
-          }}>
-            {now?.thinking ?? '...'}
-          </p>
-          {now?.thinking_2 && (
-            <p style={{
-              borderLeft: '2px solid var(--accent)',
-              paddingLeft: '0.75rem',
-              fontSize: '0.88rem',
-              fontStyle: 'italic',
-              color: 'var(--fg)',
-              lineHeight: 1.65,
-              margin: '1.5rem 0 0',
-              fontWeight: 500,
-            }}>
-              {now.thinking_2}
-            </p>
-          )}
-          {now?.thinking_3 && (
-            <p style={{
-              borderLeft: '2px solid var(--accent)',
-              paddingLeft: '0.75rem',
-              fontSize: '0.88rem',
-              fontStyle: 'italic',
-              color: 'var(--fg)',
-              lineHeight: 1.65,
-              margin: '1.5rem 0 0',
-              fontWeight: 500,
-            }}>
-              {now.thinking_3}
-            </p>
-          )}
-        </div>
-
-        {/* ROW 1+2 COL 5: GitHub + Reading stacked */}
-        <div style={{ gridRow: 'span 2', display: 'flex', flexDirection: 'column', gap: 10, alignSelf: 'start' }}>
-
-          {/* Reading */}
-          <div className="about-card" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <div className="about-label">
-              <span className="about-live-dot" />
-              Currently reading
-            </div>
-            <div style={{ display: 'flex', gap: 8, flex: 1 }}>
-              {books.map((book, i) => (
-                <div
-                  key={book.id}
-                  onClick={() => setActiveBook(i)}
-                  onMouseEnter={e => {
-                    if (i !== activeBook) e.currentTarget.style.transform = 'translateY(-4px)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.transform = 'translateY(0)'
-                  }}
-                  style={{
-                    flex: 1,
-                    aspectRatio: '2/3',
-                    borderRadius: 6,
-                    overflow: 'hidden',
-                    cursor: 'pointer',
-                    border: activeBook === i ? '2px solid var(--accent)' : '1px solid var(--border)',
-                    background: 'var(--bg-3)',
-                    transition: 'border-color 0.2s, transform 0.2s',
-                  }}
-                >
-                  {book.cover_url ? (
-                    <img src={book.cover_url} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.4rem', textAlign: 'center' }}>
-                      <span style={{ fontSize: '0.65rem', color: 'var(--fg-dimmer)', lineHeight: 1.3 }}>{book.title}</span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 5,
-              marginTop: '0.5rem',
-            }}>
-              {books.map((_, i) => (
-                <div
-                  key={i}
-                  onClick={() => setActiveBook(i)}
-                  style={{
-                    width: activeBook === i ? 16 : 6,
-                    height: 6,
-                    borderRadius: 999,
-                    background: activeBook === i ? 'var(--accent)' : 'var(--fg-dimmer)',
-                    cursor: 'pointer',
-                    transition: 'width 0.3s cubic-bezier(0.34,1.56,0.64,1), background 0.2s',
-                  }}
-                />
-              ))}
-            </div>
-
-            {books[activeBook] && (
-              <div style={{ marginTop: '0.6rem', paddingTop: '0.6rem', borderTop: '1px solid var(--border)' }}>
-                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--fg)', marginBottom: '0.15rem' }}>{books[activeBook].title}</div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--fg-dim)', marginBottom: '0.25rem' }}>{books[activeBook].author}</div>
-                {books[activeBook].note && (
-                  <div style={{ fontSize: '0.72rem', color: 'var(--accent)', fontStyle: 'italic', lineHeight: 1.4 }}>{books[activeBook].note}</div>
-                )}
-              </div>
-            )}
+        <div className="swipe">
+          <div className="tile t-read" id="about-reading" style={{ ['--i' as string]: 1 }}>
+            <Books />
           </div>
-
-          {/* GitHub */}
-          <div className="about-card">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <div className="about-label" style={{ margin: 0 }}>GitHub — 60 days</div>
-              <a
-                href="https://github.com/shubhdas0208"
-                target="_blank"
-                rel="noreferrer"
-                style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.65rem', color: 'var(--accent)', fontFamily: 'var(--font-m)', letterSpacing: '0.06em', textDecoration: 'none' }}
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/>
-                </svg>
-                shubhdas0208 ↗
-              </a>
-            </div>
-            <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-              {githubDays.length > 0 ? githubDays.map((day, i) => (
-                <div
-                  key={i}
-                  title={`${day.date}: ${day.contributionCount} contributions`}
-                  style={{ width: 14, height: 14, borderRadius: 3, background: getColor(day.contributionCount), cursor: 'default', transition: 'transform 0.15s' }}
-                  onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.2)')}
-                  onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
-                />
-              )) : Array.from({ length: 30 }).map((_, i) => (
-                <div key={i} style={{ width: 14, height: 14, borderRadius: 3, background: 'var(--bg-3)' }} />
-              ))}
-            </div>
+          <div className="tile t-think" style={{ ['--i' as string]: 2 }}>
+            <p className="lab">How I think</p>
+            <p>Electronics taught me how systems fail. Finance taught me how incentives shape behavior.</p>
           </div>
-
+          <div className="tile t-now" style={{ ['--i' as string]: 4 }}>
+            <p className="lab">Log</p>
+            <ol className="log">
+              {LOG.map(entry => (
+                <li key={entry.when}>
+                  <time>{entry.when}</time>
+                  <span>
+                    {entry.text}
+                    {entry.link && <> <Link href={entry.link.href}>{entry.link.label}</Link>.</>}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
-
-        {/* ROW 2 COL 1: How I Think */}
-        <div className="about-card" style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
-          <div className="about-label"><span className="about-live-dot" />How I think</div>
-          <p style={{ fontSize: '0.84rem', color: 'var(--fg-dim)', lineHeight: 1.68, margin: 0 }}>
-            Electronics taught me how systems fail. Finance taught me how incentives shape behavior. In AI products, model behavior is not a technical constraint, it is a design surface.
-          </p>
+        <div className="tile t-f1" style={{ ['--i' as string]: 3 }}>
+          <img src="/images/now/obsessing.avif" alt="F1 logo" loading="lazy" />
+          <svg className="lap" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <rect x="1" y="1" width="98" height="98" rx="5" pathLength={1} vectorEffect="non-scaling-stroke" />
+          </svg>
+          <div className="in">
+            <small>Obsessing over</small>
+            <b>F1: Race Strategy</b>
+            <p>Outside work I train, read history and mythology, and travel when I can.</p>
+          </div>
         </div>
-
-        {/* ROW 2 COL 2: Why AI PM */}
-        <div className="about-card" style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
-          <div className="about-label"><span className="about-live-dot" />Why AI PM</div>
-          <p style={{ fontSize: '0.84rem', color: 'var(--fg-dim)', lineHeight: 1.68, margin: 0 }}>
-            The technology is genuinely ahead of the use cases. I want to be in the room figuring out what the new problems are.
-          </p>
+        <div className={`tile t-gh${swept ? ' swept' : ''}${stage === 'settled' ? ' settled' : ''}`} id="about-github" style={{ ['--i' as string]: 5 }}>
+          <GitHubGraph profileUrl={SOCIALS.github} user={GITHUB_USER} />
         </div>
-
-        {/* ROW 2 COL 3: One More Thing */}
-        <div className="about-card" style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
-          <div className="about-label"><span className="about-live-dot" />Outside work</div>
-          <p style={{ fontSize: '0.84rem', color: 'var(--fg-dim)', lineHeight: 1.68, margin: 0 }}>
-            Outside of work I train, read, and travel when I can. Currently working through history and mythology, a surprisingly good lens for why people and institutions behave the way they do.
-          </p>
-        </div>
-
-        {/* ROW 2 COL 4: Obsessing Over */}
-        <div className="about-card" style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
-          <div className="about-label"><span className="about-live-dot" />Obsessing over</div>
-          {now?.obsessing_image_url ? (
-            <img
-              src={now.obsessing_image_url}
-              alt={now.obsessing_label ?? 'Obsessing over'}
-              style={{ width: '100%', height: 72, objectFit: 'cover', borderRadius: 6, margin: '6px 0 5px', border: '1px solid var(--border)' }}
-            />
-          ) : (
-            <div style={{ width: '100%', height: 72, borderRadius: 6, background: 'var(--bg-3)', margin: '6px 0 5px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: '0.6rem', color: 'var(--fg-dimmer)', fontFamily: 'var(--font-m)', letterSpacing: '0.1em' }}>image</span>
-            </div>
-          )}
-          {now?.obsessing_label && (
-            <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--fg)', marginBottom: '0.2rem' }}>{now.obsessing_label}</div>
-          )}
-          <p style={{ fontSize: '0.82rem', color: 'var(--fg-dim)', lineHeight: 1.65, margin: 0 }}>{now?.obsessing ?? '...'}</p>
-        </div>
-
       </div>
-
-      <p className="fu s2" style={{ fontFamily: 'var(--font-m)', fontSize: '0.6rem', color: 'var(--fg-dimmer)', marginTop: '1rem', letterSpacing: '0.1em', textAlign: 'right' }}>
-        Last updated <span style={{ color: 'var(--accent)' }}>{updatedAt}</span>
-      </p>
-
     </section>
   )
 }

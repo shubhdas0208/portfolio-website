@@ -40,3 +40,6 @@ session context/
 
 # claude code per-project settings
 .claude/
+
+# design review artifacts (local only)
+design-review/

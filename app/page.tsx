@@ -1,23 +1,23 @@
-import FloatNav from './components/FloatNav'
 import Hero from './components/Hero'
 import About from './components/About'
 import Projects from './components/Projects'
-import Blog from './components/Blog'
+import Writing from './components/Writing'
 import Experience from './components/Experience'
 import Contact from './components/Contact'
+import Footer from './components/Footer'
 
 export default function Home() {
   return (
     <>
-      <FloatNav />
       <main>
         <Hero />
         <About />
         <Projects />
-        <Blog />
+        <Writing />
         <Experience />
         <Contact />
       </main>
+      <Footer />
     </>
   )
 }
