@@ -29,6 +29,7 @@ const dmMono = DM_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '
 const instrument = Instrument_Serif({ subsets: ['latin'], weight: '400', style: 'italic', variable: '--font-instrument', display: 'swap' })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portfolio-website-shubh-das.vercel.app'),
   title: 'Shubh Sankalp Das · Product Manager',
   description: 'Product Manager at Dezerv. Case studies on LLM agent reliability and RAG, and essays on the product decisions inside engineering.',
   openGraph: {
