@@ -43,3 +43,4 @@ session context/
 
 # design review artifacts (local only)
 design-review/
+.gstack/
