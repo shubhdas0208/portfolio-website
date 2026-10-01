@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { RESUME_URL } from '../lib/site'
+import { usePathname } from 'next/navigation'
+import { EMAIL, RESUME_URL } from '../lib/site'
 import { istTime } from '../lib/hooks'
 
 type Theme = 'light' | 'dark'
@@ -13,19 +14,21 @@ const SUN = (
 const MOON = <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
 
 export default function Header() {
+  const isHome = usePathname() === '/'
   const [time, setTime] = useState('')
   const [scrolled, setScrolled] = useState(false)
   const [theme, setTheme] = useState<Theme>('light')
+  const sentinelRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light')
     const tick = () => setTime(istTime())
     tick()
     const id = setInterval(tick, 30_000)
-    const onScroll = () => setScrolled(window.scrollY > 80)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => { clearInterval(id); window.removeEventListener('scroll', onScroll) }
+    // A sentinel 80px down the page: no scroll listener, so no forced layout on every scroll event.
+    const io = new IntersectionObserver(([e]) => setScrolled(!e.isIntersecting))
+    if (sentinelRef.current) io.observe(sentinelRef.current)
+    return () => { clearInterval(id); io.disconnect() }
   }, [])
 
   const toggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -52,19 +55,25 @@ export default function Header() {
   }
 
   return (
-    <header className={`hdr${scrolled ? ' scrolled' : ''}`}>
-      <div className="right">
-        <span className="pill role">AI Product Manager</span>
-        <Link href="/" className="pill loc" aria-label="Bengaluru, local time">
-          <span className="city">Bengaluru</span><i />
-          <span className="num clock" suppressHydrationWarning>{time || '--:--'}</span><i />
-          <span>IST</span>
+    <>
+      <span ref={sentinelRef} className="hdr-sentinel" aria-hidden="true" />
+      <header className={`hdr${scrolled ? ' scrolled' : ''}`}>
+        <Link href="/" className="home" aria-label="Shubh Sankalp Das, home">
+          <span className="full">Shubh Sankalp Das</span><span className="ini">SSD</span>
         </Link>
-        <a className="res" href={RESUME_URL} target="_blank" rel="noopener noreferrer">Resume ↗</a>
-        <button className="themebtn" type="button" onClick={toggleTheme} aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">{theme === 'dark' ? MOON : SUN}</svg>
-        </button>
-      </div>
-    </header>
+        <div className="right">
+          <span className="pill loc" aria-label="Bengaluru, local time">
+            <span className="city">Bengaluru</span><i />
+            <span className="num clock" suppressHydrationWarning>{time || '--:--'}</span><i />
+            <span>IST</span>
+          </span>
+          <a className="res" href={RESUME_URL} target="_blank" rel="noopener noreferrer">Resume ↗</a>
+          <a className="talk" href={isHome ? '#contact' : `mailto:${EMAIL}`}>{isHome ? "Let's talk" : 'Email me'}</a>
+          <button className="themebtn" type="button" onClick={toggleTheme} aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">{theme === 'dark' ? MOON : SUN}</svg>
+          </button>
+        </div>
+      </header>
+    </>
   )
 }

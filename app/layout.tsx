@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import { DM_Mono, Instrument_Serif } from 'next/font/google'
+import './tailwind.css'
 import './globals.css'
 import Header from './components/Header'
 import FloatNav from './components/FloatNav'
 import P99Panel from './components/P99Panel'
+import { ViewTransitionResolver } from './components/ViewTransitionLink'
 
 const clash = localFont({
   src: [
@@ -30,17 +32,18 @@ const instrument = Instrument_Serif({ subsets: ['latin'], weight: '400', style: 
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portfolio-website-shubh-das.vercel.app'),
-  title: 'Shubh Sankalp Das · Product Manager',
+  title: 'Shubh Sankalp Das · Product Manager who builds AI products',
   description: 'Product Manager at Dezerv. Case studies on LLM agent reliability and RAG, and essays on the product decisions inside engineering.',
   openGraph: {
-    title: 'Shubh Sankalp Das · Product Manager',
-    description: 'Shipped products, technical teardowns and PM writing.',
+    title: 'Shubh Sankalp Das · Product Manager who builds AI products',
+    description: 'Product Manager at Dezerv. Case studies on LLM agent reliability and RAG, and essays on the product decisions inside engineering.',
     type: 'website',
   },
 }
 
-// Sets the theme before first paint (light by default) so there is no flash.
-const themeScript = `try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=(t==='dark'||t==='light')?t:'light'}catch(e){}`
+// Sets the theme before first paint (light by default) so there is no flash, and adds motion-ok
+// only when JS runs and motion is allowed, so every motion pre-state is opt-in.
+const themeScript = `try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=(t==='dark'||t==='light')?t:'light'}catch(e){}try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('motion-ok')}catch(e){}`
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -49,10 +52,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
+        <a className="skip" href="#content">Skip to content</a>
         <Header />
-        {children}
         <FloatNav />
+        {children}
         <P99Panel />
+        <ViewTransitionResolver />
       </body>
     </html>
   )

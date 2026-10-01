@@ -1,14 +1,14 @@
-import { RESUME_URL } from '../lib/site'
+import P99Hint from './P99Hint'
 
 export default function Footer() {
-  const sha = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? 'local'
-  const branch = process.env.VERCEL_GIT_COMMIT_REF ?? 'dev'
+  const fullSha = process.env.VERCEL_GIT_COMMIT_SHA
+  const branch = process.env.VERCEL_GIT_COMMIT_REF ?? 'main'
   const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' })
   return (
     <footer className="foot">
-      <span className="commit" title="Build that is currently live"><i />{branch} · {sha} · deployed {built}</span>
+      {fullSha && <span className="commit" title="Build that is currently live"><i />{branch} · {fullSha.slice(0, 7)} · deployed {built}</span>}
       <div className="links">
-        <a href={RESUME_URL} target="_blank" rel="noopener noreferrer">Resume ↗</a>
+        <P99Hint />
         <span>© {new Date().getFullYear()} Shubh Sankalp Das</span>
       </div>
     </footer>
