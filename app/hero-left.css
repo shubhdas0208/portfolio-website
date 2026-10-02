@@ -1,0 +1,100 @@
+/* ── hero left column: "Letterhead". The name on his own stationery, taped to the desk surface and signed. ──
+   Text is always at full strength on first paint. Under html.motion-ok only the sheet settle, the rules,
+   the highlighter, the signature and the swoosh animate; without JS or with reduced motion they show final. */
+
+.hd-left{min-width:0}
+.lh{position:relative;max-width:440px}
+
+.lh-sheet{position:relative;padding:30px 26px 28px;border-radius:6px;rotate:-1.2deg;color:var(--fg);
+  background:
+    linear-gradient(180deg,transparent 0 63%,color-mix(in oklab,var(--fg) 4%,transparent) 63.2%,transparent 65%),
+    radial-gradient(color-mix(in oklab,var(--fg) 11%,transparent) .8px,transparent 1.2px) 0 0/14px 14px,
+    var(--surf);
+  box-shadow:0 2px 3px var(--press),0 26px 46px -18px rgba(23,19,14,.38)}
+[data-theme="dark"] .lh-sheet{box-shadow:0 0 0 1px var(--line),0 2px 3px rgba(0,0,0,.4),0 26px 46px -18px rgba(0,0,0,.7)}
+
+/* tape: same colour as the desk prints */
+.lh-tape{position:absolute;top:-10px;width:64px;height:20px;background:color-mix(in oklab,var(--acc) 22%,rgba(255,255,255,.5));opacity:.85;pointer-events:none}
+[data-theme="dark"] .lh-tape{background:color-mix(in oklab,var(--acc) 30%,rgba(244,239,231,.18))}
+.lh-tape.t1{left:-12px;rotate:-22deg}
+.lh-tape.t2{right:-12px;rotate:18deg}
+
+/* letterhead: the h1 stays the accessible name; the first name carries the accent */
+.lh-name{margin:0;font:600 clamp(38px,4.3vw,54px)/.94 var(--fd);letter-spacing:-.02em;color:var(--fg)}
+.lh-first{color:var(--accText)}
+
+/* double rule (accent + hairline) above the letterhead line */
+.lh-meta{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:4px 0;margin:14px 0 6px;padding:11px 0 0;font:500 12px/1.4 var(--fm);letter-spacing:.04em;color:var(--dim)}
+.lh-meta::before,.lh-meta::after{content:"";position:absolute;left:0;right:0;transform-origin:left}
+.lh-meta::before{top:0;height:1.5px;background:var(--acc)}
+.lh-meta::after{top:4px;height:1px;background:var(--lineS)}
+.lh-meta > *:not(:first-child)::before{content:"·";margin:0 9px;color:var(--dimmer)}
+.lh-meta a{color:var(--fg);text-decoration:underline;text-decoration-color:var(--accB);text-underline-offset:3px;transition:text-decoration-color .2s}
+.lh-meta a:hover{text-decoration-color:var(--acc)}
+.lh-meta a:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+
+/* ruled rows: mono label | bold value | right-aligned detail */
+.lh-rows{container-type:inline-size;margin:0 0 6px;padding:0}
+.lh-row{position:relative;display:grid;grid-template-columns:74px minmax(0,auto) minmax(0,1fr);align-items:baseline;column-gap:10px;padding:11px 0 10px}
+.lh-row::after{content:"";position:absolute;left:0;right:0;bottom:0;border-bottom:1px dashed var(--lineS);transform-origin:left}
+.lh-row dt{display:flex;align-items:center;gap:6px;font:500 11.5px/1.3 var(--fm);letter-spacing:.06em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+.lh-row dt i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--acc)}
+.lh-row.live dt{color:var(--accText)}
+.lh-row dd{margin:0}
+.lh-val{font:700 16px/1.25 var(--fb);letter-spacing:-.01em;color:var(--fg);white-space:nowrap}
+.lh-det{justify-self:end;text-align:right;font:11.5px/1.35 var(--fm);color:var(--dim)}
+.lh-row.live .lh-det{justify-self:start;text-align:left;font:italic 400 19px/1.1 var(--fs);letter-spacing:0;color:var(--accText)}
+.lh-val mark{color:inherit;padding:0 3px;margin:0 -3px;
+  background:linear-gradient(transparent 52%,color-mix(in oklab,var(--acc) 48%,transparent) 52% 94%,transparent 94%) no-repeat 0 0/100% 100%}
+[data-theme="dark"] .lh-val mark{background-image:linear-gradient(transparent 52%,color-mix(in oklab,var(--acc) 40%,transparent) 52% 94%,transparent 94%)}
+
+/* detail drops under the value: always on a .stack row (value too long to share a line), every row on a narrow sheet (tablet column, phones) */
+.lh-row.stack{grid-template-columns:74px minmax(0,1fr);row-gap:2px}
+.lh-row.stack .lh-det{grid-column:2;justify-self:start;text-align:left}
+@container (max-width:340px){
+  .lh-row{grid-template-columns:74px minmax(0,1fr);row-gap:2px}
+  .lh-det{grid-column:2;justify-self:start;text-align:left}
+}
+
+/* signature + swoosh, decorative (the h1 carries the name) */
+
+.lh-ctas{flex-wrap:wrap}
+
+/* hint: the drag gesture is mouse only, so touch screens get the tap copy */
+.lh-hint{margin:20px 0 0 6px;display:flex;align-items:center;gap:8px;font:12px/1.4 var(--fm);color:var(--dimmer)}
+.lh-hint i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--acc)}
+.lh-hint-touch{display:none}
+@media (hover:none),(pointer:coarse){
+  .lh-hint-mouse{display:none}
+  .lh-hint-touch{display:inline}
+}
+
+/* motion: draw once on load */
+html.motion-ok .lh-sheet{animation:lhLand .8s var(--ease) .1s both}
+html.motion-ok .lh-meta::before,html.motion-ok .lh-meta::after{animation:lhRule .7s var(--ease) .45s both}
+html.motion-ok .lh-meta::after{animation-delay:.6s}
+html.motion-ok .lh-row::after{animation:lhRule .6s var(--ease) both;animation-delay:calc(.7s + var(--i,0) * .12s)}
+html.motion-ok .lh-val mark{animation:lhMark .8s var(--ease) 1.1s both}
+html.motion-ok .lh-hint i{animation:dkpulse 1.6s ease-in-out infinite}
+html.motion-ok .hero.paused .lh-hint i{animation-play-state:paused}
+@keyframes lhLand{from{translate:0 -14px;rotate:-3.4deg}}
+@keyframes lhRule{from{transform:scaleX(0)}}
+@keyframes lhMark{from{background-size:0% 100%}}
+@keyframes lhSig{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes lhDraw{from{stroke-dashoffset:1}}
+
+@media (max-width:899px){
+  .lh{max-width:none}
+  .lh-sheet{padding:26px 22px 22px;rotate:-.6deg}
+  html.motion-ok .lh-sheet{animation-name:lhLandSm}
+  .lh-name{font-size:40px}
+  .lh-meta{font-size:11.5px}
+  .lh-ctas{flex-wrap:nowrap}
+  .lh-ctas .btn{flex:1 1 0;justify-content:center;padding:14px 12px}
+  .lh-hint{margin-top:16px}
+}
+@keyframes lhLandSm{from{translate:0 -10px;rotate:-2deg}}
+
+@media (prefers-reduced-motion:reduce){
+  .lh-sheet,.lh-meta::before,.lh-meta::after,.lh-row::after,.lh-val mark,.lh-hint i{animation:none}
+}
