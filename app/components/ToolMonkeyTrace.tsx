@@ -14,9 +14,14 @@ const RUNS: Run[] = [
   { mode: 'silent_failure', lines: [['·', 'task  Summarise the Q2 notes', 'dim'], ['→', 'summarizer(doc_q2)', ''], ['✕', 'injected  ""  (empty)', 'bad'], ['·', 'agent  answered anyway, no flag', 'dim'], ['✕', 'silent failure · the one users never see', 'bad']], detected: 0, silent: 1, recovered: 0 },
 ]
 
+const LINE_MS = 650
+const INJECT_MS = 1100
+const HOLD_MS = 2600
+
 export default function ToolMonkeyTrace() {
   const ref = useRef<HTMLDivElement>(null)
-  const [state, setState] = useState({ run: 0, shown: 0, n: 1, detected: 0, silent: 0, recovered: 0 })
+  // First frame is a finished run, so a glance never lands on an empty panel.
+  const [state, setState] = useState({ run: 0, shown: RUNS[0].lines.length, n: 1, detected: RUNS[0].detected, silent: RUNS[0].silent, recovered: RUNS[0].recovered })
   const timer = useRef<number>(0)
   const stateRef = useRef(state)
   stateRef.current = state
@@ -24,21 +29,24 @@ export default function ToolMonkeyTrace() {
 
   useEffect(() => { setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches) }, [])
 
+  // A finished run stays on screen for the hold, then the next run starts with its first line,
+  // so the panel is never empty.
   const step = useCallback(() => {
     const s = stateRef.current
     const run = RUNS[s.run]
-    const shown = s.shown + 1
-    if (shown > run.lines.length) {
-      const next = { run: (s.run + 1) % RUNS.length, shown: 0, n: s.n + 1, detected: s.detected + run.detected, silent: s.silent + run.silent, recovered: s.recovered + run.recovered }
-      setState(next)
-      timer.current = window.setTimeout(step, 2600)
+    if (s.shown >= run.lines.length) {
+      const counted = s.n === 1 && s.run === 0 // run 0 is pre-counted in the initial state
+      const nextRun = (s.run + 1) % RUNS.length
+      setState({ run: nextRun, shown: 1, n: s.n + 1, detected: s.detected + (counted ? 0 : run.detected), silent: s.silent + (counted ? 0 : run.silent), recovered: s.recovered + (counted ? 0 : run.recovered) })
+      timer.current = window.setTimeout(step, LINE_MS)
       return
     }
+    const shown = s.shown + 1
     setState({ ...s, shown })
-    timer.current = window.setTimeout(step, shown === 3 ? 1100 : 650)
+    timer.current = window.setTimeout(step, shown === run.lines.length ? HOLD_MS : shown === 3 ? INJECT_MS : LINE_MS)
   }, [])
 
-  const start = useCallback(() => { if (!timer.current) timer.current = window.setTimeout(step, 400) }, [step])
+  const start = useCallback(() => { if (!timer.current) timer.current = window.setTimeout(step, stateRef.current.n === 1 && stateRef.current.run === 0 ? HOLD_MS : 400) }, [step])
   const stop = useCallback(() => { clearTimeout(timer.current); timer.current = 0 }, [])
   useVisibleLoop(ref, start, stop, !reduced)
 
