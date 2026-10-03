@@ -19,7 +19,7 @@ export function CurrentlyTicker({ facts }: { facts: string[] }) {
   const items = [...facts, `Bengaluru ${time || '--:--'} IST`]
   const track = items.map((f, i) => <span key={i} className="tk-item">{f}</span>)
   return (
-    <div className="ticker" aria-label={`Currently: ${items.join('. ')}`}>
+    <div className="ticker" role="group" aria-label={`Currently: ${items.join('. ')}`}>
       <span className="dial" aria-hidden="true"><i /></span>
       <div className="tk-mask" aria-hidden="true">
         <div className="tk-track">{track}{track}</div>

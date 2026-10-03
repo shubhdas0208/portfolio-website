@@ -33,7 +33,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
   ]
   return (
     <Article
-      kind="Essay"
+      kind="Blog"
       slug={post.slug}
       annot={post}
       reply="Disagree? Tell me why."

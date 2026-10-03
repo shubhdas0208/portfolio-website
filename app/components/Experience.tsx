@@ -29,6 +29,7 @@ export default function Experience() {
   const binderRef = useRef<HTMLDivElement>(null)
   const floatRef = useRef<HTMLDivElement>(null)
   const pointer = useRef<[number, number] | null>(null)
+  const hoverMq = useRef<MediaQueryList | null>(null)
   const [active, setActive] = useState(0)
   const [card, setCard] = useState<number | null>(null)
   const since = firstYear()
@@ -52,7 +53,8 @@ export default function Experience() {
   // Hover card: the one biggest result of the company whose contents row is under the cursor (mouse devices only).
   const updateCard = useCallback(() => {
     const p = pointer.current, box = binderRef.current, fl = floatRef.current
-    if (!p || !box || !fl || !window.matchMedia('(hover: hover)').matches) { setCard(null); return }
+    hoverMq.current ??= window.matchMedia('(hover: hover)')
+    if (!p || !box || !fl || !hoverMq.current.matches) { setCard(null); return }
     const row = document.elementFromPoint(p[0], p[1])?.closest('[data-row]') as HTMLElement | null
     const idx = row ? Number(row.dataset.row) : -1
     if (idx < 0) { setCard(null); return }
@@ -63,9 +65,14 @@ export default function Experience() {
   }, [])
 
   useEffect(() => {
-    const onScroll = () => { if (pointer.current) updateCard() }
+    // One hit test per frame at most: each call forces layout via elementFromPoint + getBoundingClientRect.
+    let frame = 0
+    const onScroll = () => {
+      if (!pointer.current || frame) return
+      frame = requestAnimationFrame(() => { frame = 0; updateCard() })
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(frame) }
   }, [updateCard])
 
   const shownCard = card !== null ? EXPERIENCE[card] : null

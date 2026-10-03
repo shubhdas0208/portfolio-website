@@ -14,6 +14,7 @@ const ICONS = {
 }
 
 const NAME = 'Shubh Sankalp Das'
+const SHORT_NAME = 'Shubh Das' // fits the resume paper; LinkedIn keeps the full name
 const X_NAME = 'Shubh Das' // X display name: confirm with Shubh
 const stripScheme = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
 const X_HANDLE = SOCIALS.x.split('/').filter(Boolean).pop() ?? ''
@@ -69,7 +70,7 @@ export default function SocialCards() {
         <span className="pc-cta">Connect <span className="pc-arr" aria-hidden="true">↗</span></span>
       </a>
 
-      <a className="pc pc-x" href={SOCIALS.x} {...linkProps} aria-label={`Follow @${X_HANDLE} on X`}>
+      <a className="pc pc-x" href={SOCIALS.x} {...linkProps} aria-label={`Follow @${X_HANDLE} on X, opens in a new tab`}>
         <span className="pc-top">
           <span className="pc-av" aria-hidden="true">{X_NAME[0]}</span>
           <span className="pc-id"><b>{X_NAME}</b><small>@{X_HANDLE}</small></span>
@@ -85,7 +86,7 @@ export default function SocialCards() {
         <span className="cv-stage" aria-hidden="true">
           <span className="cv-back" />
           <span className="cv-paper">
-            <b>{NAME}</b>
+            <b>{SHORT_NAME}</b>
             <i /><i /><i className="s" /><i /><i className="s" />
           </span>
           <span className="cv-front" />

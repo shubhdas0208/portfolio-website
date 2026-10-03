@@ -5,7 +5,8 @@ export default function ProjectIndex({ items, current }: { items: ProjectRef[]; 
   return (
     <nav className="idx" aria-label={`Projects, ${items.find(p => p.id === current)?.name ?? ''} card`}>
       {items.map(p => (
-        <a key={p.id} href={`#${p.id}`} aria-current={p.id === current ? 'true' : undefined}>{p.name}</a>
+        // The link to the card you are on is skipped by Tab: it would only re-land on the same card.
+        <a key={p.id} href={`#${p.id}`} aria-current={p.id === current ? 'true' : undefined} tabIndex={p.id === current ? -1 : undefined}>{p.name}</a>
       ))}
     </nav>
   )

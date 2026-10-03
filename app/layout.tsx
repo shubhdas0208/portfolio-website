@@ -33,10 +33,10 @@ const instrument = Instrument_Serif({ subsets: ['latin'], weight: '400', style: 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portfolio-website-shubh-das.vercel.app'),
   title: 'Shubh Sankalp Das · Product Manager who builds AI products',
-  description: 'Product Manager at Dezerv. Case studies on LLM agent reliability and RAG, and essays on the product decisions inside engineering.',
+  description: 'Product Manager at Dezerv. Case studies on LLM agent reliability and RAG, and blogs on the product decisions inside engineering.',
   openGraph: {
     title: 'Shubh Sankalp Das · Product Manager who builds AI products',
-    description: 'Product Manager at Dezerv. Case studies on LLM agent reliability and RAG, and essays on the product decisions inside engineering.',
+    description: 'Product Manager at Dezerv. Case studies on LLM agent reliability and RAG, and blogs on the product decisions inside engineering.',
     type: 'website',
   },
 }

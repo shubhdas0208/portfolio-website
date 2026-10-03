@@ -23,11 +23,13 @@ export async function POST(request: Request) {
     })
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error('contact: resend failed', error)
+      return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
   } catch (err) {
+    console.error('contact: unexpected error', err)
     return NextResponse.json(
       { error: 'Failed to send message' },
       { status: 500 }

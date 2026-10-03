@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { EMAIL, RESUME_URL } from '../lib/site'
+import { RESUME_URL } from '../lib/site'
 import { istTime } from '../lib/hooks'
 
 type Theme = 'light' | 'dark'
@@ -68,7 +68,7 @@ export default function Header() {
             <span>IST</span>
           </span>
           <a className="res" href={RESUME_URL} target="_blank" rel="noopener noreferrer">Resume ↗</a>
-          <a className="talk" href={isHome ? '#contact' : `mailto:${EMAIL}`}>{isHome ? "Let's talk" : 'Email me'}</a>
+          <a className="talk" href={isHome ? '#contact' : '/#contact'}>Let&apos;s talk</a>
           <button className="themebtn" type="button" onClick={toggleTheme} aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">{theme === 'dark' ? MOON : SUN}</svg>
           </button>

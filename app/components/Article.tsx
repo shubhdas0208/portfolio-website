@@ -19,7 +19,7 @@ const COVER_SIZE: Record<string, [number, number]> = {
 }
 
 interface ArticleProps {
-  kind: 'Case study' | 'Essay'
+  kind: 'Case study' | 'Blog'
   slug: string
   backHref: string
   backLabel: string
@@ -70,7 +70,7 @@ export default function Article({ kind, slug, backHref, backLabel, title, subtit
             </div>
             {cover && (
               <figure className="fig" style={isCase ? { viewTransitionName: `case-media-${slug}` } : undefined}>
-                <img src={cover} alt={`${title}: cover image`} width={coverW} height={coverH} />
+                <img src={cover} alt="" width={coverW} height={coverH} />
               </figure>
             )}
             {(quote || annot.notes?.length) && (

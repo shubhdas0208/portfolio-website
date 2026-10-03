@@ -41,7 +41,7 @@ interface RoleBase { title: string; meta: string; bullets: Bullet[] }
 /**
  * A role with its proof pulled out of the bullets: `hero` is the headline, `how` is the verbatim `rest`
  * of the hero bullet, `results` are the other figures. Every number comes from a bullet. A `pending`
- * role has no published figures yet and renders "Shubh to add" slots instead.
+ * role has no published figures yet and renders its bullets only.
  */
 export type Role = RoleBase & ({ pending: true } | { pending?: false; hero: Stat; how: string; results: Stat[] })
 

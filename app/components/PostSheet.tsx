@@ -43,7 +43,7 @@ export default function PostSheet({ post, pinned, vt = true, level = 3 }: { post
           </div>
         )}
         <div className="act">
-          <ViewTransitionLink className="btn" href={href}>Read the essay →</ViewTransitionLink>
+          <ViewTransitionLink className="btn" href={href}>Read the blog →</ViewTransitionLink>
           {parts.length > 0 && <small>Each bar is a section. Pick one to jump in.</small>}
         </div>
       </div>

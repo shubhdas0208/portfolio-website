@@ -48,11 +48,11 @@ export default function Writing() {
           label="Blogs"
           variant="md"
           title="Thinking in public."
-          meta={[`${total} published${drafts.length ? ` · ${drafts.length} in draft` : ''}`, 'Essays on the product decisions inside engineering']}
+          meta={[`${total} published${drafts.length ? ` · ${drafts.length} in draft` : ''}`, 'Blogs on the product decisions inside engineering']}
           aside={showsAllLink() ? (
             <>
               <b>{`${total} published${drafts.length ? ` · ${drafts.length} in draft` : ''}`}</b>
-              <span>Essays on the product decisions inside engineering</span>
+              <span>Blogs on the product decisions inside engineering</span>
               <Link className="all" href="/writing">All blogs ({total}) →</Link>
             </>
           ) : undefined}

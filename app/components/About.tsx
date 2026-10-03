@@ -33,7 +33,7 @@ function Reading() {
 function F1() {
   return (
     <div className="ab-f1">
-      <img src="/images/now/obsessing.avif" alt="F1 logo" loading="lazy" />
+      <img src="/images/now/obsessing.avif" alt="" loading="lazy" />
       <div className="in">
         <small>Obsessing over</small>
         <b>F1: Race Strategy</b>

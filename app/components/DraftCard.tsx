@@ -4,7 +4,7 @@ import type { Post } from '../lib/content'
 export default function DraftCard({ post }: { post: Post }) {
   return (
     <div className="next">
-      <small>In draft · not out yet</small>
+      <small>In draft</small>
       <p>{post.title}<span className="caret" aria-hidden="true" /></p>
       <i aria-hidden="true" />
     </div>

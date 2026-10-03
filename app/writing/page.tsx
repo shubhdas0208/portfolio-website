@@ -8,7 +8,7 @@ import { getDrafts, getLead, getPublished, postToPile, tagSlug } from '../lib/po
 
 export const metadata: Metadata = {
   title: 'All blogs · Shubh Sankalp Das',
-  description: 'Essays on the product decisions inside engineering.',
+  description: 'Blogs on the product decisions inside engineering.',
 }
 
 /** "All blogs": the same paper world as the home desk, with tag chips read from ?tag=. */

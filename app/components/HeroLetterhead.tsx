@@ -59,7 +59,7 @@ export default function HeroLetterhead() {
       <p className="lh-hint">
         <i aria-hidden="true" />
         <span className="lh-hint-mouse">Drag anything on the desk. Click to open it.</span>
-        <span className="lh-hint-touch">Tap anything on the desk to open it.</span>
+        <span className="lh-hint-touch">Swipe the desk. Tap anything to open it.</span>
       </p>
     </div>
   )

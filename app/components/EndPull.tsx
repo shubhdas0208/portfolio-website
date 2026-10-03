@@ -108,9 +108,11 @@ export default function EndPull() {
       !!window.getSelection()?.toString() ||
       !!document.querySelector('.p99')
 
+    let curlNow = -1
     const setCurl = (scale: number) => {
       const st = stageRef.current
-      if (!st) return
+      if (!st || scale === curlNow) return
+      curlNow = scale
       st.style.visibility = scale > 0.01 ? 'visible' : 'hidden'
       st.style.transform = `scale(${scale})`
     }
@@ -173,6 +175,8 @@ export default function EndPull() {
       lastY = y
       if (goingUp) cancelReturn()
       if (busy) return
+      // Far above Contact nothing can curl or arm: skip the per-event style writes and DOM queries.
+      if (y < target - window.innerHeight && !lift) { setCurl(0); return }
       if (visual() && !programmatic && !lastInputKey) setCurl(scrollCurl() + (lift / EXTRA_PULL) * (1 - SCROLL_CURL))
       if (!atEnd() && lift) { lift = 0; pulled = 0; main.style.transform = '' }
       if (!goingUp) armIdle()

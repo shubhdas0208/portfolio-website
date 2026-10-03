@@ -74,8 +74,15 @@ export default function Contact({ footer }: { footer?: ReactNode }) {
 
   const submit = async (e?: FormEvent) => {
     e?.preventDefault()
-    const ok = (Object.keys(RULES) as Field[]).map(f => validate(f)).every(Boolean)
-    if (!ok) { (formRef.current?.querySelector('.invalid') as HTMLElement | null)?.focus(); return }
+    const fields = Object.keys(RULES) as Field[]
+    const ok = fields.map(f => validate(f)).every(Boolean)
+    if (!ok) {
+      // .invalid is not rendered yet at this point, so pick the first failing field from the rules directly
+      const bad = fields.find(f => RULES[f](values[f]))
+      const el = bad ? formRef.current?.elements.namedItem(bad) : null
+      if (el instanceof HTMLElement) el.focus()
+      return
+    }
     setStatus('sending')
     try {
       const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(values) })
@@ -94,7 +101,9 @@ export default function Contact({ footer }: { footer?: ReactNode }) {
       value={values[field]}
       className={errors[field] ? 'invalid' : undefined}
       aria-invalid={!!errors[field]}
-      onChange={e => setValues(v => ({ ...v, [field]: e.target.value }))}
+      aria-required="true"
+      aria-describedby={errors[field] ? `err-${field}` : undefined}
+      onChange={e => { setValues(v => ({ ...v, [field]: e.target.value })); if (errors[field]) validate(field, e.target.value) }}
       onBlur={e => e.target.value && validate(field, e.target.value)}
     />
   )
@@ -134,22 +143,24 @@ export default function Contact({ footer }: { footer?: ReactNode }) {
             ) : (
               <>
                 <div className="two">
-                  <label>Name{input('name', { autoComplete: 'name', placeholder: 'Your name' })}<span className="err">{errors.name}</span></label>
-                  <label>Email{input('email', { type: 'email', autoComplete: 'email', placeholder: 'you@company.com' })}<span className="err">{errors.email}</span></label>
+                  <label>Name{input('name', { autoComplete: 'name', placeholder: 'Your name' })}<span className="err" id="err-name">{errors.name}</span></label>
+                  <label>Email{input('email', { type: 'email', autoComplete: 'email', placeholder: 'you@company.com' })}<span className="err" id="err-email">{errors.email}</span></label>
                 </div>
                 <label>
                   What&apos;s on your mind?
                   <textarea
                     name="message"
                     rows={5}
-                    placeholder="A role, a problem worth solving, or a disagreement with my P99 post."
+                    placeholder="A role, a problem worth solving, or a disagreement with my P99 blog."
                     value={values.message}
                     className={errors.message ? 'invalid' : undefined}
                     aria-invalid={!!errors.message}
-                    onChange={e => setValues(v => ({ ...v, message: e.target.value }))}
+                    aria-required="true"
+                    aria-describedby={errors.message ? 'err-message' : undefined}
+                    onChange={e => { setValues(v => ({ ...v, message: e.target.value })); if (errors.message) validate('message', e.target.value) }}
                     onBlur={e => e.target.value && validate('message', e.target.value)}
                   />
-                  <span className="err">{errors.message}</span>
+                  <span className="err" id="err-message">{errors.message}</span>
                 </label>
                 <div className="row">
                   {status === 'failed' && (

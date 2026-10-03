@@ -5,7 +5,6 @@ import type { Bullet, Company, Role } from '../lib/site'
 import { useInViewOnce } from '../lib/hooks'
 import CountUp from './CountUp'
 
-const PENDING_RESULTS = [2, 3, 4]
 
 const CHEVRON = (
   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2.5 3.8 5 6.3l2.5-2.5" /></svg>
@@ -45,13 +44,8 @@ function FullNotes({ bullets }: { bullets: Bullet[] }) {
 }
 
 function Outcomes({ role }: { role: Role }) {
-  if (role.pending) {
-    return (
-      <ul className="bd-out">
-        {PENDING_RESULTS.map(n => <li key={n} className="ph"><b aria-hidden="true" /><span>Full-time result {n}: Shubh to add</span></li>)}
-      </ul>
-    )
-  }
+  // A role with no published results shows nothing here rather than empty placeholder rows.
+  if (role.pending) return null
   return (
     <ul className="bd-out">
       {role.results.map(r => <li key={r.label}><b>{r.value}</b><span>{r.label}</span></li>)}
@@ -59,12 +53,11 @@ function Outcomes({ role }: { role: Role }) {
   )
 }
 
-/** Headline (or its dashed slot) and the note under it: the "how" for a real result, the bullets for a pending role. */
+/** Headline and the note under it: the "how" for a real result, just the bullets for a pending role. */
 function Proof({ role }: { role: Role }) {
   if (role.pending) {
     return (
       <>
-        <div className="bd-slot"><b>Shubh to add</b><span>Full-time headline result</span></div>
         <div className="bd-ann"><p>{role.bullets.map(b => <span key={b.lead}><strong>{b.lead}</strong>{b.rest}</span>)}</p></div>
       </>
     )
@@ -78,9 +71,7 @@ function Proof({ role }: { role: Role }) {
 }
 
 function Notes({ role }: { role: Role }) {
-  return role.pending
-    ? <span className="bd-ft bd-ft-ph"><span>Full notes: Shubh to add {CHEVRON}</span></span>
-    : <FullNotes bullets={role.bullets} />
+  return role.pending ? null : <FullNotes bullets={role.bullets} />
 }
 
 /** One company page in the binder. Two roles sit side by side; one role keeps headline left, outcomes right. */
