@@ -1,0 +1,11 @@
+/* The end of the page: the last sheet's bottom right corner peels up off the desk.
+   The two triangles never change shape; only the stage's scale moves, so it stays on the compositor. */
+html.endpull{overscroll-behavior-y:none}
+main.bands{position:relative;z-index:1}
+.endpull-stage{--epDesk:#E2D9CB;--epRule:rgba(23,19,14,.12);--epFlapA:#FBF8F3;--epFlapB:#BFAF98;--epNote:#B23C0B;position:fixed;right:0;bottom:0;width:260px;height:260px;z-index:2;pointer-events:none;visibility:hidden;transform:scale(0);transform-origin:100% 100%}
+[data-theme="dark"] .endpull-stage{--epDesk:#1F1A15;--epRule:rgba(244,239,231,.08);--epFlapA:#D9CFC0;--epFlapB:#6E655A;--epNote:#FF8533}
+.ep-desk,.ep-flap{position:absolute;inset:0}
+.ep-desk{clip-path:polygon(100% 0,100% 100%,0 100%);background:repeating-linear-gradient(180deg,transparent 0 27px,var(--epRule) 27px 28px),var(--epDesk)}
+.ep-desk span{position:absolute;right:16px;bottom:22px;font:400 italic 19px/1 var(--fs);color:var(--epNote);white-space:nowrap}
+.ep-flap{clip-path:polygon(0 0,100% 0,0 100%);background:linear-gradient(135deg,var(--epFlapA),var(--epFlapB));filter:drop-shadow(-6px -6px 10px rgba(0,0,0,.45))}
+.endpull-flash{position:fixed;left:0;right:0;bottom:0;height:3px;z-index:3;background:var(--acc);opacity:0;pointer-events:none}

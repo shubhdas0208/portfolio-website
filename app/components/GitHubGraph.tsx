@@ -1,27 +1,29 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { loadContributions } from './useContributions'
 
 export interface ContributionDay { date: string; count: number; level: number }
 export interface ContributionData { total: number; weeks: ContributionDay[][] }
 
 const WORDS = ['No contributions', 'A few contributions', 'Some contributions', 'Many contributions', 'Lots of contributions']
-const CELL = 10
-const GAP = 3
-const LABEL_COL = 36
+// Default card: 10px cells. Full year (About spread): every week of the year as long as cells stay at least 8px.
+const SIZES = { card: { cell: 10, gap: 3, label: 36 }, full: { cell: 8, gap: 2, label: 28 } }
 
-export default function GitHubGraph({ profileUrl, user }: { profileUrl: string; user: string }) {
+interface Props { profileUrl: string; user: string; fullYear?: boolean }
+
+export default function GitHubGraph({ profileUrl, user, fullYear = false }: Props) {
   const [data, setData] = useState<ContributionData | null>(null)
   const [failed, setFailed] = useState(false)
   const [fit, setFit] = useState(53)
-  const [tip, setTip] = useState('Hover a day')
+  const [tip, setTip] = useState('Each square is one day')
   const boxRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let cancelled = false
-    fetch('/api/github')
-      .then(r => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d: ContributionData) => { if (!cancelled) setData(d) })
+    // Shared with the Contact GitHub card: one request per page load.
+    loadContributions()
+      .then(d => { if (!cancelled) setData(d) })
       .catch(() => { if (!cancelled) setFailed(true) })
     return () => { cancelled = true }
   }, [])
@@ -30,12 +32,13 @@ export default function GitHubGraph({ profileUrl, user }: { profileUrl: string; 
   useEffect(() => {
     const box = boxRef.current
     if (!box) return
-    const measure = () => setFit(Math.max(12, Math.floor((box.clientWidth - LABEL_COL + GAP) / (CELL + GAP))))
+    const { cell, gap, label } = fullYear ? SIZES.full : SIZES.card
+    const measure = () => setFit(Math.max(12, Math.floor((box.clientWidth - label + gap) / (cell + gap))))
     measure()
     const ro = new ResizeObserver(measure)
     ro.observe(box)
     return () => ro.disconnect()
-  }, [])
+  }, [fullYear])
 
   const weeks = data ? data.weeks.slice(-fit) : []
   const months: { col: number; label: string }[] = []
@@ -56,8 +59,8 @@ export default function GitHubGraph({ profileUrl, user }: { profileUrl: string; 
         <span className="gh-total">{data ? <><span className="num">{data.total}</span> contributions in the last year</> : failed ? 'GitHub activity' : 'Loading contributions…'}</span>
         <a href={profileUrl} target="_blank" rel="noopener noreferrer"><span className="gh-long">github.com/{user}</span><span className="gh-short">GitHub</span> ↗</a>
       </p>
-      <div className="gh-scroll" ref={boxRef}>
-        {failed && <p style={{ margin: 0, fontSize: 14, color: 'var(--dim)' }}>Couldn&apos;t load the graph right now. See it on GitHub.</p>}
+      <div className={`gh-scroll${fullYear ? ' gh-full' : ''}`} ref={boxRef}>
+        {failed && <p style={{ margin: 0, fontSize: 14, color: 'var(--dim)' }}>The graph didn&apos;t load. Open it on GitHub with the link above.</p>}
         {data && (
           <div className="gh">
             <div className="months">
@@ -77,7 +80,7 @@ export default function GitHubGraph({ profileUrl, user }: { profileUrl: string; 
                   const day = week.find(d => new Date(d.date + 'T00:00:00').getDay() === row)
                   if (!day) return <i key={`${col}-${row}`} data-l="-1" style={{ ['--c' as string]: col }} />
                   const label = new Date(day.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-                  return <i key={`${col}-${row}`} data-l={day.level} data-d={label} title={`${day.count} on ${label}`} style={{ ['--c' as string]: col }} />
+                  return <i key={`${col}-${row}`} data-l={day.level} data-d={label} title={`${day.count} ${day.count === 1 ? 'contribution' : 'contributions'} on ${label}`} style={{ ['--c' as string]: col }} />
                 }),
               )}
             </div>

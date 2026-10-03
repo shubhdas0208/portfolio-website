@@ -1,0 +1,111 @@
+/* Contact: profile cards (LinkedIn, X, GitHub, resume envelope) and the signed sign-off. The band stays warm black in both themes. */
+
+#contact .here{margin-top:14px}
+
+/* ── profile cards ── */
+#contact .pcs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--lineS)}
+#contact .pc{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0;padding:13px 15px;border-radius:12px;border:1px solid var(--lineS);background:color-mix(in oklab,#1C1712 88%,transparent);color:var(--fg);text-decoration:none;
+  transition:transform .35s var(--ease),border-color .25s,box-shadow .35s var(--ease)}
+#contact .pc:hover,#contact .pc:focus-visible{transform:translateY(-4px);border-color:var(--acc);box-shadow:0 18px 30px -18px rgba(255,133,51,.45)}
+#contact .pc:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+#contact .pc-id{display:flex;flex-direction:column;gap:3px;min-width:0}
+#contact .pc-id b{font:600 15px/1.2 var(--fb);letter-spacing:-.005em}
+#contact .pc-id small{font:400 11.5px/1.3 var(--fm);color:var(--dimmer);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#contact .pc-top{display:flex;align-items:center;gap:10px;min-width:0}
+#contact .pc-top .pc-id{flex:1}
+#contact .pc-ico{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:8px;border:1px solid var(--lineS)}
+#contact .pc-arr{display:inline-block;transition:transform .3s var(--ease)}
+#contact .pc:hover .pc-arr,#contact .pc:focus-visible .pc-arr{transform:translate(3px,-3px)}
+#contact .pc-act{margin-top:auto;font:500 12.5px/1.3 var(--fb);color:var(--dim)}
+#contact .pc-act .num{color:var(--accText);font-weight:500}
+
+/* LinkedIn: the one wide cream card, with the orange Connect action */
+#contact .pc-li{grid-column:1/-1;flex-direction:row;align-items:center;gap:16px;padding:13px 16px;background:#F4EFE7;color:#17130E;border-color:#F4EFE7}
+#contact .pc-li:hover,#contact .pc-li:focus-visible{border-color:#E0600F}
+#contact .pc-logo{display:grid;place-items:center;width:50px;height:50px;flex:none;border-radius:10px;background:#17130E;color:#F4EFE7}
+#contact .pc-li .pc-id{flex:1}
+#contact .pc-li .pc-id b{font:600 21px/1.1 var(--fd);letter-spacing:-.01em}
+#contact .pc-role{font-size:14px;line-height:1.35;color:rgba(23,19,14,.78)}
+#contact .pc-li .pc-id small{color:rgba(23,19,14,.62)}
+#contact .pc-cta{flex:none;display:inline-flex;align-items:center;gap:6px;padding:12px 18px;border-radius:999px;background:#E0600F;color:#17130E;font:600 15px/1 var(--fb);transition:background .2s}
+#contact .pc-li:hover .pc-cta{background:#F07126}
+
+/* X: a post-style card in X's own monochrome language (pure black, white type, grey handle, white Follow pill) */
+#contact .pc-x{background:#000;border-color:#2F3336;color:#E7E9EA}
+#contact .pc-x:hover,#contact .pc-x:focus-visible{border-color:#E7E9EA;box-shadow:0 18px 30px -18px rgba(231,233,234,.28)}
+#contact .pc-av{display:grid;place-items:center;width:36px;height:36px;flex:none;border-radius:50%;background:#E7E9EA;color:#000;font:700 16px/1 var(--fb)}
+#contact .pc-x .pc-id b{color:#E7E9EA}
+#contact .pc-x .pc-id small{color:#71767B;font-family:var(--fb);font-size:13px}
+#contact .pc-xlogo{align-self:flex-start;color:#E7E9EA}
+#contact .pc-url{font:400 11.5px/1.3 var(--fm);color:#71767B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#contact .pc-follow{margin-top:auto;align-self:flex-start;padding:9px 16px;border-radius:999px;background:#EFF3F4;color:#0F1419;font:700 13.5px/1 var(--fb);transition:background .2s}
+#contact .pc-x:hover .pc-follow,#contact .pc-x:focus-visible .pc-follow{background:#D7DBDC}
+
+/* GitHub: mini contribution strip from /api/github, glowing the same orange as the threads */
+#contact .pc-gh{--gh0:#28221B;--gh1:color-mix(in oklab,#FF8533 25%,transparent);--gh2:color-mix(in oklab,#FF8533 50%,transparent);--gh3:color-mix(in oklab,#FF8533 75%,transparent);--gh4:#FF8533}
+#contact .pc-mini{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,auto);grid-template-columns:repeat(20,minmax(0,1fr));gap:2px}
+#contact .pc-mini i{display:block;aspect-ratio:1;border-radius:1.5px;background:var(--gh0)}
+#contact .pc-mini i[data-l="-1"]{background:transparent}
+#contact .pc-mini i[data-l="1"]{background:var(--gh1)}
+#contact .pc-mini i[data-l="2"]{background:var(--gh2)}
+#contact .pc-mini i[data-l="3"]{background:var(--gh3)}
+#contact .pc-mini i[data-l="4"]{background:var(--gh4);box-shadow:0 0 6px rgba(255,133,51,.45)}
+#contact .pc-mini:not(.on) i{opacity:.55}
+html.motion-ok #contact .pc-mini.on i{animation:pcCell .45s var(--ease) backwards;animation-delay:calc(var(--c,0) * 18ms)}
+@keyframes pcCell{from{opacity:0;transform:scale(.3)}}
+
+/* Resume: a cream CV tucked in a kraft envelope; it slides up and tilts out on hover and focus */
+#contact .cv-stage{position:relative;display:block;height:66px;width:100px}
+#contact .cv-back,#contact .cv-front{position:absolute;left:0;right:0;bottom:0;height:44px;border-radius:3px}
+#contact .cv-back{background:#9E7148}
+#contact .cv-back::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:18px;background:#B5875A;clip-path:polygon(0 100%,50% 0,100% 100%)}
+#contact .cv-front{background:#C99A68;clip-path:polygon(0 0,50% 52%,100% 0,100% 100%,0 100%);box-shadow:inset 0 -1px 0 rgba(0,0,0,.18)}
+#contact .cv-paper{position:absolute;left:12px;right:12px;bottom:6px;height:58px;padding:7px 7px 0;border-radius:2px;background:#FBF8F3;box-shadow:0 2px 6px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:4px;
+  transform:translateY(0) rotate(0);transform-origin:50% 100%;transition:transform .5s var(--ease)}
+#contact .cv-paper b{font:700 7px/1 var(--fb);letter-spacing:.08em;text-transform:uppercase;color:#17130E;white-space:nowrap}
+#contact .cv-paper i{display:block;height:2px;border-radius:1px;background:rgba(23,19,14,.22)}
+#contact .cv-paper i:first-of-type{background:#E0600F;width:46%}
+#contact .cv-paper i.s{width:70%}
+#contact .pc-cv:hover .cv-paper,#contact .pc-cv:focus-visible .cv-paper{transform:translateY(-20px) rotate(-4deg)}
+
+/* ── signature ── */
+/* the signature sits on the light form card, bottom left, level with Send message */
+#contact .form{position:relative}
+#contact .ct-sign{position:absolute;left:26px;bottom:18px;pointer-events:none}
+#contact .form:has(.fail) .ct-sign{display:none}
+#contact .sig{display:block;width:clamp(150px,15vw,200px);height:auto;overflow:visible}
+#contact .sig path{fill:none;stroke:var(--acc);stroke-width:4.4;stroke-linecap:round;stroke-linejoin:round}
+#contact .sig path.dot{stroke-width:6}
+/* Each stroke is drawn by its dash offset, in sequence, with its own pen speed. Paused until the signature is in view. */
+html.motion-ok #contact .sig path{stroke-dasharray:1 2;stroke-dashoffset:1.02;animation:sigDraw var(--dur) var(--pen) var(--at) both}
+html.motion-ok #contact .sig:not(.on) path{animation-play-state:paused}
+@keyframes sigDraw{from{stroke-dashoffset:1.02}to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){
+  #contact .sig path{animation:none;stroke-dasharray:none;stroke-dashoffset:0}
+  #contact .pc,#contact .pc-arr,#contact .cv-paper{transition:none}
+  #contact .pc-mini.on i{animation:none}
+}
+
+/* ── tablet: tighter cards ── */
+@media (max-width:1024px){
+  #contact .pc{padding:12px 13px}
+  #contact .pc-li{padding:14px 16px}
+}
+
+/* ── phones: LinkedIn and resume full width, X and GitHub side by side ── */
+@media (max-width:760px){
+  #contact .pcs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #contact .pc-li{flex-wrap:wrap;gap:12px 14px}
+  #contact .pc-logo{width:46px;height:46px}
+  #contact .pc-li .pc-id{flex:1 1 180px}
+  #contact .pc-cta{flex:1 1 100%;justify-content:center}
+  #contact .pc-cv{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-items:flex-end;gap:10px 16px}
+  #contact .pc-cv .pc-id{flex:1 1 120px}
+  #contact .pc-cv .pc-act{flex:1 1 100%}
+  #contact .pc-top{gap:8px}
+  #contact .pc-av,#contact .pc-ico{width:30px;height:30px}
+  #contact .pc-xlogo{display:none}
+}
+/* below the desktop spread the signature drops under Send instead of sitting on it */
+@media (max-width:899px){#contact .ct-sign{position:static;margin-top:4px}#contact .sig{width:min(190px,60vw)}}
+@media (min-width:900px) and (max-width:1040px){#contact .ct-sign{position:static;margin-top:-6px}#contact .sig{width:130px}}

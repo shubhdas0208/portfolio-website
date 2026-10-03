@@ -1,0 +1,168 @@
+/* ── About as a magazine profile spread ──
+   Left page: pull quote, drop-cap bio, full-year GitHub graph.
+   Right page: the books standing on one shelf, then the F1 card beside How I work.
+   Everything is scoped under #about so it wins over the older bento rules in globals.css. */
+
+#about .ab-spread{
+  --cvH:208px;
+  --pageX:32px;
+  position:relative;border-radius:6px;
+  box-shadow:0 28px 46px -26px rgba(23,19,14,.45),0 0 0 1px var(--line);
+}
+#about .ab-page{position:relative;min-width:0;background:var(--surf)}
+
+/* pull quote */
+#about .ab-pq{position:relative;margin:0;padding-left:30px;font:italic 400 38px/1.04 var(--fs);letter-spacing:-.01em;color:var(--fg);text-wrap:balance}
+#about .ab-pq::before{content:"\201C";position:absolute;left:-5px;top:-.16em;font:italic 400 2em/1 var(--fs);color:var(--acc)}
+
+/* bio with a drop cap */
+#about .ab-bio{margin-top:16px;padding-top:14px;border-top:1px solid var(--lineS);font-size:16.5px;line-height:1.6;color:var(--fg)}
+#about .ab-bio p{margin:0 0 10px}
+#about .ab-bio p+p{color:var(--dim)}
+#about .ab-bio p:last-child{margin-bottom:0}
+#about .ab-dc::first-letter{float:left;font:600 60px/.84 var(--fd);margin:5px 10px 0 0;color:var(--accText)}
+
+/* Log as a timeline: a tick per entry, "Now" in accent */
+
+/* GitHub: the big slot, a full year of weeks */
+#about .ab-gh{margin-top:12px;padding-top:10px;border-top:1px solid var(--lineS)}
+#about .ab-spread .ab-gh .lab{margin:0;align-items:baseline}
+#about .ab-gh .gh-total{font:600 13.5px/1.3 var(--fb)}
+#about .ab-gh .lab a{font-size:11px}
+#about .ab-gh .gh-scroll{padding:6px 0 2px}
+#about .ab-gh .gh{grid-template-columns:22px minmax(0,1fr);gap:6px}
+#about .ab-gh .gh .months{height:13px;font-size:10.5px;line-height:1}
+#about .ab-gh .gh .days{gap:2px;font-size:9.5px}
+#about .ab-gh .gh .cells{gap:2px}
+#about .ab-gh .gh-foot{margin-top:4px;font-size:11.5px}
+#about .ab-gh .gh-legend i{width:9px;height:9px}
+
+/* reading feature */
+#about .ab-spread .ab-read .lab{margin:0 0 12px}
+#about .ab-read .lab span{text-transform:none;letter-spacing:.02em;color:var(--dimmer)}
+#about .ab-books{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto auto auto;column-gap:22px;row-gap:0}
+#about .ab-book{display:grid;grid-row:span 4;grid-template-rows:subgrid;justify-items:center;text-align:center;min-width:0;line-height:1.22}
+#about .ab-cvw{position:relative;display:flex;justify-content:center;width:100%;padding-bottom:12px}
+#about .ab-cvw::after{content:"";position:absolute;left:-11px;right:-11px;bottom:0;height:12px;background:linear-gradient(180deg,color-mix(in oklab,var(--fg) 14%,var(--surf)) 0 3px,color-mix(in oklab,var(--fg) 7%,var(--surf)) 3px);box-shadow:0 8px 14px -8px rgba(23,19,14,.35);z-index:0}
+#about .ab-book:first-child .ab-cvw::after{left:-6px;border-radius:2px 0 0 2px}
+#about .ab-book:last-child .ab-cvw::after{right:-6px;border-radius:0 2px 2px 0}
+#about .ab-cvw .ab-cover{z-index:1}
+#about .ab-cover{position:relative;display:block;height:var(--cvH);aspect-ratio:136/208;max-width:100%;overflow:hidden;border-radius:2px 4px 4px 2px;background:var(--surf2);
+  box-shadow:0 1px 0 rgba(0,0,0,.08),0 16px 22px -14px rgba(23,19,14,.6);transition:box-shadow .45s var(--ease)}
+#about .ab-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.22),transparent 8%,transparent 94%,rgba(255,255,255,.14));pointer-events:none}
+#about .ab-cover img{width:100%;height:100%;object-fit:cover}
+#about .ab-book:hover .ab-cover{box-shadow:0 1px 0 rgba(0,0,0,.08),0 26px 30px -16px rgba(23,19,14,.6)}
+#about .ab-book b{display:block;margin-top:12px;font-size:14px;line-height:1.25;color:var(--fg);text-wrap:balance}
+#about .ab-au{display:block;margin:3px 0 6px;font-size:12px;line-height:1.3;color:var(--dimmer)}
+#about .ab-book em{font:italic 400 15px/1.22 var(--fs);color:var(--fg);
+  background:linear-gradient(transparent 58%,color-mix(in oklab,var(--acc) 26%,transparent) 58%) no-repeat 0 0/0% 100%;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+#about .ab-book:hover em{background-size:100% 100%}
+
+/* F1 card and How I work share the foot of the right page */
+#about .ab-foot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding-top:12px;border-top:1px solid var(--lineS)}
+#about .ab-f1{position:relative;overflow:hidden;border-radius:6px;background:#0b0b0b;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;min-height:112px}
+#about .ab-f1 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;transition:transform .8s var(--ease)}
+#about .ab-f1::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 5%,rgba(0,0,0,.9))}
+#about .ab-f1 .in{position:relative;z-index:2;padding:10px 12px 11px}
+#about .ab-f1 small{display:block;font-size:11px;line-height:1.3;color:rgba(255,255,255,.72)}
+#about .ab-f1 b{display:block;font:700 15px/1.2 var(--fb);letter-spacing:-.01em}
+#about .ab-f1 .lap{margin-top:7px;gap:6px 8px}
+#about .ab-f1 .lap .clock{font-size:12px;min-width:7ch}
+#about .ab-f1 .lap button{font-size:11.5px;padding:6px 9px}
+#about .ab-f1:hover .lap .sectors i::after{transform:scaleX(1)}
+#about .ab-f1:hover .lap .sectors i:nth-child(2)::after{transition-delay:.45s}
+#about .ab-f1:hover .lap .sectors i:nth-child(3)::after{transition-delay:.9s}
+#about .ab-spread .ab-work .lab{margin:0 0 4px;font-size:11px}
+#about .ab-work .hiw li{padding:4px 0;gap:0}
+#about .ab-work .hiw li:first-child{padding-top:0}
+#about .ab-work .hiw b{font-size:13px;line-height:1.25;font-weight:600}
+#about .ab-work .hiw a{font-size:12px;line-height:1.35}
+
+/* folios */
+#about .ab-folio{position:absolute;bottom:10px;font:500 10px/1 var(--fm);letter-spacing:.1em;text-transform:uppercase;color:var(--dimmer);pointer-events:none}
+#about .ab-l .ab-folio{left:var(--pageX)}
+#about .ab-r .ab-folio{right:var(--pageX)}
+
+/* ── desktop: the open spread, sized to sit between the header and the floating nav ── */
+@media (min-width:1025px){
+  #about.band .sec{padding-top:clamp(8px,1.4vh,20px);padding-bottom:clamp(8px,1.4vh,20px)}
+  #about.band .sh{padding-top:16px;margin-bottom:12px}
+  #about.band .sh-serif .h2{font-size:clamp(38px,6vh,56px)}
+  /* covers keep 136x208 when there is height for it and shrink on short screens */
+  #about .ab-spread{--cvH:clamp(140px,calc(100vh - 622px),208px);display:grid;grid-template-columns:minmax(0,1.22fr) minmax(0,1fr)}
+  #about .ab-page{padding:20px var(--pageX) 28px}
+  #about .ab-l{border-radius:6px 0 0 6px;background:linear-gradient(270deg,rgba(23,19,14,.10),transparent 44px),var(--surf)}
+  #about .ab-r{border-radius:0 6px 6px 0;background:linear-gradient(90deg,rgba(23,19,14,.12),transparent 44px),var(--surf);display:flex;flex-direction:column}
+  /* one column, so no sentence breaks across the rule; the graph sits on the page foot, level with the F1 card */
+  #about .ab-l{display:flex;flex-direction:column}
+  #about .ab-bio{column-count:1;max-width:58ch}
+  #about .ab-gh{margin-top:auto}
+  #about .ab-foot{margin-top:auto}
+  #about .ab-read{margin-bottom:14px}
+  #about .ab-pq{font-size:clamp(30px,4.8vh,38px)}
+}
+@media (min-width:1025px) and (max-height:780px){
+  #about .ab-pq{padding-left:26px}
+}
+/* a narrower ticker column keeps the title on one line, so the spread fits the viewport */
+@media (min-width:1025px) and (max-width:1199px){#about .sh:has(.ticker){grid-template-columns:minmax(0,1fr) minmax(0,340px)}}
+
+/* ── tablet and phone: one page, the reading feature right after the quote and bio ── */
+@media (max-width:1024px){
+  #about .ab-spread{display:flex;flex-direction:column;padding:22px 24px 26px;background:var(--surf)}
+  #about .ab-page{display:contents}
+  #about .ab-folio{display:none}
+  #about .ab-pq{order:1}
+  #about .ab-bio{order:2}
+  #about .ab-read{order:3;margin-top:16px;padding-top:12px;border-top:1px solid var(--lineS)}
+  #about .ab-foot{order:5;margin-top:16px}
+  #about .ab-gh{order:6;margin-top:16px}
+  #about .ab-bio{column-count:2;column-gap:24px;column-rule:1px solid var(--line)}
+  #about .ab-books{max-width:520px}
+}
+@media (max-width:760px){
+  #about .ab-spread{padding:20px 18px 22px}
+  #about .ab-pq{font-size:30px;padding-left:24px}
+  #about .ab-bio{column-count:1;font-size:15px;line-height:1.6}
+  #about .ab-dc::first-letter{font-size:48px}
+  #about .ab-books{gap:12px}
+  #about .ab-cover{height:auto;width:min(100%,120px)}
+  #about .ab-book b{font-size:13px}
+  #about .ab-book em{font-size:14.5px}
+  #about .ab-foot{grid-template-columns:1fr;gap:14px}
+  #about .ab-f1{min-height:132px}
+  #about .ab-work .hiw b{font-size:14.5px}
+  #about .ab-work .hiw a{font-size:13px}
+  #about .ab-gh .gh .days{font-size:9px}
+}
+
+/* ── dark: warm ink pages, a deeper gutter, covers lit like a reading lamp ── */
+[data-theme="dark"] #about .ab-spread{box-shadow:0 30px 60px -24px rgba(0,0,0,.85),0 0 0 1px var(--line),inset 0 1px 0 rgba(244,239,231,.05)}
+[data-theme="dark"] #about .ab-pq::before{text-shadow:0 0 22px color-mix(in oklab,var(--acc) 45%,transparent)}
+[data-theme="dark"] #about .ab-cover{box-shadow:0 0 0 1px rgba(244,239,231,.07),0 18px 26px -14px rgba(0,0,0,.9)}
+[data-theme="dark"] #about .ab-cover::after{background:linear-gradient(90deg,rgba(0,0,0,.4),transparent 9%,transparent 93%,rgba(255,255,255,.1))}
+[data-theme="dark"] #about .ab-book:hover .ab-cover{box-shadow:0 0 0 1px color-mix(in oklab,var(--acc) 40%,transparent),0 26px 34px -16px rgba(0,0,0,.95),0 0 30px -6px color-mix(in oklab,var(--acc) 30%,transparent)}
+[data-theme="dark"] #about .ab-book em{color:rgba(244,239,231,.9);background-image:linear-gradient(transparent 58%,color-mix(in oklab,var(--acc) 32%,transparent) 58%)}
+[data-theme="dark"] #about .ab-f1{box-shadow:0 0 0 1px rgba(244,239,231,.08)}
+@media (min-width:1025px){
+  [data-theme="dark"] #about .ab-l{background:linear-gradient(270deg,rgba(0,0,0,.42),transparent 48px),radial-gradient(110% 70% at 0 0,color-mix(in oklab,var(--acc) 6%,transparent),transparent 65%),var(--surf)}
+  [data-theme="dark"] #about .ab-r{background:linear-gradient(90deg,rgba(0,0,0,.48),transparent 48px),var(--surf)}
+  [data-theme="dark"] #about .ab-r::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(244,239,231,.05)}
+}
+
+/* ── motion: only with html.motion-ok, which is never set under reduced motion ── */
+html.motion-ok #about .ab-cover{transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+html.motion-ok #about .ab-book:hover .ab-cover{transform:translateY(-8px) rotate(-1.5deg)}
+html.motion-ok #about .ab-book em{transition:background-size .5s var(--ease)}
+html.motion-ok #about .ab-f1:hover img{transform:scale(1.05)}
+/* arrival: covers rise 26px with a 120ms stagger, once */
+html.motion-ok #about .ab-pre .ab-cover{opacity:0;transform:translateY(26px)}
+html.motion-ok #about .ab-go .ab-cover{transition:transform .9s var(--ease) calc(var(--i,0) * 120ms),opacity .6s ease calc(var(--i,0) * 120ms),box-shadow .45s var(--ease)}
+@media (prefers-reduced-motion:reduce){
+  #about .ab-cover,#about .ab-book em,#about .ab-f1 img{transition:none}
+  #about .ab-pre .ab-cover{opacity:1;transform:none}
+  #about .ab-book:hover .ab-cover{transform:none}
+}
+
+[data-theme="dark"] #about .ab-cvw::after{background:linear-gradient(180deg,rgba(244,239,231,.16) 0 3px,rgba(244,239,231,.06) 3px);box-shadow:0 10px 16px -8px rgba(0,0,0,.7)}
