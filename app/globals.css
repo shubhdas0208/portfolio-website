@@ -292,10 +292,10 @@ html.motion-ok .desk .rc .row,html.motion-ok .desk .rc .hd{animation:print .3s s
 .desk .fl{left:560px;top:30px;width:150px;height:300px;background:transparent;box-shadow:none}
 .desk .fl:hover{box-shadow:none}
 .desk .fl .sn{position:absolute;left:0;top:0;width:66px;height:50px;padding:6px 7px;border-radius:2px;font:600 10.5px/1.2 var(--fb);color:#17130E;box-shadow:0 2px 3px rgba(23,19,14,.12),0 8px 14px -8px rgba(23,19,14,.35);transform:translate(var(--x1),var(--y1));transition:transform .7s var(--ease);transition-delay:calc(var(--i) * 40ms)}
-html.motion-ok .desk .fl .sn{animation:sortin 1.2s var(--ease) both;animation-delay:calc(.6s + var(--i) * 70ms)}
+/* backwards fill: once sorted, the animation lets go, so hover and leave both glide via the transition */
+html.motion-ok .desk .fl .sn{animation:sortin 1.2s var(--ease) backwards;animation-delay:calc(.6s + var(--i) * 70ms)}
 @keyframes sortin{from{transform:translate(var(--x0),var(--y0)) rotate(var(--r0))}to{transform:translate(var(--x1),var(--y1))}}
-/* hover scatters the notes back; it must outrank the motion-ok sort-in animation above */
-.desk .fl:hover .sn,html.motion-ok .desk .fl:hover .sn{animation:none;transform:translate(var(--x0),var(--y0)) rotate(var(--r0))}
+.desk .fl:hover .sn{transform:translate(var(--x0),var(--y0)) rotate(var(--r0))}
 .desk .fl .sn small{display:block;margin-top:3px;font:11px/1.2 var(--fm);opacity:.7}
 .desk .fl .sn .scrib{display:block;height:5px;margin:3px 0 4px;border-radius:3px;background:repeating-linear-gradient(90deg,rgba(23,19,14,.35) 0 10px,transparent 10px 13px);width:80%}
 .desk .fl .sn.a{background:#F6C99A}.desk .fl .sn.b{background:#F3E3B5}.desk .fl .sn.c{background:#E9D7C6}
