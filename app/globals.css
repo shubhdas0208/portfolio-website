@@ -254,10 +254,10 @@ html.motion-ok .sh .w{transition:transform .6s var(--ease);transition-delay:calc
 .desk .ob.held{cursor:grabbing;scale:1.07;z-index:30;transition:scale .2s var(--ease),box-shadow .2s;box-shadow:0 6px 10px var(--press),0 40px 60px -16px rgba(23,19,14,.5)}
 .desk .ob:focus-visible{outline:2px solid var(--focus);outline-offset:4px;z-index:25}
 .desk img{display:block;pointer-events:none}
-.desk .dlab{position:absolute;left:50%;top:-16px;transform:translate(-50%,6px);font:11px/1 var(--fm);background:var(--fg);color:var(--bg);padding:6px 9px;border-radius:999px;opacity:0;white-space:nowrap;pointer-events:none;transition:opacity .2s,transform .3s var(--ease);z-index:5}
+.desk .dlab{position:absolute;left:50%;top:-16px;transform:translate(-50%,6px);font:11.5px/1 var(--fm);background:var(--fg);color:var(--bg);padding:6px 9px;border-radius:999px;opacity:0;white-space:nowrap;pointer-events:none;transition:opacity .2s,transform .3s var(--ease);z-index:5}
 .desk .ob:hover .dlab,.desk .ob:focus-visible .dlab{opacity:1;transform:translate(-50%,0)}
 .desk .tape{position:absolute;width:62px;height:20px;background:color-mix(in oklab,var(--acc) 22%,rgba(255,255,255,.5));opacity:.8}
-.desk .cap{display:block;font:italic 16px/1.25 var(--fs);color:var(--fg);margin:8px 2px 0}
+.desk .cap{display:block;font:500 14.5px/1.3 var(--fb);color:var(--fg);margin:8px 2px 0}
 .desk .cap b{display:block;margin-bottom:3px;font:600 13px/1 var(--fb);font-style:normal;letter-spacing:.01em}
 
 /* ID badge: sways, swings harder on hover */
@@ -265,10 +265,11 @@ html.motion-ok .sh .w{transition:transform .6s var(--ease);transition-delay:calc
 .desk .badge-ob:hover{animation-duration:1.4s}
 .desk .badge-ob .strap{position:absolute;left:72px;top:-70px;width:26px;height:70px;border-radius:3px 3px 0 0;background:var(--acc)}
 .desk .badge-ob .clip{position:absolute;left:70px;top:-6px;width:30px;height:12px;border-radius:4px;background:var(--dimmer)}
-.desk .badge-ob .ph{display:grid;place-items:center;height:112px;padding:8px;border:1.5px dashed var(--lineS);border-radius:8px;background:var(--tint);text-align:center;font:11px/1.35 var(--fm);color:var(--dimmer)}
+.desk .badge-ob .ph{display:block;height:136px;overflow:hidden;border-radius:8px;background:#2a211a}
+.desk .badge-ob .ph img{display:block;width:100%;height:100%;object-fit:cover}
 .desk .badge-ob .h4{display:block;margin:12px 0 2px;font:600 15px/1.2 var(--fb)}
 .desk .badge-ob .r{display:block;font-size:13px;line-height:1.4;color:var(--dim)}
-.desk .badge-ob .r em{font:italic 15px/1.3 var(--fs);color:var(--accText)}
+.desk .badge-ob .r em{font:500 14px/1.3 var(--fb);color:var(--accText)}
 @keyframes dksway{0%,100%{rotate:-6deg}50%{rotate:-3deg}}
 
 /* ToolMonkey print and its run receipt */
@@ -294,11 +295,11 @@ html.motion-ok .desk .rc .row,html.motion-ok .desk .rc .hd{animation:print .3s s
 html.motion-ok .desk .fl .sn{animation:sortin 1.2s var(--ease) both;animation-delay:calc(.6s + var(--i) * 70ms)}
 @keyframes sortin{from{transform:translate(var(--x0),var(--y0)) rotate(var(--r0))}to{transform:translate(var(--x1),var(--y1))}}
 .desk .fl:hover .sn{animation:none;transform:translate(var(--x0),var(--y0)) rotate(var(--r0))}
-.desk .fl .sn small{display:block;margin-top:3px;font:10px/1.2 var(--fm);opacity:.7}
+.desk .fl .sn small{display:block;margin-top:3px;font:11px/1.2 var(--fm);opacity:.7}
 .desk .fl .sn .scrib{display:block;height:5px;margin:3px 0 4px;border-radius:3px;background:repeating-linear-gradient(90deg,rgba(23,19,14,.35) 0 10px,transparent 10px 13px);width:80%}
 .desk .fl .sn.a{background:#F6C99A}.desk .fl .sn.b{background:#F3E3B5}.desk .fl .sn.c{background:#E9D7C6}
 .desk .fl .sn:first-child{outline:1.5px solid #17130E}
-.desk .fl .rk{position:absolute;left:-18px;font:500 11px/1 var(--fm);color:var(--dimmer);transition:opacity .3s}
+.desk .fl .rk{position:absolute;left:-18px;font:500 11.5px/1 var(--fm);color:var(--dimmer);transition:opacity .3s}
 .desk .fl:hover .rk{opacity:0}
 .desk .fl .cap{position:absolute;left:0;top:226px;width:150px}
 
@@ -309,31 +310,44 @@ html.motion-ok .desk .fl .sn{animation:sortin 1.2s var(--ease) both;animation-de
 .desk .pg99 .ring{position:absolute;right:-26px;bottom:-30px;width:92px;height:92px;border-radius:50%;border:6px solid rgba(120,72,30,.16);box-shadow:inset 0 0 0 2px rgba(120,72,30,.08);transition:rotate 1.2s var(--ease)}
 .desk .pg99:hover .ring{rotate:200deg}
 
-/* BITS notebook: a toy car laps a pencil circuit, faster on hover */
-.desk .nb{left:262px;top:356px;width:212px;height:196px;padding:20px 16px 12px;rotate:4deg;border-radius:4px 8px 8px 4px;background:repeating-linear-gradient(var(--surf) 0 21px,var(--line) 21px 22px);background-position:0 30px}
-.desk .nb .sp{position:absolute;left:12px;right:12px;top:-6px;height:12px;background:radial-gradient(circle,var(--dimmer) 0 3px,transparent 3.5px) 0 0/16px 12px repeat-x}
-.desk .nb .t{display:block;margin:2px 0;font:italic 19px/1.15 var(--fs)}
-.desk .nb .s{display:block;font-size:12px;color:var(--dim)}
-.desk .nb .strat{position:absolute;right:14px;bottom:8px;font:italic 14px/1 var(--fs);color:var(--dimmer)}
-.desk .nb svg{position:absolute;left:24px;bottom:12px;width:164px;height:84px;overflow:visible}
-.desk .nb svg path{fill:none;stroke:var(--dimmer);stroke-width:1.4;stroke-dasharray:3 3}
-.desk .nb .trk{position:absolute;left:24px;bottom:12px;width:164px;height:84px}
-.desk .nb .car{position:absolute;left:0;top:0;width:14px;height:7px;border-radius:3px;background:var(--acc);offset-rotate:auto;animation:dklap 5s linear infinite}
-.desk .nb:hover .car{animation-duration:1.6s}
-@keyframes dklap{to{offset-distance:100%}}
+/* BITS: a wide instant print of the campus sketch, taped down; its frame follows the theme, the picture does not */
+.desk .bits{left:262px;top:350px;width:204px;padding:8px 8px 0;rotate:-3deg;border-radius:3px;background:#FDFBF6}
+.desk .bits img{display:block;width:100%;height:auto;border-radius:1px}
+.desk .bits .tape{position:absolute;z-index:3;left:70px;top:-9px;width:64px;height:18px;rotate:-3deg;background:color-mix(in oklab,#F2A464 46%,transparent);opacity:.85;mix-blend-mode:multiply;pointer-events:none}
+.desk .bits .pc{display:block;padding:9px 2px 11px;font:600 16px/1.15 var(--fb);color:#17130E}
+.desk .bits .pc small{display:block;margin-top:3px;font:400 11px/1.2 var(--fm);letter-spacing:.06em;text-transform:uppercase;color:rgba(23,19,14,.62)}
+[data-theme="dark"] .desk .bits{background:#241E18;box-shadow:0 2px 3px rgba(0,0,0,.4),0 18px 32px -12px rgba(0,0,0,.7),inset 0 0 0 1px rgba(244,239,231,.06)}
+[data-theme="dark"] .desk .bits .tape{mix-blend-mode:normal;opacity:.6}
+[data-theme="dark"] .desk .bits .pc{color:#F4EFE7}
+[data-theme="dark"] .desk .bits .pc small{color:rgba(244,239,231,.62)}
 
-/* Voxikin phone: buzzes now and then, rings on hover */
-.desk .ph1{left:478px;top:362px;width:112px;height:206px;padding:12px 9px;border-radius:22px;background:#17130E;border:1px solid var(--lineS);rotate:-9deg;z-index:3;animation:dkbuzz 8s linear infinite;box-shadow:0 4px 6px rgba(0,0,0,.18),0 18px 30px -12px rgba(23,19,14,.45)}
-.desk .ph1:hover{animation:dkbuzz 1s linear infinite}
-.desk .ph1 .scr2{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;height:100%;border-radius:14px;background:#221C16;color:#F4EFE7}
-.desk .ph1 .scr2 b{font:600 13px/1 var(--fb)}
-.desk .ph1 .vk{font:10px/1 var(--fm);color:#FF8533;letter-spacing:.08em}
-.desk .ph1 .wave{height:26px}.desk .ph1 .wave i{background:#FF8533}
-@keyframes dkbuzz{0%,84%,100%{translate:var(--dx,0px) var(--dy,0px)}86%,90%,94%{translate:calc(var(--dx,0px) - 2px) var(--dy,0px)}88%,92%,96%{translate:calc(var(--dx,0px) + 2px) var(--dy,0px)}}
-.desk .rp{position:absolute;left:534px;top:465px;width:10px;height:10px;border-radius:50%;border:2px solid var(--acc);opacity:0;pointer-events:none;animation:dkring 8s var(--ease) infinite}
-.desk .rp.b2{animation-delay:.25s}
-@keyframes dkring{0%,84%{opacity:0;transform:scale(1)}86%{opacity:.8}100%{opacity:0;transform:scale(16)}}
-.desk .vx{left:598px;top:404px;width:120px;padding:12px;rotate:6deg;z-index:2}
+/* Voxikin phone: graphite frame showing the app's splash */
+.desk .ph1{left:486px;top:340px;width:122px;height:250px;padding:0;background:none;border-radius:26px;rotate:-8deg;z-index:3;box-shadow:0 2px 3px rgba(0,0,0,.25),0 26px 40px -14px rgba(23,19,14,.55)}
+.desk .ph1 .body{position:absolute;inset:0;border-radius:26px;background:linear-gradient(150deg,#5a544e 0%,#26221f 34%,#1a1714 70%,#3a3531 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.desk .ph1 .pbtn{position:absolute;width:3px;border-radius:2px;background:linear-gradient(#4a4440,#24201d)}
+.desk .ph1 .pbtn.b1{left:-2px;top:62px;height:20px}.desk .ph1 .pbtn.b2{left:-2px;top:90px;height:34px}.desk .ph1 .pbtn.b3{right:-2px;top:78px;height:44px}
+.desk .ph1 .scr{position:absolute;inset:5px;border-radius:21px;overflow:hidden;background:#000}
+.desk .ph1 .disp{position:absolute;inset:2px;border-radius:19px;overflow:hidden;background:linear-gradient(180deg,#FFFFFF 0%,#FCFBF7 54%,#F6F4EE 100%)}
+.desk .ph1 .glare{position:absolute;inset:5px;border-radius:21px;z-index:9;pointer-events:none;background:linear-gradient(118deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.06) 26%,rgba(255,255,255,0) 40%)}
+/* the splash renders at its true 390x844 and is zoomed (zoom re-lays out text, so it stays sharp) */
+.vx-frame{--ease:cubic-bezier(.16,1,.3,1);--ink:#17181A;--r5:#969892;--r6:#B4B5AD;--r7:#CDCCC2;--r8:#E0DED4;--ui:var(--font-archivo),system-ui,sans-serif;
+  position:absolute;left:0;top:0;display:block;width:390px;height:844px;zoom:.2718}
+.vx-frame .vx-field{position:absolute;inset:0;z-index:1}
+.vx-frame .vx-field i{position:absolute;left:0;top:var(--y);display:flex;align-items:baseline;gap:27px;white-space:nowrap;font-style:normal;transform:translateX(var(--tx));animation:vxGather 820ms var(--ease) var(--d) both}
+.vx-frame .vx-field span{font:500 var(--s)/1 var(--ui),"Noto Sans Devanagari","Nirmala UI",sans-serif;color:var(--c)}
+@keyframes vxGather{from{opacity:0;transform:translate(var(--tx),var(--dy))}}
+.vx-frame .vx-clear{position:absolute;inset:0;z-index:2;background:radial-gradient(48% 18% at 50% 50%,#FFF1D8 0%,#FFF8EA 48%,rgba(255,248,234,0) 100%),radial-gradient(72% 33% at 50% 50%,#FCFBF7 0%,#FCFBF7 50%,rgba(252,251,247,0) 100%);animation:vxClear 760ms var(--ease) 470ms both}
+@keyframes vxClear{from{opacity:0;transform:scale(1.34)}}
+.vx-frame .vx-name{position:absolute;left:0;right:0;top:50%;z-index:3;text-align:center;transform:translateY(-50%);animation:vxName 720ms var(--ease) 730ms both}
+.vx-frame .vx-name b{display:block;font:700 56px/1 var(--ui);letter-spacing:-.036em;color:var(--ink)}
+@keyframes vxName{from{opacity:0;transform:translateY(calc(-50% + 10px)) scale(.958)}}
+.vx-frame .vx-sb{position:absolute;left:0;right:0;top:0;z-index:6;height:54px;display:flex;justify-content:space-between;align-items:center;padding:16px 34px 0 40px;font:600 17px/1 var(--ui);color:#17181A}
+.vx-frame .vx-sb .sig{display:flex;gap:6px;align-items:center}
+.vx-frame .vx-island{position:absolute;left:50%;top:12px;z-index:7;width:122px;height:36px;border-radius:20px;background:#000;transform:translateX(-50%)}
+.vx-frame .vx-home{position:absolute;left:50%;bottom:9px;z-index:7;width:136px;height:5px;border-radius:3px;background:#17181A;transform:translateX(-50%)}
+.hero.paused .vx-frame *{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.vx-frame *{animation:none!important}}
+.desk .vx{left:614px;top:404px;width:112px;padding:12px;rotate:6deg;z-index:2}
 .desk .vx .cap{margin:0}
 .hero.paused .desk *{animation-play-state:paused}
 

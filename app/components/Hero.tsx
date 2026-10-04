@@ -5,10 +5,10 @@ import { useEffect, useRef } from 'react'
 import { useVisibleLoop } from '../lib/hooks'
 import DeskObject from './DeskObject'
 import HeroLetterhead from './HeroLetterhead'
+import VoxikinSplash from './VoxikinSplash'
 
 const DESK_W = 728
 const DESK_H = 604
-const WAVE_BARS = 6
 const noop = () => {}
 
 // Filtr notes: only the sources are real labels; the top-ranked note carries the one published theme.
@@ -20,8 +20,6 @@ const NOTES = [
   { src: 'Jira', tone: 'b', x0: 76, y0: 96, r0: -20, x1: 0, y1: 116 },
   { src: 'Calls', tone: 'c', x0: 0, y0: 160, r0: 7, x1: 72, y1: 116 },
 ]
-
-const TRACK = 'M20 60 C 20 20, 70 6, 110 14 S 160 40, 150 62 S 100 82, 60 74 S 20 76, 20 60 Z'
 
 const PHONE_BOX = 600
 const PHONE_MIN_SCALE = 0.66
@@ -81,7 +79,7 @@ export default function Hero() {
           <div ref={deskRef} className="desk" style={{ ['--w' as string]: `${DESK_W}px`, ['--h' as string]: `${DESK_H}px` }}>
             <DeskObject href="#experience" label="Experience" className="badge-ob" style={{ ['--p' as string]: 6 }}>
               <span className="strap" aria-hidden="true" /><span className="clip" aria-hidden="true" />
-              <span className="ph">PHOTO<br />Shubh to supply<br />(portrait, plain bg)</span>
+              <span className="ph"><img src="/images/hero/shubh-portrait.webp" alt="Shubh Sankalp Das" width={144} height={136} /></span>
               <span className="h4">Shubh Sankalp Das</span>
               <span className="r">Product Manager, Dezerv<br /><em>Lending + Voice Agents</em></span>
             </DeskObject>
@@ -122,22 +120,17 @@ export default function Hero() {
               <span className="ring" aria-hidden="true" />
             </DeskObject>
 
-            <DeskObject href="#about" label="About" className="nb" style={{ ['--p' as string]: 4 }}>
-              <span className="sp" aria-hidden="true" />
-              <span className="t">BITS Pilani, Goa</span>
-              <span className="s">Electronics + Finance</span>
-              <svg viewBox="0 0 164 84" aria-hidden="true"><path d={TRACK} /></svg>
-              <span className="trk" aria-hidden="true"><span className="car" style={{ offsetPath: `path("${TRACK}")` }} /></span>
-              <span className="s strat">race strategy</span>
+            <DeskObject href="#about" label="About" className="bits" style={{ ['--p' as string]: 4 }}>
+              <span className="tape" aria-hidden="true" />
+              <img src="/images/hero/bits-goa-sketch.webp" alt="" width={188} height={113} />
+              <span className="pc">BITS Pilani, Goa<small>Electronics + Finance</small></span>
             </DeskObject>
 
-            <span className="rp" aria-hidden="true" /><span className="rp b2" aria-hidden="true" />
             <DeskObject href="#projects-own" label="Voxikin project" className="ph1" style={{ ['--p' as string]: 10 }}>
-              <span className="scr2">
-                <span className="vk">VOXIKIN</span>
-                <span className="wave" aria-hidden="true">{Array.from({ length: WAVE_BARS }, (_, i) => <i key={i} />)}</span>
-                <b>calling</b>
-              </span>
+              <span className="body" aria-hidden="true" />
+              <span className="pbtn b1" aria-hidden="true" /><span className="pbtn b2" aria-hidden="true" /><span className="pbtn b3" aria-hidden="true" />
+              <span className="scr"><span className="disp"><VoxikinSplash /></span></span>
+              <span className="glare" aria-hidden="true" />
             </DeskObject>
 
             <DeskObject href="#projects-own" label="Voxikin: a voice AI elderly healthcare assistant" className="vx" style={{ ['--p' as string]: 6 }}>
