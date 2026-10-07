@@ -11,16 +11,6 @@ const DESK_W = 728
 const DESK_H = 604
 const noop = () => {}
 
-// Filtr notes: only the sources are real labels; the top-ranked note carries the one published theme.
-const NOTES = [
-  { src: 'Slack', tone: 'a', x0: 40, y0: 120, r0: -14, x1: 0, y1: 0 },
-  { src: 'Jira', tone: 'b', x0: 6, y0: 40, r0: 9, x1: 72, y1: 0 },
-  { src: 'Calls', tone: 'c', x0: 70, y0: 150, r0: 18, x1: 0, y1: 58 },
-  { src: 'Slack', tone: 'a', x0: 30, y0: 80, r0: -6, x1: 72, y1: 58 },
-  { src: 'Jira', tone: 'b', x0: 76, y0: 96, r0: -20, x1: 0, y1: 116 },
-  { src: 'Calls', tone: 'c', x0: 0, y0: 160, r0: 7, x1: 72, y1: 116 },
-]
-
 const PHONE_BOX = 600
 const PHONE_MIN_SCALE = 0.66
 
@@ -101,17 +91,8 @@ export default function Hero() {
             </DeskObject>
 
             <DeskObject href="/projects/filtr-rag-pm-tool" label="Filtr case study" className="fl" style={{ ['--p' as string]: 7 }}>
-              {NOTES.map((n, i) => (
-                <span
-                  key={i}
-                  className={`sn ${n.tone}`}
-                  style={{ ['--x0' as string]: `${n.x0}px`, ['--y0' as string]: `${n.y0}px`, ['--r0' as string]: `${n.r0}deg`, ['--x1' as string]: `${n.x1}px`, ['--y1' as string]: `${n.y1}px`, ['--i' as string]: i }}
-                >
-                  {i === 0 ? <>Mobile Checkout Failures<small>7 mentions</small></> : <><i className="scrib" aria-hidden="true" /><small>{n.src}</small></>}
-                </span>
-              ))}
-              <span className="rk" style={{ top: 20 }}>1</span><span className="rk" style={{ top: 78 }}>2</span><span className="rk" style={{ top: 136 }}>3</span>
-              <span className="cap"><b>Filtr</b>Slack, Jira and calls in. Ranked insight out.</span>
+              <img src="/images/projects/filtr-rag-pm-tool-cover-480.webp" alt="" width={160} height={96} />
+              <span className="cap"><b>Filtr</b>Turns Slack, Jira and call notes into a ranked list of user problems.</span>
             </DeskObject>
 
             <DeskObject href="/writing/p99-is-a-ux-metric" label="P99 blog" className="pg99" style={{ ['--p' as string]: 8 }}>
