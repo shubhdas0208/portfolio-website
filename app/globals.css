@@ -84,11 +84,9 @@ input,textarea{caret-color:var(--acc)}
 .threads{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .threads path{fill:none;stroke-width:1.6;stroke-linecap:round}
 .threads{animation:drift var(--t,9s) ease-in-out infinite alternate}
-.threads .flow{stroke-dasharray:6 14;animation:flow 6s linear infinite}
 @keyframes drift{from{transform:translateY(-1.4%)}to{transform:translateY(1.4%)}}
-@keyframes flow{to{stroke-dashoffset:-200}}
-.paused .threads,.paused .threads .flow{animation-play-state:paused}
-@media (prefers-reduced-motion:reduce){.threads,.threads .flow{animation:none}}
+.paused .threads{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.threads{animation:none}}
 .band-night .form{--bg:#F4EFE7;--surf:#FBF8F3;--fg:#17130E;--dim:rgba(23,19,14,.72);--dimmer:rgba(23,19,14,.64);--line:rgba(23,19,14,.09);--lineS:rgba(23,19,14,.16);--acc:#E0600F;--accInk:#17130E;--accText:#B23C0B;--err:#B3261E;--focus:#B23C0B;color:var(--fg)}
 /* ── one calm background layer per section, always behind content ── */
 .band{isolation:isolate;overflow:clip}
