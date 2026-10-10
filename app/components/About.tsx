@@ -80,7 +80,7 @@ export default function About() {
         <div className="ab-page ab-l">
           <blockquote className="ab-pq">The most interesting product problems are people problems.</blockquote>
           <div className="ab-bio">
-            <p className="ab-dc">I studied Electronics and Instrumentation at BITS Pilani Goa, with a Finance minor. I drifted into product because my questions were never about technical output. They were about people. Now I&apos;m a Product Manager at Dezerv.</p>
+            <p className="ab-dc">I studied Electronics and Instrumentation at BITS Pilani Goa, with a Finance minor. I drifted into product because my questions were never only about technical output. They were also about people. Now I&apos;m a Product Manager at Dezerv.</p>
             <p>Outside work I train, read history and mythology, and travel when I can.</p>
           </div>
           <div className={`ab-gh${swept ? ' swept' : ''}${stage === 'settled' ? ' settled' : ''}`} id="about-github">
