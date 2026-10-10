@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
-import { DM_Mono, Instrument_Serif } from 'next/font/google'
+import { DM_Mono } from 'next/font/google'
 import './tailwind.css'
 import './globals.css'
 import Header from './components/Header'
@@ -28,7 +28,6 @@ const satoshi = localFont({
 })
 
 const dmMono = DM_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-dm-mono', display: 'swap' })
-const instrument = Instrument_Serif({ subsets: ['latin'], weight: '400', style: 'italic', variable: '--font-instrument', display: 'swap' })
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portfolio-website-shubh-das.vercel.app'),
@@ -47,7 +46,7 @@ const themeScript = `try{var t=localStorage.getItem('theme');document.documentEl
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="light" suppressHydrationWarning className={`${clash.variable} ${satoshi.variable} ${dmMono.variable} ${instrument.variable}`}>
+    <html lang="en" data-theme="light" suppressHydrationWarning className={`${clash.variable} ${satoshi.variable} ${dmMono.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

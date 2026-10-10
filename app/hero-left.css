@@ -43,7 +43,7 @@
 .lh-row dd{margin:0}
 .lh-val{font:700 16px/1.25 var(--fb);letter-spacing:-.01em;color:var(--fg);white-space:nowrap}
 .lh-det{justify-self:end;text-align:right;font:11.5px/1.35 var(--fm);color:var(--dim)}
-.lh-row.live .lh-det{justify-self:start;text-align:left;font:italic 400 19px/1.1 var(--fs);letter-spacing:0;color:var(--accText)}
+.lh-row.live .lh-det{justify-self:start;text-align:left;font:500 17.7px/1.1 var(--fb);letter-spacing:0;color:var(--accText)}
 .lh-val mark{color:inherit;padding:0 3px;margin:0 -3px;
   background:linear-gradient(transparent 52%,color-mix(in oklab,var(--acc) 48%,transparent) 52% 94%,transparent 94%) no-repeat 0 0/100% 100%}
 [data-theme="dark"] .lh-val mark{background-image:linear-gradient(transparent 52%,color-mix(in oklab,var(--acc) 40%,transparent) 52% 94%,transparent 94%)}

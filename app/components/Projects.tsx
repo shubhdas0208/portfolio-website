@@ -1,13 +1,13 @@
 import { PROJECTS } from '../lib/content'
 import SectionHeader from './SectionHeader'
 import CountUp from './CountUp'
-import ToolMonkeyTrace from './ToolMonkeyTrace'
-import FiltrThemes from './FiltrThemes'
+import ToolMonkeyReport from './ToolMonkeyReport'
+import FiltrBoard from './FiltrBoard'
 import VoxikinCase from './VoxikinCase'
 import ViewTransitionLink from './ViewTransitionLink'
 import VisibleCard from './VisibleCard'
 import ProjectIndex, { type ProjectRef } from './ProjectIndex'
-import { Oscilloscope, SortingDots } from './ProjectSignatures'
+import { SortingDots } from './ProjectSignatures'
 
 const liveHost = (url?: string | null) => (url ? url.replace(/^https?:\/\//, '') : '')
 
@@ -27,7 +27,7 @@ interface CaseProps {
   statsLabel?: string
   stats: Stat[]
   media: React.ReactNode
-  signature: React.ReactNode
+  signature?: React.ReactNode
 }
 
 function Case({ variant, id, index, refs, slug, title, summary, liveUrl, stack, tag, statsLabel, stats, media, signature }: CaseProps) {
@@ -71,7 +71,7 @@ export default function Projects() {
     { id: 'projects-own', name: 'Voxikin' },
   ]
 
-  const meta: [string, string] = [`${shipped.length} shipped · 1 being built`, 'Case study and live link for every shipped build']
+  const meta: [string, string] = [`${shipped.length} shipped · 1 being built`, 'Case study and live link for each']
 
   return (
     <section className="band" id="projects" data-current="tm">
@@ -97,18 +97,16 @@ export default function Projects() {
               refs={refs}
               slug={toolmonkey.slug}
               title={toolmonkey.title}
-              summary={toolmonkey.summary}
+              summary="Breaks your agent's tools on purpose, then shows exactly how it fails, before your users do."
               liveUrl={toolmonkey.live_url}
               stack="AgentEval · LLM · FastAPI · Python"
-              tag="agent under test"
-              statsLabel="V1 results on scenario C1"
+              statsLabel="First test run"
               stats={[
-                { value: '100%', label: 'of tasks completed' },
-                { value: '33%', label: 'of injected failures detected' },
-                { value: '25%', label: 'silent failures', hot: true },
+                { value: '100%', label: 'tasks completed' },
+                { value: '33%', label: 'failures caught' },
+                { value: '25%', label: 'went unnoticed', hot: true },
               ]}
-              media={<ToolMonkeyTrace />}
-              signature={<Oscilloscope />}
+              media={<ToolMonkeyReport />}
             />
           )}
           {filtr && (
@@ -119,15 +117,16 @@ export default function Projects() {
               refs={refs}
               slug={filtr.slug}
               title={filtr.title}
-              summary={filtr.summary}
+              summary="Reads your call transcripts, Slack and Jira tickets, then ranks the biggest issues by impact so you know what to fix first."
               liveUrl={filtr.live_url}
               stack="RAG · LLM · FastAPI · Pinecone"
+              statsLabel="What you get"
               stats={[
-                { value: '~45 s', label: 'upload to first insight', hot: true },
-                { value: '5', label: 'issue themes, ranked for you' },
-                { value: '3', label: 'sources: Slack, Jira, calls' },
+                { value: '~45 s', label: 'to first insight', hot: true },
+                { value: '5', label: 'ranked issues' },
+                { value: '3', label: 'sources' },
               ]}
-              media={<FiltrThemes />}
+              media={<FiltrBoard />}
               signature={<SortingDots />}
             />
           )}
