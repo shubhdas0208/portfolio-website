@@ -790,9 +790,7 @@ html.motion-ok #writing:not([data-arrived]) :is(.sheet,mark,.ruler li,.note,.not
 .sent .also a{color:var(--accText);text-decoration:underline;text-underline-offset:3px}
 .foot{padding:24px var(--pad) 110px;border-top:1px solid var(--lineS);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--dimmer)}
 .band-night .foot{margin-top:var(--s-sec);padding-inline:0}
-.foot .commit{display:inline-flex;gap:8px;align-items:center;font:500 13px/1 var(--fm);color:var(--dim);border:1px solid var(--lineS);border-radius:999px;padding:8px 11px}
-.foot .commit i{width:7px;height:7px;border-radius:50%;background:var(--acc);display:block}
-.foot .links{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.foot .links{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-left:auto}
 .foot a:hover{color:var(--fg)}
 .kb{appearance:none;display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:0;cursor:pointer;font-size:13.5px;color:var(--dim)}
 .kb:hover{color:var(--fg)}
@@ -994,6 +992,7 @@ html.vt-nav::view-transition-old(root){animation-direction:reverse}
   .form .two{grid-template-columns:1fr}
   .fnav a{padding:12px 10px;font-size:13px}
   .foot{flex-direction:column;align-items:flex-start}
+  .foot .links{margin-left:0}
 }
 @media (prefers-reduced-motion:reduce){
   .gh .cells i{transform:none;opacity:1;transition:none}
