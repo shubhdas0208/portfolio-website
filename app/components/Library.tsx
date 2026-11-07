@@ -86,7 +86,7 @@ export default function Library() {
 
   return (
     <div className="lib" id="about-library">
-      <p className="lab">My library <span>{LIBRARY_COUNT} books · pull one off the shelf</span></p>
+      <p className="lab">Me between the Pages <span>{LIBRARY_COUNT} books · pull one off the shelf</span></p>
       <div className="lib-case">
         {SHELVES.map((shelf, si) => (
           <div key={shelf.id} className="lib-row">
