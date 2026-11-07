@@ -98,8 +98,10 @@
   #about .ab-l{display:flex;flex-direction:column}
   #about .ab-bio{column-count:1;max-width:58ch}
   #about .ab-gh{margin-top:auto}
-  #about .ab-foot{margin-top:auto}
-  #about .ab-read{margin-bottom:14px}
+  /* the books moved to the library below, so the F1 card fills the page and How I work sits under it */
+  #about .ab-foot{flex:1;grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;gap:14px;padding-top:0;border-top:0}
+  #about .ab-f1 .in{padding:16px 18px 16px}
+  #about .ab-f1 b{font-size:20px}
   #about .ab-pq{font-size:clamp(30px,4.8vh,38px)}
 }
 @media (min-width:1025px) and (max-height:780px){
