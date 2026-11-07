@@ -2,33 +2,15 @@
 
 import '../about.css'
 import { useEffect, useRef, useState } from 'react'
-import { BOOKS } from '../lib/content'
+import { READING } from '../lib/library'
 import { SOCIALS, GITHUB_USER } from '../lib/site'
 import { useInViewOnce } from '../lib/hooks'
 import GitHubGraph from './GitHubGraph'
+import Library from './Library'
 import SectionHeader from './SectionHeader'
 import { CurrentlyTicker, HowIWork, LapTimer } from './AboutExtras'
 
 type Stage = 'pre' | 'go' | 'settled'
-
-/** Right page: the reading feature. Every cover, title, author and note is visible at once. */
-function Reading() {
-  return (
-    <>
-      <p className="lab">Currently reading <span>{BOOKS.length} books</span></p>
-      <ul className="ab-books" aria-label="Books">
-        {BOOKS.map((b, i) => (
-          <li key={b.id} className="ab-book" style={{ ['--i' as string]: i }}>
-            <span className="ab-cvw"><span className="ab-cover"><img src={b.cover_url} alt="" loading="lazy" /></span></span>
-            <b>{b.title}</b>
-            <span className="ab-au">{b.author}</span>
-            <em>{b.note}</em>
-          </li>
-        ))}
-      </ul>
-    </>
-  )
-}
 
 function F1() {
   return (
@@ -74,7 +56,7 @@ export default function About() {
         variant="serif"
         title="The person behind the work."
         meta={['Product Manager at Dezerv', 'Bengaluru']}
-        aside={<CurrentlyTicker facts={['Product Manager at Dezerv', 'Lending and voice AI agents', 'Building Voxikin', `Reading ${BOOKS[0]?.title ?? ''}`, 'Obsessing over F1 race strategy']} />}
+        aside={<CurrentlyTicker facts={['Product Manager at Dezerv', 'Lending and voice AI agents', 'Building Voxikin', `Reading ${READING[0]?.title ?? ''}`, 'Obsessing over F1 race strategy']} />}
       />
       <div ref={spreadRef} className={`ab-spread ab-${stage}`}>
         <div className="ab-page ab-l">
@@ -89,9 +71,6 @@ export default function About() {
           <span className="ab-folio" aria-hidden="true">Shubh Sankalp Das</span>
         </div>
         <div className="ab-page ab-r">
-          <div className="ab-read" id="about-reading">
-            <Reading />
-          </div>
           <div className="ab-foot">
             <F1 />
             <div className="ab-work"><HowIWork /></div>
@@ -99,6 +78,7 @@ export default function About() {
           <span className="ab-folio" aria-hidden="true">Bengaluru</span>
         </div>
       </div>
+      <Library />
       </div>
     </section>
   )
