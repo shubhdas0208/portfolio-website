@@ -1,0 +1,92 @@
+/* ── My library: a paper shelf under the About spread ──
+   Three shelves (non-fiction and sci-fi, fiction, Rick Riordan) drawn in the site's own ink: a paper card,
+   one rule per shelf, mono labels. The books stay 3D. A click pulls a book out cover-forward and slides its
+   card open beside it, pushing the neighbours along the shelf. */
+
+#about .lib{--plankH:30px;margin-top:28px}
+#about .lib .lab{margin:0 0 12px}
+#about .lib .lab span{text-transform:none;letter-spacing:.02em;color:var(--dimmer)}
+
+#about .lib-case{padding:8px 28px 18px;border-radius:6px;background:var(--surf);
+  box-shadow:0 28px 46px -26px rgba(23,19,14,.45),0 0 0 1px var(--line)}
+#about .lib-row{position:relative;overflow:hidden}
+#about .lib-row+.lib-row{margin-top:6px}
+
+/* the scroller. Its bottom strip is the shelf, painted so it stays full width while the books scroll:
+   a soft contact shadow where the books stand, then one ink rule. */
+#about .lib-books{list-style:none;margin:0;display:flex;align-items:flex-end;gap:28px;
+  padding:26px 4px var(--plankH);overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);
+  background:
+    linear-gradient(180deg,transparent calc(100% - var(--plankH) - 10px),color-mix(in oklab,var(--fg) 9%,transparent) calc(100% - var(--plankH)),transparent calc(100% - var(--plankH))),
+    linear-gradient(180deg,transparent calc(100% - var(--plankH)),var(--fg) calc(100% - var(--plankH)),var(--fg) calc(100% - var(--plankH) + 2px),transparent calc(100% - var(--plankH) + 2px))}
+#about .lib-books::-webkit-scrollbar{display:none}
+#about .lib-plank{display:none}
+
+#about .lib-grp{position:relative;flex:none}
+#about .lib-grp>ul{list-style:none;margin:0;padding:0;display:flex;align-items:flex-end;gap:2px}
+#about .lib-lbl{position:absolute;left:0;bottom:calc(-1 * var(--plankH) + 9px);white-space:nowrap;
+  font:500 10px/1.2 var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--dimmer)}
+#about .lib-grp.now .lib-lbl{color:var(--accText)}
+
+/* a book: spine and cover share one button; the card is a sibling that opens beside it */
+#about .lib-bk{display:flex;align-items:flex-end;flex:none}
+#about .lib-btn{position:relative;display:block;flex:none;padding:0;border:0;background:none;cursor:pointer;
+  width:var(--spw);height:var(--sph);border-radius:2px 3px 3px 2px;
+  box-shadow:0 1px 0 rgba(0,0,0,.2),2px 0 4px -2px rgba(0,0,0,.35)}
+#about .lib-bk.face .lib-btn,#about .lib-bk.open .lib-btn{width:var(--cvw);height:188px}
+#about .lib-btn:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+
+#about .lib-spine{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0 8px;overflow:hidden;border-radius:inherit;
+  color:var(--ink);background:linear-gradient(90deg,rgba(0,0,0,.28),transparent 26%,rgba(255,255,255,.14) 48%,transparent 70%,rgba(0,0,0,.24)),var(--sp)}
+#about .lib-spine::before,#about .lib-spine::after{content:"";position:absolute;left:0;right:0;height:2px;background:currentColor;opacity:.35}
+#about .lib-spine::before{top:6px}
+#about .lib-spine::after{bottom:24px}
+#about .lib-spine .t{flex:1;min-height:0;writing-mode:vertical-rl;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:700 10.5px/1 var(--fb);letter-spacing:.02em}
+#about .lib-spine .a{writing-mode:vertical-rl;font:500 8px/1 var(--fm);letter-spacing:.06em;text-transform:uppercase;opacity:.8;max-height:16px;overflow:hidden}
+
+#about .lib-cover{position:absolute;inset:0;overflow:hidden;border-radius:inherit;opacity:0;background:var(--sp)}
+#about .lib-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.24),transparent 7%,transparent 93%,rgba(255,255,255,.14));pointer-events:none}
+#about .lib-cover img{width:100%;height:100%;object-fit:cover;display:block}
+#about .lib-type{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:14px 12px;color:var(--ink);text-align:left}
+#about .lib-type b{font:600 15px/1.05 var(--fd);text-wrap:balance}
+#about .lib-type small{font:500 10px/1.2 var(--fm);letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+#about .lib-bk.face .lib-cover,#about .lib-bk.open .lib-cover{opacity:1}
+#about .lib-bk.face .lib-spine,#about .lib-bk.open .lib-spine{opacity:0}
+#about .lib-bk.face .lib-btn{box-shadow:0 1px 0 rgba(0,0,0,.2),8px -2px 14px -8px rgba(0,0,0,.45),-2px 0 6px -4px rgba(0,0,0,.3)}
+#about .lib-bk.open .lib-btn{transform:translateY(-6px);box-shadow:0 1px 0 rgba(0,0,0,.2),10px -4px 18px -8px rgba(0,0,0,.5),0 8px 8px -8px rgba(0,0,0,.35)}
+
+/* bookmark ribbon on the books being read now */
+#about .lib-grp.now .lib-cover::before{content:"";position:absolute;z-index:1;top:0;right:12px;width:10px;height:30px;background:var(--acc);
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%)}
+
+/* the card that slides out beside a pulled book */
+#about .lib-card{width:0;height:188px;overflow:hidden;flex:none}
+#about .lib-bk.open .lib-card{width:250px}
+#about .lib-card .in{width:250px;height:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:4px;padding:6px 18px 4px 16px}
+#about .lib-card .eb{font:500 10.5px/1.3 var(--fm);letter-spacing:.1em;text-transform:uppercase;color:var(--accText)}
+#about .lib-card .ti{margin-top:4px;font:600 19px/1.08 var(--fd);color:var(--fg);text-wrap:balance}
+#about .lib-card .au{font-size:13.5px;color:var(--fg)}
+#about .lib-card .se{font-size:12.5px;color:var(--dim)}
+#about .lib-card .me{font-size:12px;color:var(--dimmer)}
+#about .lib-card .put{margin-top:auto;align-self:flex-start;padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surf);color:var(--fg);font:500 12px/1 var(--fb);cursor:pointer}
+#about .lib-card .put:hover{border-color:var(--acc);color:var(--accText)}
+#about .lib-card .put:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* motion: spines lift on hover, a pulled book widens into its cover while the card slides out */
+.motion-ok #about .lib-btn{transition:width .45s var(--ease),height .45s var(--ease),transform .3s var(--ease),box-shadow .3s var(--ease)}
+.motion-ok #about .lib-spine,.motion-ok #about .lib-cover{transition:opacity .3s var(--ease)}
+.motion-ok #about .lib-card{transition:width .45s var(--ease)}
+.motion-ok #about .lib-card .in{transition:opacity .3s var(--ease) .12s}
+#about .lib-bk:not(.open) .lib-card .in{opacity:0}
+@media (hover:hover){
+  #about .lib-bk.spine:not(.open) .lib-btn:hover{transform:translateY(-8px)}
+  #about .lib-bk.face:not(.open) .lib-btn:hover{transform:translateY(-4px)}
+}
+
+@media (max-width:640px){
+  #about .lib-case{padding:4px 16px 14px}
+  #about .lib-books{padding:22px 2px var(--plankH);gap:20px}
+  #about .lib-bk.open .lib-card,#about .lib-card .in{width:210px}
+}
+
