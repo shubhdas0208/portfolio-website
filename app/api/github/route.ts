@@ -81,15 +81,42 @@ async function commitsFromSearch(token: string, from: Date, to: Date): Promise<D
   return out
 }
 
-/** Pushes to any repo or branch (including others' repos and forks) in roughly the last 90 days. */
-async function commitsFromEvents(token: string): Promise<DayCounts> {
+const MAX_REPOS = 40
+const MAX_BRANCHES = 30
+const MAX_COMMIT_PAGES = 3
+
+async function ghJson<T>(token: string, path: string): Promise<T> {
+  const res = await fetch(`https://api.github.com${path}`, { headers: GH_HEADERS(token), next: { revalidate: 3600 } })
+  if (!res.ok) throw new Error(`GitHub ${path.split('?')[0]} ${res.status}`)
+  return res.json() as Promise<T>
+}
+
+/**
+ * Commits by the user on EVERY branch of every repo the token can read, including private org repos
+ * (GitHub's own calendar only counts default branches). Read-only: list repos, branches, commits.
+ * A commit that sits on several branches is counted once (deduped by sha).
+ */
+async function commitsFromBranches(token: string, from: Date): Promise<DayCounts> {
   const out: DayCounts = new Map()
-  for (let page = 1; page <= 3; page++) {
-    const res = await fetch(`https://api.github.com/users/${GITHUB_USER}/events?per_page=100&page=${page}`, { headers: GH_HEADERS(token), next: { revalidate: 3600 } })
-    if (!res.ok) throw new Error(`GitHub events ${res.status}`)
-    const events = await res.json() as { type: string; created_at: string; payload?: { size?: number } }[]
-    for (const e of events) if (e.type === 'PushEvent') bump(out, e.created_at.slice(0, 10), e.payload?.size ?? 1)
-    if (events.length < 100) break
+  const seen = new Set<string>()
+  const since = from.toISOString()
+  const repos = (await ghJson<{ full_name: string; pushed_at: string | null }[]>(token, '/user/repos?per_page=100&sort=pushed'))
+    .filter(r => r.pushed_at && r.pushed_at >= since)
+    .slice(0, MAX_REPOS)
+  for (const repo of repos) {
+    const branches = await ghJson<{ name: string }[]>(token, `/repos/${repo.full_name}/branches?per_page=${MAX_BRANCHES}`).catch(() => [])
+    for (const { name } of branches) {
+      for (let page = 1; page <= MAX_COMMIT_PAGES; page++) {
+        const q = `sha=${encodeURIComponent(name)}&author=${GITHUB_USER}&since=${since}&per_page=100&page=${page}`
+        const commits = await ghJson<{ sha: string; commit: { author: { date: string } } }[]>(token, `/repos/${repo.full_name}/commits?${q}`).catch(() => [])
+        for (const c of commits) {
+          if (seen.has(c.sha)) continue
+          seen.add(c.sha)
+          bump(out, c.commit.author.date.slice(0, 10), 1)
+        }
+        if (commits.length < 100) break
+      }
+    }
   }
   return out
 }
@@ -121,7 +148,7 @@ export async function GET() {
     const to = new Date()
     const from = new Date(to.getTime() - 365 * DAY_MS)
     // The extras are best effort: a rate limit or outage still returns the official calendar.
-    const extras = (await Promise.allSettled([commitsFromSearch(token, from, to), commitsFromEvents(token)]))
+    const extras = (await Promise.allSettled([commitsFromSearch(token, from, to), commitsFromBranches(token, from)]))
       .flatMap(r => {
         if (r.status === 'fulfilled') return [r.value]
         console.error('github extra commits', r.reason)
