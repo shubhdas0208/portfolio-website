@@ -97,13 +97,13 @@ input,textarea{caret-color:var(--acc)}
 @property --pjbg{syntax:'<color>';inherits:true;initial-value:transparent}
 @property --pjacc{syntax:'<color>';inherits:true;initial-value:transparent}
 #projects{--bg:#EDE4D6;--surf:#FAF5EC;--surf2:#EDE4D6;--fg:#17130E;--dim:#5A4A3A;--dimmer:#6B5D4E;--line:#E6DACA;--lineS:#D9C9B4;
-  --pa-tm:#E0600F;--pa-fl:#F2B544;--pa-vx:#F08A6C;--pa-df:#9F3550;--paText-tm:#B23C0B;--paText-fl:#8A5A00;--paText-vx:#A8402E;--paText-df:#7E2238;--paInk:#17130E;
-  --pj-tm:#EEDBCA;--pj-fl:#EEE1CD;--pj-vx:#EEDECF;--pj-df:#EDDCD8;--pjwash:#E6CDB2;--pjline:rgba(90,74,58,.06);
+  --pa-tm:#E0600F;--pa-fl:#F2B544;--pa-vx:#F08A6C;--pa-df:#FFC71C;--paText-tm:#B23C0B;--paText-fl:#8A5A00;--paText-vx:#A8402E;--paText-df:#8A6400;--paInk:#17130E;
+  --pj-tm:#EEDBCA;--pj-fl:#EEE1CD;--pj-vx:#EEDECF;--pj-df:#F3E7C6;--pjwash:#E6CDB2;--pjline:rgba(90,74,58,.06);
   --pjbg:var(--pj-df);--pjacc:var(--pa-df);
   background:radial-gradient(60% 55% at 92% 4%,var(--pjwash),transparent 70%),var(--pjbg);transition:--pjbg .6s var(--ease),--pjacc .6s var(--ease)}
 [data-theme="dark"] #projects{--bg:#101318;--surf:#181C23;--surf2:#222731;--fg:#F1ECE4;--dim:#B8AE9F;--dimmer:#9AA3AE;--line:rgba(241,236,228,.08);--lineS:rgba(241,236,228,.14);
-  --pa-tm:#FF7A1F;--pa-df:#D9667F;--paText-tm:#FF7A1F;--paText-fl:#F2B544;--paText-vx:#F08A6C;--paText-df:#E58A9E;
-  --pj-tm:#18171A;--pj-fl:#17191B;--pj-vx:#17171B;--pj-df:#1A1416;--pjwash:#161B24;--pjline:rgba(241,236,228,.035)}
+  --pa-tm:#FF7A1F;--pa-df:#FFC71C;--paText-tm:#FF7A1F;--paText-fl:#F2B544;--paText-vx:#F08A6C;--paText-df:#FFC71C;
+  --pj-tm:#18171A;--pj-fl:#17191B;--pj-vx:#17171B;--pj-df:#19160F;--pjwash:#161B24;--pjline:rgba(241,236,228,.035)}
 #projects[data-current="tm"]{--pjbg:var(--pj-tm);--pjacc:var(--pa-tm)}
 #projects[data-current="fl"]{--pjbg:var(--pj-fl);--pjacc:var(--pa-fl)}
 #projects[data-current="vx"]{--pjbg:var(--pj-vx);--pjacc:var(--pa-vx)}
@@ -440,7 +440,7 @@ html.motion-ok .case-tm.paused::before,html.motion-ok .case-tm.paused .tm-field 
 @keyframes tmHatch{to{transform:translate(-40px,40px)}}
 @media (prefers-reduced-motion:reduce){.case-tm::before,.tm-field i{animation:none}}
 .case-fl::before{background-image:radial-gradient(color-mix(in oklab,var(--fg) 16%,transparent) 1px,transparent 1.4px);background-size:18px 18px;mask-image:linear-gradient(200deg,#000 0%,transparent 70%);-webkit-mask-image:linear-gradient(200deg,#000 0%,transparent 70%)}
-/* DrapeFit: a wine wash from the lower right, under a faint twill weave */
+/* DrapeFit: a yellow ochre wash from the lower right, under a faint twill weave */
 .case-df::before{background:repeating-linear-gradient(135deg,transparent 0 7px,color-mix(in oklab,var(--pa) 9%,transparent) 7px 8px),radial-gradient(60% 80% at 100% 100%,color-mix(in oklab,var(--pa) 22%,transparent),transparent 70%);mask-image:linear-gradient(300deg,#000 0%,transparent 62%);-webkit-mask-image:linear-gradient(300deg,#000 0%,transparent 62%)}
 .case-vx::before{background:radial-gradient(70% 90% at 0% 70%,color-mix(in oklab,var(--pa) 16%,transparent),transparent 70%),radial-gradient(50% 60% at 100% 0%,color-mix(in oklab,var(--fg) 8%,transparent),transparent 70%)}
 .case .copy{display:flex;flex-direction:column;gap:14px;min-width:0;align-self:start}
