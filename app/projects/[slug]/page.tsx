@@ -48,7 +48,12 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
       meta={
         <>
           <span>{project.tags.join(' · ')}</span>
-          {project.live_url && <a href={project.live_url} target="_blank" rel="noopener noreferrer">{project.live_url.replace(/^https?:\/\//, '')} ↗</a>}
+          {project.live_url && (
+            <a href={project.live_url} target="_blank" rel="noopener noreferrer">
+              {project.live_url.includes('t.me/') ? 'Open in Telegram' : project.live_url.replace(/^https?:\/\//, '')} ↗
+            </a>
+          )}
+          {project.github_url && <a href={project.github_url} target="_blank" rel="noopener noreferrer">GitHub ↗</a>}
         </>
       }
     />

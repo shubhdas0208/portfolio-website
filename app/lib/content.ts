@@ -42,6 +42,8 @@ export interface Project extends Annotated {
   cover_image_url?: string | null
   diagram_url?: string | null
   live_url?: string | null
+  /** Source code link shown next to the live link. */
+  github_url?: string | null
   coming_soon?: boolean
   is_published: boolean
   created_at: string
@@ -128,6 +130,70 @@ export const POSTS: Post[] = [
 // Published projects, newest first.
 export const PROJECTS: Project[] = [
   {
+    "id": "7d3f0c2e-5b8a-4e91-9c47-d2f1a6b03e58",
+    "slug": "drapefit-chat-to-cart",
+    "pull_quote": {
+      "text": "The model decides what the user meant; the catalog decides what is true.",
+      "mark": "the catalog decides what is true."
+    },
+    "notes": [
+      {
+        "label": "The rule",
+        "line": "In DrapeFit the LLM only translates language into a search spec."
+      },
+      {
+        "label": "The measurement",
+        "line": "Same accuracy, fifty times faster: an easy call once it was measured."
+      },
+      {
+        "label": "The handoff",
+        "line": "Handing off also means the agent never touches an address or a card number, which removes the hardest trust problem from version one."
+      },
+      {
+        "label": "The constraint",
+        "line": "The real constraint turned out to be the catalog's 5 requests per second, shared by all users, not money."
+      },
+      {
+        "label": "The bug",
+        "line": "The test suite passed because it tested the logic, not the freshness."
+      },
+      {
+        "label": "The fail-safe",
+        "line": "an unknown label fails closed and is logged rather than shown as a wrong size."
+      },
+      {
+        "label": "In hindsight",
+        "line": "put a latency budget in the eval from the first day, not just accuracy"
+      }
+    ],
+    "highlights": [
+      "get back only things you can actually buy in your size.",
+      "a model that summarises products will eventually state a price or size the store does not have.",
+      "Every message goes through a router that picks the cheapest path that can handle it.",
+      "computed in code from real prices, never by the model.",
+      "The boundary moved from the API to my code, where I can test it.",
+      "which is the honest cost of the promise."
+    ],
+    "title": "DrapeFit: Chat-to-Cart Shopping Agent",
+    "summary": "A Telegram agent for Indian D2C fashion: describe an outfit in one message, get in-stock options in your size, build a cart in chat and pay on each brand's own checkout. The LLM reads the request; every price and size comes from the store.",
+    "tags": [
+      "AI Agent",
+      "LLM",
+      "Shopify Catalog",
+      "FastAPI",
+      "Evals"
+    ],
+    "body": "## Problem\n\nShopping for one specific outfit in India means opening five apps. You want a grey turtleneck in M and blue jeans in waist 32, under ₹2,000 each. Marketplaces bury D2C brands under sponsored listings, filters disagree on sizes (\"XXL\" vs \"2XL\", \"M (38)\"), and the size you want is often out of stock after you have already fallen for the product. Indian D2C brands, where much of the interesting fashion now lives, are spread across hundreds of separate Shopify stores with no shared search.\n\nThe user I designed for: a 22 to 30 year old in a metro who buys from brands they found on Instagram, knows exactly what they want, and shops in English, Hindi or a mix of both.\n\nThe job: describe it once, in your own words, and get back only things you can actually buy in your size.\n\n## Decision\n\nThe hypothesis: a chat agent that turns one natural-language message into a grounded catalog search can get a shopper from intent to a brand's checkout faster than browsing, without ever showing a wrong price or size.\n\n**What I built:**\n\n- **Grounded search:** one message in, up to 5 in-stock options per item in the requested size, each as a photo card with price, size and brand.\n- **Cart and handoff:** add to cart from the card, refine with \"same but black\" or \"show cheaper\", and check out with one pay button per brand that opens the brand's own Shopify checkout with the items already in the cart.\n- **The learning loop:** a 24-hour \"did you buy?\" follow-up that asks why when the answer is no, and an append-only event log that feeds a metrics report.\n\n**Why Telegram, not a web app or WhatsApp.** Telegram bots are free, need no business verification, and support inline buttons and photo cards. WhatsApp's Business API charges per conversation and needs approval. A web app would have meant building search UI before knowing whether chat-first shopping works at all.\n\n**Why handoff, not in-chat payment.** Every catalog variant I sampled had native checkout disabled, so an agent cannot complete the purchase itself. Cart permalinks reached Shopify checkout on 7 of 7 Indian stores I tested. Handing off also means the agent never touches an address or a card number, which removes the hardest trust problem from version one.\n\n**What I rejected:**\n\n- **Letting the LLM write the reply.** It is the obvious design and the most dangerous one: a model that summarises products will eventually state a price or size the store does not have. In DrapeFit the LLM only translates language into a search spec.\n- **Guessing delivery dates.** Users asked for them on day one. The catalog returns no delivery data for Indian stores, even with a pincode, so any date in chat would be invented. The bot links each brand's shipping policy and lets the brand's checkout show the real date for the pincode.\n\n## System Architecture\n\n![DrapeFit System Architecture](/images/projects/drapefit-chat-to-cart-diagram.webp)\n\nEvery message goes through a router that picks the cheapest path that can handle it.\n\n**Code path, no LLM:** button taps and messages like \"add A1 B3\", \"remove B2\" or \"checkout\" are matched by a strict grammar. A message counts only if every word is a label, a cart verb or filler, so \"add a black hoodie\" still reaches the parser. These paths are instant, free and cannot misread a label.\n\n**Classifier path:** free text sent within two hours of results (\"same but black\", \"kuch sasta dikhao\", \"remove the jeans\") goes to a small LLM classifier that returns an action, the items it refers to and the requested change. Code applies the change. \"Cheaper\" means below the cheapest option already shown, computed in code from real prices, never by the model.\n\n**Parser path:** a new request goes to Sarvam, which returns a JSON spec (items, colours, sizes, per-item or total budget, gender) validated by Pydantic, with one retry. If a value would be a guess, such as \"turtleneck size 30\" (chest 30 or XS?), the bot asks one short question instead of searching.\n\n**Grounded retrieval:** each item runs in parallel through the Shopify Global Catalog with India filters, then through hard filters in code: an exact rupee cap, colour synonyms including Hindi words, at most 3 options per brand, and an exact size check. Size labels are normalised as data (\"XXL\" = \"2XL\", \"M (38)\" = \"M\"), and an unknown label fails closed and is logged rather than shown as a wrong size. Only variants verified in stock in the requested size become options, and each option is a frozen object copied field by field from the API.\n\n**Checkout:** stock and price are re-checked live for every cart line, bypassing the cache. Price changes are flagged with the new price, and sold-out lines are removed and named. Each brand gets one cart permalink, wrapped in a click-tracking redirect.\n\n**Learning loop:** every step writes to an append-only event log in Postgres. A cron job keeps the free server awake and sends the 24-hour follow-up, and a metrics script turns the log into a funnel.\n\n## Technical Choices\n\n**Sarvam for language understanding.** The users write Hinglish: \"mujhe ek kala hoodie chahiye XL mein, 1500 tak\". I tested two Sarvam variants on 15 held-out requests. sarvam-105b scored 14/15 but took 31 seconds at p95, which alone breaks the 8 second reply budget. sarvam-105b-conversations scored the same 14/15 at 0.6 seconds. Same accuracy, fifty times faster: an easy call once it was measured.\n\n**JSON mode over strict schema mode.** Strict schema mode produced runaway whitespace on 4 of 6 Hinglish inputs. Plain JSON mode with the schema in the prompt was 6 for 6, and Pydantic still validates every reply. The boundary moved from the API to my code, where I can test it.\n\n**Two LLM calls instead of one.** Follow-up messages use a separate classifier with its own schema and eval set rather than an extended main parser. It costs one extra call, about 0.3 seconds, after a search, but it keeps the parser's accuracy stable and makes each model measurable on its own.\n\n**₹0 infrastructure, on purpose.** FastAPI on Render's free tier, Postgres on Neon's free tier, and cron-job.org for the keep-warm ping and hourly follow-ups. The only variable cost is LLM tokens: about ₹0.06 to ₹0.12 per shopping session, so 300 tester sessions cost roughly ₹20 to ₹40. The real constraint turned out to be the catalog's 5 requests per second, shared by all users, not money.\n\n**Photo cards over albums.** The first version sent a photo album and a text list. Testing on a phone exposed the flaw: in an album grid you cannot tell which photo is option A1. Each suggestion is now its own card with its photo, price, size and an \"Add to cart\" button. That is about 6 messages per item instead of 2, within Telegram's limits, and the bot backs off automatically when Telegram asks it to.\n\n## Metrics\n\nEvals were written before the prompts they test. Prompts were tuned on one set and scored on another.\n\n| Check | Result |\n|---|---|\n| Request parsing, 15 unseen requests | 14/15 exact match (target 90%) |\n| Missed or needless clarifying questions | 0% |\n| Follow-up classifier, 12 held-out messages | 12/12 on two runs |\n| Grounding gate: shown price, size and brand equal API data | 100% across 20 recorded queries |\n| Live checkout links reaching Shopify checkout | 2/2 brands |\n| Typical time to first options | about 6 seconds |\n| Automated tests | 313 |\n\nThe product metric is the share of searches that end in a click to a brand's site, tracked with zero-result rate, time to first result and the reasons people give for not buying. The first real sessions measured 6.7 seconds typical and 9.4 seconds at the slow end, over the 8 second target, which made speed the first thing to fix.\n\n## What Broke\n\n**The cache that faked a check.** Checkout is supposed to re-check stock and price before handoff. The first live run finished checkout in 31 milliseconds, impossible for a real network check: it was reading the 10 minute product cache. The test suite passed because it tested the logic, not the freshness. Checkout now bypasses the cache and takes about a second, which is the honest cost of the promise.\n\n**The model that was right but slow.** My first parser choice was accurate and unusable. Without a latency check next to the accuracy eval, I would have shipped a bot that sometimes took half a minute to answer.\n\n**Two deploy failures in ten minutes.** The first Render deploy refused to start because the app required its public URL, which only exists after the service is created. The second failed because Telegram rejected characters in the webhook secret Render had generated. Both are now handled in code, so a redeploy from the blueprint works in one pass.\n\n**A token in a log file.** The HTTP library logs full request URLs, and Telegram bot URLs contain the bot token. I caught it on the first local start, silenced that logger in both the local runner and the server, and rotated the token.\n\n**Labels that went stale.** An independent code review found that after \"same but black\" returned fewer options, typing \"add A5\" could add the old A5 that was no longer on screen, and that an old \"Not yet\" tap could reopen an answered follow-up. Both were fixed with regression tests before any tester saw them.\n\n## Retrospective\n\nThe decision I would make again is the hard line between language and facts. The model decides what the user meant; the catalog decides what is true. That one rule removed the most damaging failure an AI shopping agent can have, and it made the rest of the system testable.\n\nThe decision I am least sure about is the number of messages. Photo cards made results legible but noisier, and only tester behaviour will settle the balance between clarity and chat clutter.\n\nWhat I would do differently: put a latency budget in the eval from the first day, not just accuracy, and test freshness, not just correctness, for anything that claims to be live.\n\nNext: 10 to 20 testers, a weekly pass over failed searches grouped by cause, and fixing the biggest group first. Delivery dates by pincode would need either Shopify to return fulfilment data for Indian stores or a partner brand that shares store access.",
+    "cover_image_url": "/images/projects/drapefit-chat-to-cart-cover.webp",
+    "diagram_url": "/images/projects/drapefit-chat-to-cart-diagram.webp",
+    "is_published": true,
+    "created_at": "2026-11-15T09:00:00+00:00",
+    "updated_at": "2026-11-15T09:00:00+00:00",
+    "live_url": "https://t.me/DrapeFitBot",
+    "github_url": "https://github.com/shubhdas0208/drapefit",
+    "coming_soon": false
+  },
+  {
     "id": "0eece75d-74e2-494d-b9f2-a59d09d0cb2c",
     "slug": "toolmonkey-chaos-agent",
     "pull_quote": { "text": "Task completion rate is a vanity metric for agents. An agent that finishes every task but uses garbage data on 1 in 4 runs is not reliable. It is dangerous.", "mark": "Task completion rate is a vanity metric for agents." },
@@ -164,6 +230,7 @@ export const PROJECTS: Project[] = [
     "created_at": "2026-03-28T09:56:32.154882+00:00",
     "updated_at": "2026-03-28T09:56:32.154882+00:00",
     "live_url": "https://toolmonkey.vercel.app",
+    "github_url": "https://github.com/shubhdas0208/toolmonkey",
     "coming_soon": false
   },
   {
@@ -203,6 +270,7 @@ export const PROJECTS: Project[] = [
     "created_at": "2026-03-28T09:10:59.809511+00:00",
     "updated_at": "2026-03-28T09:10:59.809511+00:00",
     "live_url": "https://filtr-omega.vercel.app",
+    "github_url": "https://github.com/shubhdas0208/filtr",
     "coming_soon": false
   },
   {

@@ -14,6 +14,7 @@ const TOC_MIN_HEADINGS = 4
 /** Intrinsic sizes of the cover files in public/, so the figure reserves its height before the image loads. */
 const COVER_SIZE: Record<string, [number, number]> = {
   '/images/blog/p99-is-a-ux-metric-cover.webp': [1920, 1115],
+  '/images/projects/drapefit-chat-to-cart-cover.webp': [1600, 840],
   '/images/projects/toolmonkey-chaos-agent-cover.webp': [1099, 600],
   '/images/projects/filtr-rag-pm-tool-cover.webp': [1433, 857],
 }

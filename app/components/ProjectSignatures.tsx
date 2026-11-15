@@ -22,6 +22,16 @@ export function SortingDots() {
   )
 }
 
+/** DrapeFit: a running stitch that keeps sewing, ending at a knot. */
+export function StitchLine() {
+  return (
+    <svg className="sig sig-stitch" viewBox="0 0 168 64" aria-hidden="true">
+      <path d="M2 14C40 2 54 50 92 40S140 6 164 30" />
+      <circle cx="164" cy="30" r="3.5" />
+    </svg>
+  )
+}
+
 /** Voxikin: call ripples expanding from behind the call card. */
 export function CallRings() {
   return <span className="sig sig-rings" aria-hidden="true"><i /><i /><i /></span>
