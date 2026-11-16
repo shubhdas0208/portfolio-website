@@ -4,43 +4,35 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePrefersReducedMotion, useVisibleLoop } from '../lib/hooks'
 import FitStage from './FitStage'
 
-// The chat loop: message, search, options in your size, add to cart, pay on the brand's checkout.
+// The chat loop: message, what the bot understood, options in your size, add to cart, pay on the brand's checkout.
 // Times are ms from the start of a loop; each step adds one class to the stage.
 const STEPS: [string, number][] = [
-  ['m', 300], ['s', 1100], ['a', 1800], ['b', 2350], ['c', 2900], ['p1', 4300], ['p2', 4900], ['pay', 5600], ['co', 6500],
+  ['m', 210], ['s', 630], ['a', 980], ['b', 1260], ['c', 1610], ['p1', 2520], ['p2', 2940], ['pay', 3430], ['co', 3990],
 ]
 const STEP_CLASSES = STEPS.map(([name]) => name)
-const LOOP_MS = 10500
-const FIRST_HOLD_MS = 2600
+const LOOP_MS = 7350
+const FIRST_HOLD_MS = 1820
 
 // Phones get the chat alone at near full size; wider screens add the checkout it hands off to.
 const NARROW_QUERY = '(max-width:760px)'
 const WIDE = { w: 560, h: 440 }
 const SOLO = { w: 336, h: 412 }
 
-// Illustrated garments and a made-up brand: no real product photos or store names.
+// Stock photos and a made-up brand: no real store products or store names.
 const BRAND = 'Northloom'
 const ITEMS = [
-  { key: 'A1', name: 'Grey turtleneck', price: '₹1,499', size: 'Size M', short: 'Turtleneck · M' },
-  { key: 'B1', name: 'Blue slim jeans', price: '₹1,497', size: 'Waist 32', short: 'Jeans · 32' },
+  { key: 'A1', name: 'Black crew tee', price: '₹1,499', size: 'Size M', short: 'T-shirt · M', kind: 'T-shirt', asked: 'black · M · ≤ ₹2,000' },
+  { key: 'B1', name: 'Blue slim jeans', price: '₹1,497', size: 'Waist 32', short: 'Jeans · 32', kind: 'Jeans', asked: 'blue · 32 · ≤ ₹2,000' },
 ]
 const TOTAL = '₹2,996'
+// The checkout total as the cart fills: empty, one item, both.
+const RUNNING_TOTALS = ['₹0', ITEMS[0].price, TOTAL]
+const TICKS = ['a', 'b']
 
-const turtleneck = (
-  <svg viewBox="0 0 120 96" aria-hidden="true">
-    <path d="M49 8h22v12l23 9 15 36-15 7-9-19v37H34V53l-9 19-15-7 15-36 24-9z" fill="#8F959E" />
-    <path d="M49 8h22v12c-6 4-16 4-22 0z" fill="#A9AEB6" />
-    <path d="M49 14h22M34 84h52" stroke="#737982" strokeWidth="2" fill="none" />
-  </svg>
-)
-const jeans = (
-  <svg viewBox="0 0 120 96" aria-hidden="true">
-    <path d="M38 6h44l8 86H66l-6-56-6 56H30z" fill="#4E78C4" />
-    <path d="M38 6h44l1 10H37z" fill="#3D62A6" />
-    <path d="M43 22c2 8 8 11 14 11M77 22c-2 8-8 11-14 11M60 16v20" stroke="#34558F" strokeWidth="1.6" fill="none" strokeLinecap="round" />
-  </svg>
-)
-const PHOTOS = [turtleneck, jeans]
+// Two stock photos cropped to the product tile (Unsplash: Ryan Hoffman, TuanAnh Blue).
+const PHOTO_W = 438
+const PHOTO_H = 264
+const PHOTOS = ['/images/projects/drapefit-tshirt.jpg', '/images/projects/drapefit-jeans.jpg']
 
 /** DrapeFit as a chat: an illustration of the bot's loop, not a recording. */
 export default function DrapeFitChat() {
@@ -84,7 +76,7 @@ export default function DrapeFitChat() {
   useEffect(() => stop, [stop])
 
   return (
-    <div ref={ref} role="img" aria-label={`Illustration of a DrapeFit chat in Telegram: one message asks for a grey turtleneck and blue jeans, the bot replies with two in-stock options in the right size, both are added to the cart, and a Pay on ${BRAND} button opens the brand's own checkout with a total of ${TOTAL}`}>
+    <div ref={ref} role="img" aria-label={`Illustration of a DrapeFit chat in Telegram: one message asks for a black t-shirt and blue jeans, the bot reads back the colour, size and budget it understood, replies with two in-stock options in the right size, both are added to the cart, and a Pay on ${BRAND} button opens the brand's own checkout with a total of ${TOTAL}`}>
       <FitStage w={size.w} h={size.h}>
         <div ref={stage} className={solo ? 'dc solo' : 'dc'}>
           <div className="dc-phone">
@@ -93,7 +85,7 @@ export default function DrapeFitChat() {
               <div><b>DrapeFit</b><small>bot</small></div>
             </div>
             <div className="dc-body">
-              <div className="dc-msg me">grey turtleneck M and blue jeans waist 32, under ₹2,000 each</div>
+              <div className="dc-msg me">black t-shirt M and blue jeans waist 32, under ₹2,000 each</div>
               <div className="dc-msg bot">
                 <span>Searching 2 items…</span>
                 <span className="tick a">A ✓</span>
@@ -102,7 +94,7 @@ export default function DrapeFitChat() {
               <div className="dc-cards">
                 {ITEMS.map((item, i) => (
                   <div key={item.key} className="dc-card">
-                    <div className="dc-ph">{PHOTOS[i]}<span>{item.key}</span></div>
+                    <div className="dc-ph"><img src={PHOTOS[i]} alt="" width={PHOTO_W} height={PHOTO_H} loading="lazy" /><span>{item.key}</span></div>
                     <div className="dc-cap">
                       <b>{item.name}</b>
                       {BRAND}<br />
@@ -119,16 +111,29 @@ export default function DrapeFitChat() {
             </div>
           </div>
           <svg className="dc-link" viewBox="0 0 560 440" aria-hidden="true">
-            <path d="M326 390H450V352" />
-            <path className="hd" d="M443 361l7-9 7 9" />
+            <path d="M332 390H452V352" />
+            <path className="hd" d="M445 361l7-9 7 9" />
           </svg>
-          <span className="dc-lab">The brand&apos;s own checkout</span>
+          <span className="dc-lab u">What it understood</span>
+          <div className="dc-parse">
+            {ITEMS.map((item, i) => (
+              <div key={item.key} className="row">
+                <span className="k">{item.key[0]}</span>
+                <div><b>{item.kind}</b><small>{item.asked}</small></div>
+                <span className={`tick ${TICKS[i]}`}>✓</span>
+              </div>
+            ))}
+          </div>
+          <span className="dc-lab k">The brand&apos;s own checkout</span>
           <div className="dc-co">
             <div className="bar"><i /><i /><i /><span>{BRAND.toLowerCase()}.in/cart</span></div>
-            {ITEMS.map(item => (
-              <div key={item.key} className="ln"><span>{item.short}</span><b>{item.price}</b></div>
+            {ITEMS.map((item, i) => (
+              <div key={item.key} className={`ln l${i + 1}`}><span>{item.short}</span><b>{item.price}</b></div>
             ))}
-            <div className="ln tot"><span>Total</span><b>{TOTAL}</b></div>
+            <div className="ln tot">
+              <span>Total</span>
+              <b className="tv">{RUNNING_TOTALS.map((value, i) => <span key={value} className={`v${i}`}>{value}</span>)}</b>
+            </div>
             <div className="go">Checkout</div>
           </div>
           <span className="dc-note">Stock and price re-checked live</span>

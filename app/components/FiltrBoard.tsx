@@ -25,11 +25,11 @@ const ICONS: Record<Src, JSX.Element> = {
   jira: <><rect width="18" height="18" x="3" y="3" rx="2" /><path d="m9 12 2 2 4-4" /></>,
 }
 
-const SCATTER_MS = 2100
-const SORTED_MS = 4700
-const FIRST_HOLD_MS = 2600
-const COUNT_MS = 600
-const RESUME_MS = 450
+const SCATTER_MS = 1470
+const SORTED_MS = 3290
+const FIRST_HOLD_MS = 1820
+const COUNT_MS = 420
+const RESUME_MS = 315
 const TOP_MENTIONS = 7
 
 const v = (name: string, value: string | number) => ({ [`--${name}`]: value })
@@ -73,7 +73,7 @@ export default function FiltrBoard() {
   const start = useCallback(() => {
     running.current = true
     if (hovering.current || timers.current.length) return
-    later(cycle, first.current ? FIRST_HOLD_MS : 400)
+    later(cycle, first.current ? FIRST_HOLD_MS : 280)
     first.current = false
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cycle])

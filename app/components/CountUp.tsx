@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useInViewOnce } from '../lib/hooks'
 
-const LONG_MS = 900
-const SHORT_MS = 400
+const LONG_MS = 630
+const SHORT_MS = 280
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 4)
 
 /**

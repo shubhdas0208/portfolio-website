@@ -13,12 +13,12 @@ const MODES: Mode[] = [
   { name: 'silent_failure', tool: '(empty)', agent: 'flagged missing data', missed: false },
 ]
 
-const STEP = { inject: 0, answer: 520, verdict: 1040 }
-const ROW_AT = [400, 1750, 3100]
-const GAUGE_AT = 4500
-const STAMP_AT = 5500
-const SHAKE_MS = 550
-const LOOP_MS = 9500
+const STEP = { inject: 0, answer: 364, verdict: 728 }
+const ROW_AT = [280, 1225, 2170]
+const GAUGE_AT = 3150
+const STAMP_AT = 3850
+const SHAKE_MS = 385
+const LOOP_MS = 6650
 const TRACK_PX = 420
 const SCORE = 72.5
 
@@ -81,8 +81,8 @@ export default function ToolMonkeyReport() {
     r.classList.remove('inj', 'ans', 'vrd')
     void r.offsetWidth
     r.classList.add('inj')
-    later(() => r.classList.add('ans'), 260)
-    later(() => r.classList.add('vrd'), 600)
+    later(() => r.classList.add('ans'), 182)
+    later(() => r.classList.add('vrd'), 420)
   }
 
   return (

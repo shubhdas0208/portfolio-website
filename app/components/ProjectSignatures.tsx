@@ -22,13 +22,10 @@ export function SortingDots() {
   )
 }
 
-/** DrapeFit: a running stitch that keeps sewing, ending at a knot. */
+/** DrapeFit: a running stitch hemming the whole card, like a sewn-in label. */
 export function StitchLine() {
   return (
-    <svg className="sig sig-stitch" viewBox="0 0 168 64" aria-hidden="true">
-      <path d="M2 14C40 2 54 50 92 40S140 6 164 30" />
-      <circle cx="164" cy="30" r="3.5" />
-    </svg>
+    <span className="sig sig-hem" aria-hidden="true" />
   )
 }
 

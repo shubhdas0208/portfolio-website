@@ -12,9 +12,9 @@ export const ASK_OWN_MESSAGE = "Hi Shubh, I'd like to hear about Voxikin."
 const WAVE_BARS = 18
 
 // The call loop: ring, pick up, question, answer, confirmed. Times are ms from the start of a loop.
-const AT = { answer: 1100, question: 1600, reply: 3100, done: 4200 }
-const LOOP_MS = 7600
-const FIRST_HOLD_MS = 2600
+const AT = { answer: 770, question: 1120, reply: 2170, done: 2940 }
+const LOOP_MS = 5320
+const FIRST_HOLD_MS = 1820
 const STATUS = { ringing: 'calling…', live: '● on call', done: '✓ 0:38' }
 
 interface Props { index: number; refs: ProjectRef[] }
@@ -59,11 +59,10 @@ export default function VoxikinCase({ index, refs }: Props) {
     <VisibleCard className="case case-vx" id="projects-own" tint="vx" style={{ ['--ci' as string]: index }}>
       <div className="copy">
         <ProjectIndex items={refs} current="projects-own" />
-        <h3>Voxikin<small>Voice AI elderly healthcare assistant</small></h3>
-        <p className="tagline">Caring for your loved ones, no matter where life takes you.</p>
+        <h3>Voxikin<small>The Voice agent for your parent&apos;s medicine</small></h3>
         <p>
-          It calls your parent on schedule, confirms every dose in their own language, and tells you only what
-          actually needs you. They install nothing. Their entire interface is answering a phone call.
+          Voxi calls your parent before every dose, reminds them in their own language, checks their well-being
+          and keeps you informed. They install nothing. Their entire interface is answering a phone call.
         </p>
         <div className="ft">
           <span>Not public yet</span>
