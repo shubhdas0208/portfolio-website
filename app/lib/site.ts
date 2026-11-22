@@ -30,7 +30,7 @@ export interface LogEntry {
 export const LOG: LogEntry[] = [
   { when: 'Now', text: 'Product Manager at Dezerv, on lending and voice AI agents.' },
   { when: "Mar '26", text: 'Shipped ToolMonkey and Filtr. Wrote', link: { label: 'P99 is a UX Metric', href: '/writing/p99-is-a-ux-metric' } },
-  { when: "Dec '25", text: 'Wrapped the Dezerv internship. M1 retention 38% to 51%.' },
+  { when: "Dec '25", text: 'Wrapped the Dezerv internship. M1 retention 19% to 33%.' },
   { when: "Apr '25", text: 'Left 91Ventures. LP reporting down from 48 hours to 60 minutes.' },
 ]
 
@@ -60,24 +60,32 @@ export interface Company {
 // Bullet copy is verbatim from the original Experience section.
 export const EXPERIENCE: Company[] = [
   {
-    id: 'dezerv', name: 'Dezerv', monogram: 'Dz', city: 'Bengaluru', years: "'25 to now", metric: '38→51%', metricCaption: 'M1 retention after shipping Portfolio Snapshot', summary: 'Product Manager · Product Intern',
+    id: 'dezerv', name: 'Dezerv', monogram: 'Dz', city: 'Bengaluru', years: "'25 to now", metric: '₹44.9Cr', metricCaption: 'loan book in 90 days, launching Loan against mutual funds', summary: 'Associate Product Manager · Product Intern',
     roles: [
-      { title: 'Product Manager', meta: 'Full-time · Bengaluru', pending: true, bullets: [
-        { lead: 'Lending products', rest: 'Loan against mutual funds and loan against securities.' },
-        { lead: 'Voice AI agents', rest: 'For PMS client calls.' },
-      ] },
+      { title: 'Associate Product Manager', meta: 'Jul 2026 to Present · Full-time · Bengaluru',
+        hero: { value: '₹44.9Cr', label: 'loan book in 90 days' },
+        how: '(197 loans) and INR 18.4L ARR by launching Loan against mutual funds as a new LOB.',
+        results: [
+          { value: '2.99→5.08%', label: 'loan initiation, A/B on 36K users' },
+          { value: '4.2x', label: 'monthly disbursals' },
+          { value: '0.90→1.66%', label: 'blended take rate' },
+        ],
+        bullets: [
+          { lead: 'INR 44.9Cr loan book in 90 days', rest: ' (197 loans) and INR 18.4L ARR by launching Loan against mutual funds as a new LOB.' },
+          { lead: 'Loan initiation lifted 2.1 pp (2.99% to 5.08%, A/B on 36K users)', rest: ' by redesigning the app to solve friction surfaced in user feedback calls.' },
+          { lead: 'Monthly disbursals scaled 4.2x (INR 1.21Cr to 5.13Cr) and daily loans 4.7x', rest: ' through discovery experiments, presented weekly to leadership.' },
+          { lead: 'Blended take rate improved from 0.90% to 1.66%', rest: ' via cohorted PF experiments, lifting average PF per loan 2.1x (INR 499 to INR 1,054).' },
+        ] },
       { title: 'Product Intern', meta: 'Jul 2025 to Dec 2025 · Internship · Bengaluru',
-        hero: { value: '38→51%', label: 'M1 retention' },
+        hero: { value: '19→33%', label: 'M1 retention' },
         how: 'by conducting user research on weekly portfolio tracking needs and shipping the Portfolio Snapshot feature.',
         results: [
           { value: '94→2%', label: 'status misclassification' },
-          { value: '18%', label: 'more conversions, same RM capacity' },
           { value: '+40%', label: 'session time, controlled cohort' },
         ],
         bullets: [
-          { lead: 'M1 retention lifted from 38% to 51%', rest: ' by conducting user research on weekly portfolio tracking needs and shipping the Portfolio Snapshot feature.' },
-          { lead: 'Status misclassification reduced from 94% to 2%', rest: ' by engineering a client call status identifier that analysed transcripts using classification rules.' },
-          { lead: '18% more conversions with the same RM capacity', rest: ' by developing an affluent user model using salary, spend, and investment patterns.' },
+          { lead: 'M1 retention lifted from 19% to 33%', rest: ' by conducting user research on weekly portfolio tracking needs and shipping the Portfolio Snapshot feature.' },
+          { lead: 'Status misclassification reduced from 94% to 2%', rest: ' by developing a client call status identifier that analysed transcripts using classification rules.' },
           { lead: 'Session time increased 40% in a controlled cohort', rest: ' by discovering the need for actionable insights and integrating Thurro AI into the stocks page.' },
         ] },
     ],
