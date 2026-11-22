@@ -1,6 +1,6 @@
 // Site-wide constants and section data that is not part of the posts/projects content.
 
-export const RESUME_URL = 'https://drive.google.com/file/d/1BA4IKjQMZAQbHeRM5nver6vW0qQF7s7Y/view'
+export const RESUME_URL = 'https://drive.google.com/file/d/1rGMDnVh08Lk5op-l6pqE90J--F_gdqP8/view?usp=sharing'
 export const EMAIL = 'dasshriyans2802@gmail.com'
 export const GITHUB_USER = 'shubhdas0208'
 
